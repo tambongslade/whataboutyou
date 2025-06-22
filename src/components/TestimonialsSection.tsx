@@ -18,7 +18,7 @@ const TestimonialsSection: React.FC = () => {
       name: "MICHEAL ZIK",
       role: "Créateur Digital",
       message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eiusmod tempor invidunt ut labore et dolore magna aliquyam erat.",
-      avatar: "/About 1.png",
+      avatar: "/About 1.webp",
       color: "bg-red-500"
     },
     {
@@ -26,7 +26,7 @@ const TestimonialsSection: React.FC = () => {
       name: "SARAH WILSON",
       role: "Designer Graphique",
       message: "WhataboutYou m'a permis de faire découvrir mes créations à un public incroyable. La plateforme est intuitive et le support exceptionnel.",
-      avatar: "/About 2.png",
+      avatar: "/About 2.webp",
       color: "bg-yellow-500"
     },
     {
@@ -34,7 +34,7 @@ const TestimonialsSection: React.FC = () => {
       name: "ALEX MARTIN",
       role: "Artiste Numérique",
       message: "Grâce à cette communauté, j'ai pu développer mon réseau et collaborer avec d'autres créateurs talentueux du monde entier.",
-      avatar: "/About 3.png",
+      avatar: "/About 3.webp",
       color: "bg-cyan-500"
     }
   ];

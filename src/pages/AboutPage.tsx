@@ -36,7 +36,7 @@ const AboutPage: React.FC = () => {
             </div>
             <div>
               <img
-                src="/About 1.png"
+                src="/About 1.webp"
                 alt="Notre équipe"
                 className="w-full h-auto rounded-2xl shadow-lg"
                 onError={(e) => {

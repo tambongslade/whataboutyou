@@ -7,8 +7,8 @@ const TombolaHeroSection = () => {
       <div className="relative w-full min-h-screen flex items-center justify-center">
         {/* Hero Background Image */}
         <div className="absolute inset-0">
-          <img 
-            src="/tombolahero.png" 
+                  <img 
+          src="/tombolahero.webp" 
             alt="Tombola Background" 
             className="w-full h-full object-cover"
             onLoad={() => console.log('Tombola background image loaded successfully')}

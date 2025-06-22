@@ -28,7 +28,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
               <img 
-                src="/Logo.png" 
+                src="/Logo.webp" 
                 alt="WhataboutYou Logo" 
                 className="h-10 w-auto"
               />

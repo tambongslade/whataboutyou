@@ -184,7 +184,7 @@ const AboutSection = () => {
             }`}>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
-                  src="/About 1.png" 
+                  src="/About 1.webp" 
                   alt="Groupe de jeunes créateurs au festival WhatAboutYou" 
                   className="w-full h-[500px] object-cover"
                   onError={(e) => {
@@ -224,7 +224,7 @@ const AboutSection = () => {
             }`}>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
-                  src="/About 2.png" 
+                  src="/About 2.webp" 
                   alt="Festival de plaisir et le partage" 
                   className="w-full h-[400px] object-cover"
                   onError={(e) => {
@@ -379,7 +379,7 @@ const AboutSection = () => {
             }`}>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
-                  src="/About 3.png" 
+                  src="/About 3.webp" 
                   alt="Famille vibrante et inclusive au festival WhatAboutYou" 
                   className="w-full h-[400px] object-cover"
                   onError={(e) => {

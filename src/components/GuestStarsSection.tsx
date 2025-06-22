@@ -18,21 +18,21 @@ const GuestStarsSection: React.FC = () => {
       name: "Sarah Wilson",
       role: "Artiste Musicale",
       description: "Chanteuse internationale qui a illuminé notre Festival Créatif 2024 avec ses performances exceptionnelles.",
-      image: "/About 1.png"
+      image: "/About 1.webp"
     },
     {
       id: 2,
       name: "Maya Johnson",
       role: "Influenceuse Mode",
       description: "Créatrice de contenu reconnue qui a partagé son expertise lors de nos ateliers créatifs.",
-      image: "/About 2.png"
+      image: "/About 2.webp"
     },
     {
       id: 3,
       name: "Tiana Brown",
       role: "Artiste Performeuse",
       description: "Danseuse et chorégraphe de renommée mondiale, invitée d'honneur de notre Nuit de l'Innovation.",
-      image: "/About 3.png",
+      image: "/About 3.webp",
       isHighlighted: true
     },
     {
@@ -40,14 +40,14 @@ const GuestStarsSection: React.FC = () => {
       name: "Alex Martin",
       role: "Créateur Digital",
       description: "Expert en création numérique qui a animé nos masterclasses sur l'art digital et l'innovation.",
-      image: "/About 1.png"
+      image: "/About 1.webp"
     },
     {
       id: 5,
       name: "Jordan Smith",
       role: "Producteur Musical",
       description: "Producteur de talents émergents qui découvre les nouveaux artistes lors de nos événements.",
-      image: "/About 2.png"
+      image: "/About 2.webp"
     }
   ];
 

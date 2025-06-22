@@ -9,7 +9,7 @@ const HeroSection = () => {
    
         <div className="absolute inset-0 ">
           <OptimizedImage 
-            src="/Header.png" 
+            src="/Header.webp" 
             alt="Hero Background" 
             className="w-full h-full object-cover"
             priority={true}
@@ -40,7 +40,7 @@ const HeroSection = () => {
         {/* Bulb Image - Positioned to the right */}
         <div className="absolute top-10 right-10 hidden lg:block z-40">
           <OptimizedImage 
-            src="/bulb.png" 
+            src="/bulb.webp" 
             alt="Lightbulb" 
             className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain animate-pulse"
             loading="lazy"
@@ -98,7 +98,7 @@ const HeroSection = () => {
       {/* Mobile Bulb - Smaller version for smaller screens */}
       <div className="absolute top-5 right-5 lg:hidden z-40">
         <OptimizedImage 
-          src="/bulb.png" 
+          src="/bulb.webp" 
           alt="Lightbulb" 
           className="w-12 h-12 object-contain animate-pulse"
           loading="lazy"

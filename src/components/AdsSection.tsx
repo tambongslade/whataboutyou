@@ -17,7 +17,7 @@ const AdsSection: React.FC = () => {
       id: 1,
       title: "Découvrez nos créateurs",
       description: "Plus de 500 jeunes talents vous attendent",
-      image: "/About 1.png",
+      image: "/About 1.webp",
       link: "/boutique",
       backgroundColor: "bg-gradient-to-r from-orange-500 to-red-500"
     },
@@ -25,7 +25,7 @@ const AdsSection: React.FC = () => {
       id: 2,
       title: "Rejoignez la communauté",
       description: "Partagez vos créations avec le monde",
-      image: "/About 2.png",
+      image: "/About 2.webp",
       link: "/contact",
       backgroundColor: "bg-gradient-to-r from-purple-500 to-pink-500"
     },
@@ -33,7 +33,7 @@ const AdsSection: React.FC = () => {
       id: 3,
       title: "Événements exclusifs",
       description: "Participez à nos festivals créatifs",
-      image: "/About 3.png",
+      image: "/About 3.webp",
       link: "/posts",
       backgroundColor: "bg-gradient-to-r from-blue-500 to-cyan-500"
     }

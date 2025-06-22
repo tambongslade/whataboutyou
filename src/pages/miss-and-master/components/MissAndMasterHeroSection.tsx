@@ -7,8 +7,8 @@ const MissAndMasterHeroSection = () => {
       <div className="relative w-full min-h-screen flex items-center justify-center">
         {/* Hero Background Image */}
         <div className="absolute inset-0">
-          <img 
-            src="/missandmasterhero.png" 
+                  <img 
+          src="/missandmasterhero.webp" 
             alt="Miss & Master Background" 
             className="w-full h-full object-cover"
             onLoad={() => console.log('Miss & Master background image loaded successfully')}

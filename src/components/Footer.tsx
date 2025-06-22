@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="mb-6">
               <img
-                src="/Logo.png"
+                src="/Logo.webp"
                 alt="WhataboutYou"
                 className="h-12 mb-4"
                 onError={(e) => {

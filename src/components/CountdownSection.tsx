@@ -77,7 +77,7 @@ const CountdownSection = () => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
-          src="/Countdown.png" 
+          src="/Countdown.webp" 
           alt="Festival Background" 
           className="w-full h-full object-cover opacity-100"
           onError={(e) => {

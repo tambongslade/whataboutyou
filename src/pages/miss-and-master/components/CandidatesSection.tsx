@@ -22,7 +22,7 @@ const CandidatesSection = () => {
       category: 'miss',
       ranking: 1,
       points: 251,
-      image: "/miss1.png", // Using existing image as placeholder
+      image: "/miss1.webp", // Using existing image as placeholder
       sash: "MISS FESTIVAL 2025"
     },
     {
@@ -31,7 +31,7 @@ const CandidatesSection = () => {
       category: 'miss',
       ranking: 2,
       points: 251,
-      image: "/miss1.png", // Using existing image as placeholder
+      image: "/miss1.webp", // Using existing image as placeholder
       sash: "MISS FESTIVAL 2025"
     },
     {
@@ -40,7 +40,7 @@ const CandidatesSection = () => {
       category: 'miss',
       ranking: 3,
       points: 184,
-      image: "/miss1.png", // Using existing image as placeholder
+      image: "/miss1.webp", // Using existing image as placeholder
       sash: "MISS FESTIVAL 2025"
     },
     {
@@ -49,7 +49,7 @@ const CandidatesSection = () => {
       category: 'master',
       ranking: 1,
       points: 298,
-      image: "/About 1.png", // Using existing image as placeholder
+      image: "/About 1.webp", // Using existing image as placeholder
       sash: "MASTER FESTIVAL 2025"
     },
     {
@@ -58,7 +58,7 @@ const CandidatesSection = () => {
       category: 'master',
       ranking: 2,
       points: 245,
-      image: "/About 2.png", // Using existing image as placeholder
+      image: "/About 2.webp", // Using existing image as placeholder
       sash: "MASTER FESTIVAL 2025"
     },
     {
@@ -67,7 +67,7 @@ const CandidatesSection = () => {
       category: 'master',
       ranking: 3,
       points: 198,
-      image: "/About 3.png", // Using existing image as placeholder
+      image: "/About 3.webp", // Using existing image as placeholder
       sash: "MASTER FESTIVAL 2025"
     }
   ];

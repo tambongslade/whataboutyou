@@ -16,7 +16,7 @@ const TombolaPrizesSection = () => {
       rank: 1,
       name: "TÉLÉVISEUR ÉCRAN PLAT 50\"",
       description: "Smart TV 4K Ultra HD",
-      image: "/Store.png", // Using existing image as placeholder
+      image: "/Store.webp", // Using existing image as placeholder
       category: 'tv'
     },
     {
@@ -24,7 +24,7 @@ const TombolaPrizesSection = () => {
       rank: 2,
       name: "SMARTPHONE HAUT DE GAMME",
       description: "Dernière génération",
-      image: "/Store.png", // Using existing image as placeholder
+      image: "/Store.webp", // Using existing image as placeholder
       category: 'smartphone'
     },
     {
@@ -32,7 +32,7 @@ const TombolaPrizesSection = () => {
       rank: 3,
       name: "TÉLÉVISEUR ÉCRAN PLAT 50\"",
       description: "Smart TV 4K Ultra HD",
-      image: "/Store.png", // Using existing image as placeholder
+      image: "/Store.webp", // Using existing image as placeholder
       category: 'tv'
     },
     {
@@ -40,7 +40,7 @@ const TombolaPrizesSection = () => {
       rank: 4,
       name: "SMARTPHONE HAUT DE GAMME",
       description: "Dernière génération",
-      image: "/Store.png", // Using existing image as placeholder
+      image: "/Store.webp", // Using existing image as placeholder
       category: 'smartphone'
     },
     {
@@ -48,7 +48,7 @@ const TombolaPrizesSection = () => {
       rank: 5,
       name: "TÉLÉVISEUR ÉCRAN PLAT 50\"",
       description: "Smart TV 4K Ultra HD",
-      image: "/Store.png", // Using existing image as placeholder
+      image: "/Store.webp", // Using existing image as placeholder
       category: 'tv'
     },
     {
@@ -56,7 +56,7 @@ const TombolaPrizesSection = () => {
       rank: 6,
       name: "SMARTPHONE HAUT DE GAMME",
       description: "Dernière génération",
-      image: "/Store.png", // Using existing image as placeholder
+      image: "/Store.webp", // Using existing image as placeholder
       category: 'smartphone'
     }
   ];

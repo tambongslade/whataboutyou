@@ -9,7 +9,7 @@ const PostsPage: React.FC = () => {
       author: "Sarah Wilson",
       date: "15 Mars 2024",
       category: "Tendances",
-      image: "/msg - blue.png"
+      image: "/msg - blue.webp"
     },
     {
       id: 2,
@@ -18,7 +18,7 @@ const PostsPage: React.FC = () => {
       author: "Tiana Brown",
       date: "12 Mars 2024",
       category: "Conseils",
-      image: "/msg - red.png"
+      image: "/msg - red.webp"
     },
     {
       id: 3,
@@ -27,7 +27,7 @@ const PostsPage: React.FC = () => {
       author: "Alex Martin",
       date: "10 Mars 2024",
       category: "Portrait",
-      image: "/msg-yellow.png"
+      image: "/msg-yellow.webp"
     }
   ];
 
@@ -75,8 +75,8 @@ const PostsPage: React.FC = () => {
                   </button>
                 </div>
                 <div className="h-64 lg:h-auto">
-                  <img
-                    src="/msg - blue.png"
+                            <img 
+            src="/msg - blue.webp"
                     alt="Featured post"
                     className="w-full h-full object-cover"
                     onError={(e) => {

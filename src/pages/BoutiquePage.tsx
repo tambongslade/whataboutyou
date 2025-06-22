@@ -21,7 +21,7 @@ const BoutiquePage: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <img
-              src="/Store.png"
+              src="/Store.webp"
               alt="Notre boutique"
               className="w-full h-auto rounded-2xl shadow-lg"
               onError={(e) => {

@@ -16,28 +16,28 @@ const TeamSection: React.FC = () => {
       id: 1,
       name: "SARAH WILSON",
       role: "CREATIVE DIRECTOR",
-      image: "/About 1.png",
+      image: "/About 1.webp",
       colorBg: "bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400"
     },
     {
       id: 2,
       name: "TIANA BROWN", 
       role: "HR MANAGER",
-      image: "/About 2.png",
+      image: "/About 2.webp",
       colorBg: "bg-gradient-to-br from-cyan-400 via-blue-500 to-yellow-400"
     },
     {
       id: 3,
       name: "MAYA JOHNSON",
       role: "MARKETING LEAD", 
-      image: "/About 3.png",
+      image: "/About 3.webp",
       colorBg: "bg-gradient-to-br from-red-500 via-pink-500 to-purple-600"
     },
     {
       id: 4,
       name: "ALEX MARTIN",
       role: "DESIGN LEAD",
-      image: "/About 1.png", // Reusing image
+      image: "/About 1.webp", // Reusing image
       colorBg: "bg-gradient-to-br from-green-400 via-teal-500 to-blue-500"
     }
   ];

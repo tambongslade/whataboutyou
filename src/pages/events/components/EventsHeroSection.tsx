@@ -17,8 +17,8 @@ const EventsHeroSection: React.FC = () => {
       <div className="relative w-full min-h-screen flex items-center justify-center">
         {/* Hero Background Image */}
         <div className="absolute inset-0">
-          <img 
-            src="/eventhero.png" 
+                  <img 
+          src="/eventhero.webp" 
             alt="Events Hero Background" 
             className="w-full h-full object-cover"
             onLoad={() => console.log('Background image loaded successfully')}

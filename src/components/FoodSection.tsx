@@ -18,7 +18,7 @@ const FoodSection: React.FC = () => {
       name: "Chef Marina",
       specialty: "Cuisine Fusion",
       description: "Spécialiste de la cuisine fusion africaine-européenne, Marina transforme les traditions culinaires en expériences gustatives uniques.",
-      image: "/About 1.png",
+      image: "/About 1.webp",
       location: "Paris, France"
     },
     {
@@ -26,7 +26,7 @@ const FoodSection: React.FC = () => {
       name: "Ahmed's Kitchen",
       specialty: "Street Food",
       description: "Créateur de street food authentique, Ahmed propose des saveurs du monde dans des concepts innovants et accessibles.",
-      image: "/About 2.png",
+      image: "/About 2.webp",
       location: "Lyon, France"
     },
     {
@@ -34,7 +34,7 @@ const FoodSection: React.FC = () => {
       name: "Bella Pasta",
       specialty: "Cuisine Italienne",
       description: "Passionnée de cuisine italienne traditionnelle, Bella partage ses recettes familiales et ses créations modernes.",
-      image: "/About 3.png",
+      image: "/About 3.webp",
       location: "Marseille, France"
     }
   ];
@@ -137,7 +137,7 @@ const FoodSection: React.FC = () => {
             {/* Main Image */}
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="/Store.png"
+                src="/Store.webp"
                 alt="Market scene with food vendors"
                 className="w-full h-[500px] object-cover"
                 onError={(e) => {
