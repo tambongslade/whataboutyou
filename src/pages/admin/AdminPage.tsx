@@ -3,11 +3,12 @@ import AdminNavbar from './components/AdminNavbar';
 import ConferenceRegistrations from './components/ConferenceRegistrations';
 import AdminStats from './components/AdminStats';
 import AdminLogin from './components/AdminLogin';
+import { type ConferenceRegistration } from '../../services/registrationService';
 
 const AdminPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [registrations, setRegistrations] = useState([]);
+  const [registrations, setRegistrations] = useState<ConferenceRegistration[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Check if admin is already authenticated (you can improve this with proper auth later)

@@ -1,21 +1,7 @@
-interface Registration {
-  id: string;
-  situation: string;
-  nom: string;
-  prenom: string;
-  age: string;
-  numeroTelephone: string;
-  email: string;
-  quartier: string;
-  statut: string;
-  organisation?: string;
-  aDejaParticipe: string;
-  nationalite: string;
-  createdAt: Date;
-}
+import { type ConferenceRegistration } from '../../../services/registrationService';
 
 interface AdminStatsProps {
-  registrations?: Registration[];
+  registrations?: ConferenceRegistration[];
 }
 
 const AdminStats = ({ registrations }: AdminStatsProps) => {
