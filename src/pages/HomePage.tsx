@@ -1,6 +1,10 @@
 import React from 'react';
 import HeroSection from '../components/HeroSection';
 import AboutSection from '../components/AboutSection';
+import IdentitySection from '../components/IdentitySection';
+import ValuesSection from '../components/ValuesSection';
+import WAYShowcaseSection from '../components/WAYShowcaseSection';
+import WAYStatsSection from '../components/WAYStatsSection';
 import AdsSection from '../components/AdsSection';
 import FoodSection from '../components/FoodSection';
 import PartnersSection from '../components/PartnersSection';
@@ -16,6 +20,10 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen">
       <HeroSection />
       <AboutSection />
+      <IdentitySection />
+      <ValuesSection />
+      <WAYShowcaseSection />
+      <WAYStatsSection />
       <AdsSection />
       <PartnersSection />
       <CountdownSection />

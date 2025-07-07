@@ -14,30 +14,30 @@ const FAQSection: React.FC = () => {
   const faqItems: FAQItem[] = [
     {
       id: 1,
-      question: "Lorem ipsum dolor sit tetur sadipscing elit amet, consectetur adipiscing elit ?",
-      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+      question: "Quand et où se déroule What About You ?",
+      answer: "What About You 4ème édition se déroule du 21 au 26 juillet au Palais de Congrès à Yaoundé, Cameroun. Un événement de 6 jours rempli d'activités entrepreneuriales, de conférences, d'expositions et de divertissements."
     },
     {
       id: 2,
-      question: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ?",
-      answer: "Lorem ipsum dolor sit amet consectetur adipiscing elit, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Sed dita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consectetur adipiscing eirmod tempor invidunt.",
+      question: "Quelles sont les catégories de personnes concernées ?",
+      answer: "What About You s'adresse principalement aux jeunes entrepreneurs et futurs entrepreneurs : les étudiants, les collégiens et les travailleurs. Notre événement est conçu pour inspirer et former tous ceux qui souhaitent développer leur esprit entrepreneurial et concrétiser leurs projets.",
       isFeatured: true,
       image: "/Store.webp"
     },
     {
       id: 3,
-      question: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ?",
-      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+      question: "Comment s'acquérir d'un stand d'exposition ?",
+      answer: "Pour acquérir un stand d'exposition, vous pouvez nous contacter directement via nos numéros de téléphone (+237 6 91 94 58 95, +237 6 55 64 38 59, +237 6 73 03 52 57) ou par email à whatabout.officiel@gmail.com. Nos équipes vous guideront dans le processus de réservation et vous fourniront tous les détails sur les tarifs et les modalités."
     },
     {
       id: 4,
-      question: "Lorem ipsum dolor sit amet, consectetur tetur sadipscing elit adipiscing elit ?",
-      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+      question: "Quel est le prix d'un ticket d'entrée ?",
+      answer: "Les tarifs des tickets varient selon les catégories d'âge et les types d'accès. Pour connaître les prix détaillés et les offres spéciales, veuillez nous contacter directement. Nous proposons également des tarifs préférentiels pour les groupes et les étudiants."
     },
     {
       id: 5,
-      question: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ?",
-      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+      question: "Comment puis-je obtenir plus d'informations ?",
+      answer: "Pour toute information supplémentaire, n'hésitez pas à nous contacter au Palais de Congrès à Yaoundé. Téléphones : +237 6 91 94 58 95, +237 6 55 64 38 59, +237 6 73 03 52 57. Email : whatabout.officiel@gmail.com. Suivez-nous également sur nos réseaux sociaux pour rester informés des dernières actualités."
     }
   ];
 
@@ -54,8 +54,8 @@ const FAQSection: React.FC = () => {
             FAQ WAY
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eirmod tempor invidunt ut 
-            labore et dolore magna aliquyam erat
+            Trouvez les réponses à vos questions les plus fréquentes sur What About You, 
+            l'événement entrepreneurial jeune qui transforme les rêves en réalité.
           </p>
         </div>
 
@@ -102,7 +102,7 @@ const FAQSection: React.FC = () => {
                       {/* Content Side */}
                       <div>
                         <h3 className="text-2xl font-bold text-white mb-4">
-                          PALAIS DES CONGRÈS
+                          NOTRE COMMUNAUTÉ
                         </h3>
                         <p className="text-gray-300 leading-relaxed mb-4">
                           {item.answer}
@@ -114,10 +114,10 @@ const FAQSection: React.FC = () => {
                         <div className="relative rounded-xl overflow-hidden">
                           <img
                             src={item.image}
-                            alt="Palais des Congrès"
+                            alt="Notre communauté"
                             className="w-full h-64 lg:h-80 object-cover"
                             onError={(e) => {
-                              e.currentTarget.src = 'https://via.placeholder.com/400x300/4A5568/white?text=Event+Venue';
+                              e.currentTarget.src = 'https://via.placeholder.com/400x300/4A5568/white?text=Event+Community';
                             }}
                           />
                           {/* Yellow accent circle */}

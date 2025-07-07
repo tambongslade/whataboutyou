@@ -70,8 +70,7 @@ const EventsHeroSection: React.FC = () => {
           
           {/* Description */}
           <p className="text-lg sm:text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eirmod tempor invidunt ut 
-            labore et dolore magna aliquyam erat
+            Découvrez nos événements entrepreneuriaux, socio-culturels et de divertissement qui rassemblent étudiants, collégiens et travailleurs autour de l'innovation et des opportunités d'affaires.
           </p>
 
           {/* Search Section */}

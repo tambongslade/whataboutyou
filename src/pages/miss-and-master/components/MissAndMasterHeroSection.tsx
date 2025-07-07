@@ -9,9 +9,9 @@ const MissAndMasterHeroSection = () => {
         <div className="absolute inset-0">
                   <img 
           src="/missandmasterhero.webp" 
-            alt="Miss & Master Background" 
+            alt="Miss Background" 
             className="w-full h-full object-cover"
-            onLoad={() => console.log('Miss & Master background image loaded successfully')}
+            onLoad={() => console.log('Miss background image loaded successfully')}
             onError={(e) => {
               console.error('Failed to load background image:', e);
               // Fallback: show a gradient background instead
@@ -54,15 +54,15 @@ const MissAndMasterHeroSection = () => {
         {/* Main Content */}
         <div className="relative z-30 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            MISS & MASTER
+            MISS WHAT ABOUT YOU
           </h1>
           
           <p className="text-lg sm:text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Découvrez les candidats, les beauté créée d'esprit et d'âme, la popularité et concours de l'élégance
+            Découvrez les candidates, la beauté créée d'esprit et d'âme, la popularité et le concours de l'élégance
           </p>
 
           <p className="text-base sm:text-lg text-gray-300 mb-12 max-w-2xl mx-auto">
-            Chaque participant - organisé dans un style américain fashion!
+            Chaque candidate organisée dans un style américain fashion!
           </p>
 
           {/* Search Bar */}
@@ -70,7 +70,7 @@ const MissAndMasterHeroSection = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Rechercher un candidat..."
+                placeholder="Rechercher une candidate..."
                 className="w-full px-6 py-4 pr-16 rounded-full text-gray-800 text-lg font-medium bg-white/90 backdrop-blur-sm border-2 border-transparent focus:border-yellow-400 focus:outline-none transition-all duration-300"
               />
               <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-red-500 hover:bg-red-600 text-white p-3 rounded-full transition-colors duration-300">
@@ -100,7 +100,7 @@ const MissAndMasterHeroSection = () => {
                   <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7V9C15 10.1 14.1 11 13 11V22H11V16H9V22H7V11C5.9 11 5 10.1 5 9V7H3V9C3 11.2 4.8 13 7 13V22H17V13C19.2 13 21 11.2 21 9Z"/>
                 </svg>
               </div>
-              <span>VOIR CANDIDATS</span>
+              <span>VOIR CANDIDATES</span>
             </button>
           </div>
         </div>

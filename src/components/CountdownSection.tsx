@@ -36,7 +36,7 @@ const CountdownSection = () => {
   }, []);
 
   useEffect(() => {
-    const targetDate = new Date('2025-07-26T00:00:00').getTime();
+    const targetDate = new Date('2025-07-21T00:00:00').getTime();
 
     const updateCountdown = () => {
       const now = new Date().getTime();
@@ -98,7 +98,7 @@ const CountdownSection = () => {
             WAY
           </h1>
           <p className="text-xl md:text-2xl text-white/90 font-medium tracking-widest">
-            5<sup className="text-base">ÈME</sup> ÉDITION
+            4<sup className="text-base">ÈME</sup> ÉDITION
           </p>
         </div>
 
@@ -156,7 +156,7 @@ const CountdownSection = () => {
             : 'opacity-0 translate-y-8'
         }`}>
           <p className="text-lg md:text-xl text-white/90 mb-6">
-            Rendez-vous le <span className="font-bold">26 Juillet 2025</span>
+            Rendez-vous du <span className="font-bold">21 au 26 juillet</span>
           </p>
           <button className="bg-white text-red-800 hover:bg-red-50 font-semibold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
             Réserver Maintenant

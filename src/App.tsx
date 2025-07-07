@@ -11,6 +11,7 @@ import TeamPage from './pages/TeamPage'
 import HistoryPage from './pages/HistoryPage'
 import PostsPage from './pages/PostsPage'
 import ContactPage from './pages/ContactPage'
+import AdminPage from './pages/admin/AdminPage'
 import Footer from './components/Footer'
 import './App.css'
 
@@ -49,6 +50,7 @@ function App() {
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/posts" element={<PostsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
         <Footer />
       </div>

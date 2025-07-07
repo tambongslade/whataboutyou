@@ -1,6 +1,36 @@
+import { useState, useEffect } from 'react';
 import OptimizedImage from './OptimizedImage';
+import ConferenceRegistrationModal from './ConferenceRegistrationModal';
 
 const HeroSection = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+
+  // Array of actual WAY images for the background slideshow
+  const backgroundImages = [
+    '/Header.webp',
+    '/way1/DSC_5516.webp',
+    '/way 2/EmptyName 390.webp',
+    '/eventhero.webp'
+  ];
+
+  // Auto-change background every 6 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prev) => (prev + 1) % backgroundImages.length);
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <section className="relative min-h-screen overflow-hidden ">
       {/* Hero Background Image Container */}
@@ -9,7 +39,7 @@ const HeroSection = () => {
    
         <div className="absolute inset-0 ">
           <OptimizedImage 
-            src="/Header.webp" 
+            src={backgroundImages[currentBgIndex] || '/Header.webp'} 
             alt="Hero Background" 
             className="w-full h-full object-cover"
             priority={true}
@@ -50,43 +80,49 @@ const HeroSection = () => {
         {/* Main Content */}
         <div className="relative z-30 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            QUEL EST VOTRE
+            QUELLE EST TA
             <br />
-            <span className="text-yellow-400">SITUATION AMOUREUSE</span> ?
+            <span className="text-yellow-400">SITUATION ACTUELLE</span> ?
           </h1>
           
+          <div className="mb-8">
+            <span className="text-2xl sm:text-3xl font-bold text-white bg-gradient-to-r from-red-500 to-orange-500 px-6 py-3 rounded-full">
+              WHAT ABOUT YOU - WAY
+            </span>
+          </div>
+          
           <p className="text-lg sm:text-xl md:text-2xl text-gray-200 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat
+            Foire entrepreneuriale, socio-culturelle et de divertissement qui mobilise les jeunes autour de l'entrepreneuriat et de l'innovation. Rejoignez-nous pour des expositions, conférences, salon professionnel et divertissements uniques.
           </p>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            {/* First Button with Bulb Icon */}
-            <button className="group flex items-center justify-center bg-white text-gray-800 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg min-w-[200px]">
-              <div className="w-5 h-5 mr-3 flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="17.298" height="24" viewBox="0 0 17.298 24" className="w-full h-full">
-                  <g transform="translate(-4.246 -1.279)">
-                    <path d="M12.9,1.279a8.639,8.639,0,0,1,4.817,15.814l-.006,0a1.395,1.395,0,0,0-.628,1.164v1.707a.837.837,0,0,1-.837.837H9.551a.837.837,0,0,1-.837-.837V18.261A1.395,1.395,0,0,0,8.079,17.1l-.011-.007A8.647,8.647,0,0,1,4.252,9.607V9.595a8.758,8.758,0,0,1,8.487-8.314C12.792,1.279,12.845,1.279,12.9,1.279ZM16.785,15.7a6.967,6.967,0,0,0-4-12.748,7.085,7.085,0,0,0-6.86,6.719A6.973,6.973,0,0,0,9,15.7a3.068,3.068,0,0,1,1.39,2.558v.873h5.021v-.87a3.068,3.068,0,0,1,1.377-2.56Z" fill="currentColor"/>
-                    <path d="M12.434,23.079A6.456,6.456,0,0,1,8.585,21.8a.837.837,0,1,1,1-1.339,4.742,4.742,0,0,0,5.69,0,.837.837,0,1,1,1,1.339A6.456,6.456,0,0,1,12.434,23.079Z" transform="translate(0.463 2.2)" fill="currentColor"/>
-                    <path d="M12.327,15.489a.837.837,0,0,1-.716-1.269l1.874-3.113a.054.054,0,0,0,.006-.025.056.056,0,0,0-.056-.056H11.206A1.729,1.729,0,0,1,9.715,8.4l1.85-3.1A.837.837,0,1,1,13,6.156l-1.852,3.1-.006.01a.055.055,0,0,0-.008.028.056.056,0,0,0,.056.057h2.241a1.729,1.729,0,0,1,1.488,2.615l-1.876,3.116A.836.836,0,0,1,12.327,15.489Z" transform="translate(0.603 0.418)" fill="currentColor"/>
-                  </g>
-                </svg>
-              </div>
-              <span>LOREM IPSUM</span>
-            </button>
+          {/* Identity Colors */}
+          {/* <div className="flex justify-center space-x-4 mb-8">
+            <div className="flex items-center space-x-2 px-4 py-2 bg-red-500 rounded-full text-white font-semibold">
+              <div className="w-3 h-3 bg-white rounded-full"></div>
+              <span className="text-sm sm:text-base">Rouge: Étudiant</span>
+            </div>
+            <div className="flex items-center space-x-2 px-4 py-2 bg-blue-500 rounded-full text-white font-semibold">
+              <div className="w-3 h-3 bg-white rounded-full"></div>
+              <span className="text-sm sm:text-base">Bleu: Collégien</span>
+            </div>
+            <div className="flex items-center space-x-2 px-4 py-2 bg-yellow-500 rounded-full text-white font-semibold">
+              <div className="w-3 h-3 bg-white rounded-full"></div>
+              <span className="text-sm sm:text-base">Jaune: Travailleur</span>
+            </div>
+          </div> */}
 
-            {/* Second Button with Bulb Icon */}
-            <button className="group flex items-center justify-center bg-red-500 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg min-w-[200px]">
-              <div className="w-5 h-5 mr-3 flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="17.298" height="24" viewBox="0 0 17.298 24" className="w-full h-full">
-                  <g transform="translate(-4.246 -1.279)">
-                    <path d="M12.9,1.279a8.639,8.639,0,0,1,4.817,15.814l-.006,0a1.395,1.395,0,0,0-.628,1.164v1.707a.837.837,0,0,1-.837.837H9.551a.837.837,0,0,1-.837-.837V18.261A1.395,1.395,0,0,0,8.079,17.1l-.011-.007A8.647,8.647,0,0,1,4.252,9.607V9.595a8.758,8.758,0,0,1,8.487-8.314C12.792,1.279,12.845,1.279,12.9,1.279ZM16.785,15.7a6.967,6.967,0,0,0-4-12.748,7.085,7.085,0,0,0-6.86,6.719A6.973,6.973,0,0,0,9,15.7a3.068,3.068,0,0,1,1.39,2.558v.873h5.021v-.87a3.068,3.068,0,0,1,1.377-2.56Z" fill="currentColor"/>
-                    <path d="M12.434,23.079A6.456,6.456,0,0,1,8.585,21.8a.837.837,0,1,1,1-1.339,4.742,4.742,0,0,0,5.69,0,.837.837,0,1,1,1,1.339A6.456,6.456,0,0,1,12.434,23.079Z" transform="translate(0.463 2.2)" fill="currentColor"/>
-                    <path d="M12.327,15.489a.837.837,0,0,1-.716-1.269l1.874-3.113a.054.054,0,0,0,.006-.025.056.056,0,0,0-.056-.056H11.206A1.729,1.729,0,0,1,9.715,8.4l1.85-3.1A.837.837,0,1,1,13,6.156l-1.852,3.1-.006.01a.055.055,0,0,0-.008.028.056.056,0,0,0,.056.057h2.241a1.729,1.729,0,0,1,1.488,2.615l-1.876,3.116A.836.836,0,0,1,12.327,15.489Z" transform="translate(0.603 0.418)" fill="currentColor"/>
-                  </g>
+          {/* Action Button */}
+          <div className="flex justify-center">
+            <button 
+              onClick={handleOpenModal}
+              className="group flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-500 text-white px-12 py-6 rounded-xl font-bold text-xl hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
+            >
+              <div className="w-8 h-8 mr-4 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-full h-full">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                 </svg>
               </div>
-              <span>LOREM IPSUM</span>
+              <span>PARTICIPEZ À LA CONFÉRENCE!</span>
             </button>
           </div>
         </div>
@@ -108,6 +144,12 @@ const HeroSection = () => {
       {/* Yellow floating elements (similar to the yellow corner in your design) */}
       <div className="absolute top-10 right-10 w-16 h-16 bg-yellow-400 rounded-full opacity-80 animate-bounce slow hidden lg:block" style={{ animationDelay: '2s' }}></div>
       <div className="absolute bottom-20 left-10 w-12 h-12 bg-yellow-400 rounded-full opacity-60 animate-pulse hidden lg:block"></div>
+
+      {/* Conference Registration Modal */}
+      <ConferenceRegistrationModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+      />
     </section>
   );
 };

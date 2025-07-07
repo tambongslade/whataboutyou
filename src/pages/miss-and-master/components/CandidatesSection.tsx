@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 interface Candidate {
   id: number;
   name: string;
-  category: 'miss' | 'master';
+  category: 'miss';
   ranking: number;
   points: number;
   image: string;
@@ -11,10 +11,9 @@ interface Candidate {
 }
 
 const CandidatesSection = () => {
-  const [activeFilter, setActiveFilter] = useState<'miss' | 'master'>('miss');
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
 
-  // Mock data for candidates
+  // Mock data for candidates - only Miss candidates
   const candidates: Candidate[] = [
     {
       id: 1,
@@ -23,7 +22,7 @@ const CandidatesSection = () => {
       ranking: 1,
       points: 251,
       image: "/miss1.webp", // Using existing image as placeholder
-      sash: "MISS FESTIVAL 2025"
+      sash: "MISS FESTIVAL 2024"
     },
     {
       id: 2,
@@ -32,7 +31,7 @@ const CandidatesSection = () => {
       ranking: 2,
       points: 251,
       image: "/miss1.webp", // Using existing image as placeholder
-      sash: "MISS FESTIVAL 2025"
+      sash: "MISS FESTIVAL 2024"
     },
     {
       id: 3,
@@ -41,38 +40,36 @@ const CandidatesSection = () => {
       ranking: 3,
       points: 184,
       image: "/miss1.webp", // Using existing image as placeholder
-      sash: "MISS FESTIVAL 2025"
+      sash: "MISS FESTIVAL 2024"
     },
     {
       id: 4,
-      name: "ALEX MARTIN",
-      category: 'master',
-      ranking: 1,
-      points: 298,
-      image: "/About 1.webp", // Using existing image as placeholder
-      sash: "MASTER FESTIVAL 2025"
+      name: "MARIE DUBOIS",
+      category: 'miss',
+      ranking: 4,
+      points: 167,
+      image: "/miss1.webp", // Using existing image as placeholder
+      sash: "MISS FESTIVAL 2024"
     },
     {
       id: 5,
-      name: "JORDAN SMITH",
-      category: 'master',
-      ranking: 2,
-      points: 245,
-      image: "/About 2.webp", // Using existing image as placeholder
-      sash: "MASTER FESTIVAL 2025"
+      name: "SARAH JOHNSON",
+      category: 'miss',
+      ranking: 5,
+      points: 145,
+      image: "/miss1.webp", // Using existing image as placeholder
+      sash: "MISS FESTIVAL 2024"
     },
     {
       id: 6,
-      name: "DAVID BROWN",
-      category: 'master',
-      ranking: 3,
-      points: 198,
-      image: "/About 3.webp", // Using existing image as placeholder
-      sash: "MASTER FESTIVAL 2025"
+      name: "EMMA WILSON",
+      category: 'miss',
+      ranking: 6,
+      points: 132,
+      image: "/miss1.webp", // Using existing image as placeholder
+      sash: "MISS FESTIVAL 2024"
     }
   ];
-
-  const filteredCandidates = candidates.filter(candidate => candidate.category === activeFilter);
 
   const handleVoteClick = (candidate: Candidate) => {
     setSelectedCandidate(candidate);
@@ -89,40 +86,14 @@ const CandidatesSection = () => {
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        {/* Filter Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-full p-1 shadow-lg">
-            <button
-              onClick={() => setActiveFilter('miss')}
-              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                activeFilter === 'miss'
-                  ? 'bg-cyan-500 text-white shadow-md'
-                  : 'text-gray-600 hover:text-cyan-500'
-              }`}
-            >
-              MISS WAY
-            </button>
-            <button
-              onClick={() => setActiveFilter('master')}
-              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                activeFilter === 'master'
-                  ? 'bg-cyan-500 text-white shadow-md'
-                  : 'text-gray-600 hover:text-cyan-500'
-              }`}
-            >
-              MASTER WAY
-            </button>
-          </div>
-        </div>
-
         {/* Section Title */}
         <h2 className="text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-12">
-          SECTION DES CANDIDATES
+          MISS WHAT ABOUT YOU - CANDIDATES
         </h2>
 
         {/* Candidates Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {filteredCandidates.map((candidate) => (
+          {candidates.map((candidate) => (
             <div key={candidate.id} className="relative bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
               {/* Candidate Image */}
               <div className="relative">
@@ -136,7 +107,7 @@ const CandidatesSection = () => {
                   <div className="text-center">
                     <div className="text-3xl font-black">#{candidate.ranking}</div>
                     <div className="text-xs font-semibold mt-1">
-                      {candidate.category.toUpperCase()}
+                      MISS
                     </div>
                   </div>
                 </div>
@@ -161,7 +132,7 @@ const CandidatesSection = () => {
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{candidate.name}</h3>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-gray-600">
-                    {activeFilter === 'miss' ? 'MISS2024' : 'MASTER2024'}
+                    MISS2024
                   </span>
                   <span className="text-gray-600 font-semibold">{candidate.points} PTS</span>
                 </div>
@@ -171,7 +142,7 @@ const CandidatesSection = () => {
                   onClick={() => handleVoteClick(candidate)}
                   className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300 transform hover:scale-105"
                 >
-                  VOTER MOI
+                  VOTER POUR MOI
                 </button>
               </div>
             </div>
@@ -238,7 +209,7 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
               <div className="absolute top-4 left-4 bg-yellow-400 text-black font-bold text-2xl px-4 py-2 rounded-lg">
                 #{candidate.ranking}
                 <div className="text-sm font-normal">
-                  {candidate.category === 'miss' ? 'MISS' : 'MASTER'}
+                  MISS
                 </div>
               </div>
               {/* Decorative Elements */}
@@ -254,11 +225,11 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
               <h2 className="text-2xl font-bold text-gray-900 mb-2">VOTER POUR MOI</h2>
               <h3 className="text-3xl font-bold text-gray-900 mb-4">{candidate.name}</h3>
               <div className="flex items-center space-x-4 text-gray-600">
-                <span>#{candidate.category === 'miss' ? 'MSS' : 'MST'}204</span>
+                <span>MISS2024</span>
                 <span>|</span>
                 <span>{candidate.points} PTS</span>
                 <span>|</span>
-                <span>#{candidate.ranking} / 12</span>
+                <span>#{candidate.ranking} / 6</span>
               </div>
             </div>
 

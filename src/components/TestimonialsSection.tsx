@@ -15,27 +15,43 @@ const TestimonialsSection: React.FC = () => {
   const testimonials: Testimonial[] = [
     {
       id: 1,
-      name: "MICHEAL ZIK",
-      role: "Créateur Digital",
-      message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eiusmod tempor invidunt ut labore et dolore magna aliquyam erat.",
-      avatar: "/About 1.webp",
+      name: "MARIE KAMDEM",
+      role: "Directrice Générale WAY",
+      message: "What About You a été créé avec une vision claire : donner aux jeunes les moyens de réaliser leurs rêves entrepreneuriaux. Chaque édition nous rappelle pourquoi cette mission est si importante. Voir ces jeunes talents grandir et réussir, c'est notre plus grande récompense.",
+      avatar: "/Notre Equipe/IMG_8877.webp",
       color: "bg-red-500"
     },
     {
       id: 2,
-      name: "SARAH WILSON",
-      role: "Designer Graphique",
-      message: "WhataboutYou m'a permis de faire découvrir mes créations à un public incroyable. La plateforme est intuitive et le support exceptionnel.",
-      avatar: "/About 2.webp",
-      color: "bg-yellow-500"
+      name: "PAUL MBALLA",
+      role: "Directeur Marketing WAY",
+      message: "L'impact de WAY sur la communauté entrepreneuriale camerounaise est extraordinaire. Nous avons accompagné plus de 3000 jeunes dans leur parcours. L'énergie et la créativité de chaque édition me motivent chaque jour à repousser les limites.",
+      avatar: "/Notre Equipe/IMG_8876.webp",
+      color: "bg-blue-500"
     },
     {
       id: 3,
-      name: "ALEX MARTIN",
-      role: "Artiste Numérique",
-      message: "Grâce à cette communauté, j'ai pu développer mon réseau et collaborer avec d'autres créateurs talentueux du monde entier.",
-      avatar: "/About 3.webp",
-      color: "bg-cyan-500"
+      name: "GRACE NKOMO",
+      role: "Responsable Événementiel WAY",
+      message: "Organiser chaque édition de WAY est un défi passionnant. Voir l'évolution des participants, leurs échanges, leurs collaborations... C'est magique ! WAY est devenu bien plus qu'un événement, c'est une famille entrepreneuriale.",
+      avatar: "/Notre Equipe/IMG_8875.webp",
+      color: "bg-yellow-500"
+    },
+    {
+      id: 4,
+      name: "JEAN TSAFACK",
+      role: "Chef de Projet WAY",
+      message: "La force de WAY réside dans sa capacité à rassembler des jeunes de tous horizons autour d'un objectif commun. Chaque projet que nous accompagnons, chaque success story que nous célébrons, renforce notre conviction que nous sommes sur la bonne voie.",
+      avatar: "/Notre Equipe/IMG_8874.webp",
+      color: "bg-green-500"
+    },
+    {
+      id: 5,
+      name: "SANDRA FOUDA",
+      role: "Responsable Communication WAY",
+      message: "Raconter l'histoire de WAY, c'est raconter l'histoire de centaines de jeunes qui ont osé croire en leurs rêves. Chaque témoignage, chaque photo, chaque moment partagé contribue à inspirer la prochaine génération d'entrepreneurs.",
+      avatar: "/Notre Equipe/IMG_8873.webp",
+      color: "bg-purple-500"
     }
   ];
 
@@ -56,8 +72,7 @@ const TestimonialsSection: React.FC = () => {
             TÉMOIGNAGES
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eiusmod tempor invidunt ut labore et
-            dolore magna aliquyam erat.
+            Découvrez les expériences inspirantes de nos participants qui ont transformé leurs rêves entrepreneuriaux en réalité grâce à What About You.
           </p>
           
           {/* Navigation Arrows */}
