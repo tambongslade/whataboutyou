@@ -120,8 +120,8 @@ const GuestStarsSection: React.FC = () => {
 
           {/* Description */}
           <p className="text-white/80 max-w-2xl mx-auto leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonumy eirmod tempor invidunt ut 
-            labore et dolore magna aliquyam erat
+            Découvrez les personnalités influentes et les créateurs de contenu qui participent à What About You. 
+            Ces leaders d'opinion inspirent notre communauté et partagent leur expertise avec les jeunes entrepreneurs.
           </p>
         </div>
 

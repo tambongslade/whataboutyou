@@ -98,7 +98,7 @@ const FoodSection: React.FC = () => {
             </p>
 
             <button className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
-              LOREM IPSUM
+              REJOINDRE L'AVENTURE
             </button>
 
             {/* Creator Showcase */}

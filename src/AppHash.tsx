@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage'
 import EventsPage from './pages/events/EventsPage'
@@ -12,10 +12,8 @@ import HistoryPage from './pages/HistoryPage'
 import PostsPage from './pages/PostsPage'
 import ContactPage from './pages/ContactPage'
 import AdminPage from './pages/admin/AdminPage'
-import NotFoundPage from './pages/NotFoundPage'
 import Footer from './components/Footer'
 import './App.css'
-
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -33,13 +31,13 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen">
-        <Navbar 
+        <Navbar
           isAuthenticated={isAuthenticated}
           userAvatar="https://via.placeholder.com/32"
           onLogin={handleLogin}
           onLogout={handleLogout}
         />
-        
+
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/events" element={<EventsPage />} />
@@ -53,7 +51,7 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin" element={<AdminPage />} />
           {/* Fallback route for unmatched paths */}
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Footer />
       </div>
@@ -61,4 +59,4 @@ function App() {
   )
 }
 
-export default App
+export default App 

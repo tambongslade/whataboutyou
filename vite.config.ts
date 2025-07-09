@@ -10,8 +10,7 @@ export default defineConfig({
       output: {
         // Chunk splitting for better caching
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom']
+          vendor: ['react', 'react-dom', 'react-router-dom'],
         }
       }
     },
@@ -24,7 +23,8 @@ export default defineConfig({
         drop_console: true, // Remove console.log in production
         drop_debugger: true
       }
-    }
+    },
+    sourcemap: false
   },
   // Image optimization
   assetsInclude: ['**/*.webp', '**/*.avif'],
@@ -36,7 +36,11 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': 'http://localhost:5000'
-    }
-   
+    },
+    historyApiFallback: true
+  },
+  preview: {
+    port: 4173,
+    strictPort: true,
   }
 })

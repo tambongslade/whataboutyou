@@ -206,7 +206,7 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                   )}
                 </div>
 
-                {/* Bleu - Travailleurs */}
+                {/* Bleu - Collégiens */}
                 <div 
                   className={`relative cursor-pointer transition-all duration-300 ${
                     formData.situation === 'bleu' 
@@ -240,7 +240,7 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                   )}
                 </div>
 
-                {/* Jaune - Collégiens */}
+                {/* Jaune - Travailleurs */}
                 <div 
                   className={`relative cursor-pointer transition-all duration-300 ${
                     formData.situation === 'jaune' 
