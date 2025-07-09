@@ -36,8 +36,7 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': 'http://localhost:5000'
-    },
-    historyApiFallback: true
+    }
   },
   preview: {
     port: 4173,
