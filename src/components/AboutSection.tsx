@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const AboutSection = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -432,8 +433,8 @@ const AboutSection = () => {
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 translate-y-8'
           }`}>
-            <a 
-              href="/about"
+            <Link 
+              to="/about"
               className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold rounded-lg hover:from-red-600 hover:to-orange-600 transition-all duration-300 hover:scale-105 shadow-lg"
             >
               Découvrir toutes nos valeurs
@@ -450,7 +451,7 @@ const AboutSection = () => {
                   d="M9 5l7 7-7 7" 
                 />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </section>

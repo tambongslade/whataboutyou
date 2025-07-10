@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Stat {
   number: string;
@@ -158,18 +159,18 @@ const WAYStatsSection: React.FC = () => {
             Rejoignez-nous pour la prochaine édition et faites partie de ces statistiques !
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/events"
+            <Link
+              to="/events"
               className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-8 py-4 rounded-lg font-semibold hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-xl"
             >
               Découvrir nos éditions
-            </a>
-            <a
-              href="/contact"
+            </Link>
+            <Link
+              to="/contact"
               className="border-2 border-yellow-400 text-yellow-400 px-8 py-4 rounded-lg font-semibold hover:bg-yellow-400 hover:text-black transition-all duration-300 transform hover:scale-105"
             >
               Devenir partenaire
-            </a>
+            </Link>
           </div>
         </div>
 

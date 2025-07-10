@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 interface ShowcaseImage {
   id: string;
@@ -217,18 +218,18 @@ const WAYShowcaseSection: React.FC = () => {
             Vous voulez voir plus de moments comme ceux-ci ? Participez à notre prochaine édition !
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/events"
+            <Link
+              to="/events"
               className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-8 py-4 rounded-lg font-semibold hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
             >
               Voir toutes les éditions
-            </a>
-            <a
-              href="/contact"
+            </Link>
+            <Link
+              to="/contact"
               className="border-2 border-blue-500 text-blue-500 px-8 py-4 rounded-lg font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300 transform hover:scale-105"
             >
               Nous rejoindre
-            </a>
+            </Link>
           </div>
         </div>
       </div>
