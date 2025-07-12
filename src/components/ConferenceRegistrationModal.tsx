@@ -1,9 +1,24 @@
 import { useState } from 'react';
-import { saveRegistration, type ConferenceRegistration } from '../services/registrationService';
+import { saveRegistration, checkEmailExists, type ConferenceRegistration } from '../services/registrationService';
 
 interface ConferenceRegistrationModalProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+// Error types for better handling
+type ErrorType = 'validation' | 'network' | 'server' | 'duplicate' | 'unknown';
+
+interface AppError {
+  type: ErrorType;
+  message: string;
+  field?: string;
+  retryable?: boolean;
+}
+
+// Field validation errors
+interface FieldErrors {
+  [key: string]: string;
 }
 
 const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistrationModalProps) => {
@@ -23,44 +38,133 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [showSuccess, setShowSuccess] = useState(false);
   const [registrationNumber, setRegistrationNumber] = useState<string>('');
+  const [retryCount, setRetryCount] = useState(0);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
 
-  // Phone number validation for Cameroon
-  const validateCameroonPhone = (phone: string): boolean => {
+  // International phone number validation
+  const validateInternationalPhone = (phone: string): boolean => {
     // Remove spaces and special characters
     const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
-    // Check if it matches Cameroon phone pattern
-    return /^(\+237|237)?[6-9]\d{8}$/.test(cleanPhone);
+    // Basic international phone validation - starts with + followed by 1-4 digits for country code, then 4-15 digits
+    return /^\+\d{1,4}\d{4,15}$/.test(cleanPhone);
   };
 
   const formatPhoneNumber = (phone: string): string => {
     // Remove all non-numeric characters except +
     const cleaned = phone.replace(/[^\d+]/g, '');
     
-    // If it starts with +237, format it
-    if (cleaned.startsWith('+237')) {
-      const number = cleaned.slice(4);
-      if (number.length <= 9) {
-        return `+237 ${number.slice(0, 1)} ${number.slice(1, 3)} ${number.slice(3, 5)} ${number.slice(5, 7)} ${number.slice(7, 9)}`.trim();
-      }
-    }
-    // If it starts with 237, format it
-    else if (cleaned.startsWith('237')) {
-      const number = cleaned.slice(3);
-      if (number.length <= 9) {
-        return `+237 ${number.slice(0, 1)} ${number.slice(1, 3)} ${number.slice(3, 5)} ${number.slice(5, 7)} ${number.slice(7, 9)}`.trim();
-      }
-    }
-    // If it's just the number (starts with 6-9)
-    else if (/^[6-9]/.test(cleaned)) {
-      if (cleaned.length <= 9) {
-        return `+237 ${cleaned.slice(0, 1)} ${cleaned.slice(1, 3)} ${cleaned.slice(3, 5)} ${cleaned.slice(5, 7)} ${cleaned.slice(7, 9)}`.trim();
-      }
+    // If it doesn't start with +, add it
+    if (!cleaned.startsWith('+') && cleaned.length > 0) {
+      return `+${cleaned}`;
     }
     
     return cleaned;
+  };
+
+  // Comprehensive form validation
+  const validateForm = (): FieldErrors => {
+    const errors: FieldErrors = {};
+
+    // Required field validation
+    if (!formData.situation) errors.situation = 'Veuillez sélectionner votre situation actuelle';
+    if (!formData.nom.trim()) errors.nom = 'Le nom est requis';
+    if (!formData.prenom.trim()) errors.prenom = 'Le prénom est requis';
+    if (!formData.age) errors.age = 'L\'âge est requis';
+    if (!formData.sexe) errors.sexe = 'Le sexe est requis';
+    if (!formData.numeroTelephone.trim()) errors.numeroTelephone = 'Le numéro de téléphone est requis';
+    if (!formData.email.trim()) errors.email = 'L\'email est requis';
+    if (!formData.quartier.trim()) errors.quartier = 'Le quartier est requis';
+    if (!formData.statut) errors.statut = 'Le statut est requis';
+    if (!formData.aDejaParticipe) errors.aDejaParticipe = 'Veuillez indiquer si vous avez déjà participé à une conférence';
+    if (!formData.nationalite.trim()) errors.nationalite = 'La nationalité est requise';
+
+    // Specific field validation
+    if (formData.nom && formData.nom.trim().length < 2) {
+      errors.nom = 'Le nom doit contenir au moins 2 caractères';
+    }
+    if (formData.prenom && formData.prenom.trim().length < 2) {
+      errors.prenom = 'Le prénom doit contenir au moins 2 caractères';
+    }
+    if (formData.age && (parseInt(formData.age) < 5 || parseInt(formData.age) > 120)) {
+      errors.age = 'L\'âge doit être entre 5 et 120 ans';
+    }
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Veuillez saisir une adresse email valide';
+    }
+    if (formData.numeroTelephone && !validateInternationalPhone(formData.numeroTelephone)) {
+      errors.numeroTelephone = 'Veuillez saisir un numéro de téléphone international valide (ex: +237 6XX XX XX XX)';
+    }
+
+    return errors;
+  };
+
+  // Create specific error objects
+  const createError = (type: ErrorType, message: string, field?: string, retryable: boolean = false): AppError => ({
+    type,
+    message,
+    field,
+    retryable
+  });
+
+  // Handle network and server errors
+  const handleSubmissionError = (error: unknown): AppError => {
+    if (error instanceof Error) {
+      const errorMessage = error.message.toLowerCase();
+      
+      // Network errors
+      if (errorMessage.includes('fetch') || errorMessage.includes('network') || errorMessage.includes('connexion')) {
+        return createError('network', 'Erreur de connexion. Vérifiez votre connexion internet et réessayez.', undefined, true);
+      }
+      
+      // Duplicate email
+      if (errorMessage.includes('email') && (errorMessage.includes('exist') || errorMessage.includes('déjà'))) {
+        return createError('duplicate', 'Cette adresse email est déjà utilisée pour une inscription.', 'email');
+      }
+      
+      // Server errors
+      if (errorMessage.includes('500') || errorMessage.includes('server') || errorMessage.includes('serveur')) {
+        return createError('server', 'Erreur du serveur. Notre équipe technique a été notifiée.', undefined, true);
+      }
+      
+      // Client errors
+      if (errorMessage.includes('400') || errorMessage.includes('invalid')) {
+        return createError('validation', 'Données invalides. Veuillez vérifier vos informations.', undefined, false);
+      }
+      
+      // Generic server error with the actual message
+      return createError('server', error.message, undefined, true);
+    }
+    
+    return createError('unknown', 'Une erreur inattendue s\'est produite. Veuillez réessayer.', undefined, true);
+  };
+
+  // Check if email exists before submission
+  const checkEmailAvailability = async (email: string): Promise<boolean> => {
+    try {
+      setIsCheckingEmail(true);
+      const exists = await checkEmailExists(email);
+      if (exists) {
+        setFieldErrors(prev => ({ ...prev, email: 'Cette adresse email est déjà utilisée pour une inscription.' }));
+        return false;
+      }
+      // Clear email field error if it was previously set
+      setFieldErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.email;
+        return newErrors;
+      });
+      return true;
+    } catch (error) {
+      // If email check fails, allow submission to proceed (don't block user)
+      console.warn('Email check failed:', error);
+      return true;
+    } finally {
+      setIsCheckingEmail(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -80,29 +184,57 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
       }));
     }
     
-    // Clear error when user starts typing
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+    
+    // Clear general error when user modifies form
     if (error) setError(null);
+  };
+
+  // Email blur validation
+  const handleEmailBlur = async () => {
+    if (formData.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      await checkEmailAvailability(formData.email);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-    
-    // Validate phone number
-    if (!validateCameroonPhone(formData.numeroTelephone)) {
-      setError('Veuillez saisir un numéro de téléphone camerounais valide (ex: +237 6 XX XX XX XX)');
-      setIsSubmitting(false);
-      return;
-    }
+    setFieldErrors({});
     
     try {
+      // Client-side validation
+      const validationErrors = validateForm();
+      if (Object.keys(validationErrors).length > 0) {
+        setFieldErrors(validationErrors);
+        setError(createError('validation', 'Veuillez corriger les erreurs dans le formulaire.'));
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check email availability one more time before submission
+      const emailAvailable = await checkEmailAvailability(formData.email);
+      if (!emailAvailable) {
+        setError(createError('duplicate', 'Cette adresse email est déjà utilisée. Veuillez utiliser une autre adresse.', 'email'));
+        setIsSubmitting(false);
+        return;
+      }
+      
       // Save registration to Firebase
       const regNumber = await saveRegistration(formData as ConferenceRegistration);
       
       // Show success modal with registration number
       setRegistrationNumber(regNumber);
       setShowSuccess(true);
+      setRetryCount(0); // Reset retry count on success
       
       // Reset form
       setFormData({
@@ -122,9 +254,37 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
       
     } catch (error) {
       console.error('Registration error:', error);
-      setError(error instanceof Error ? error.message : 'Une erreur est survenue lors de l\'inscription.');
+      const appError = handleSubmissionError(error);
+      setError(appError);
+      
+      // Increment retry count for retryable errors
+      if (appError.retryable) {
+        setRetryCount(prev => prev + 1);
+      }
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Retry submission
+  const handleRetry = () => {
+    setError(null);
+    handleSubmit(new Event('submit') as any);
+  };
+
+  // Get error icon and color based on error type
+  const getErrorStyle = (errorType: ErrorType) => {
+    switch (errorType) {
+      case 'network':
+        return { color: 'text-orange-700', bgColor: 'bg-orange-50', borderColor: 'border-orange-200', icon: '🌐' };
+      case 'server':
+        return { color: 'text-red-700', bgColor: 'bg-red-50', borderColor: 'border-red-200', icon: '⚠️' };
+      case 'duplicate':
+        return { color: 'text-yellow-700', bgColor: 'bg-yellow-50', borderColor: 'border-yellow-200', icon: '⚠️' };
+      case 'validation':
+        return { color: 'text-blue-700', bgColor: 'bg-blue-50', borderColor: 'border-blue-200', icon: 'ℹ️' };
+      default:
+        return { color: 'text-red-700', bgColor: 'bg-red-50', borderColor: 'border-red-200', icon: '❌' };
     }
   };
 
@@ -154,12 +314,38 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <div className="flex items-center">
-                <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                <span className="text-red-700 font-medium">{error}</span>
+            <div className={`${getErrorStyle(error.type).bgColor} border ${getErrorStyle(error.type).borderColor} rounded-lg p-4 mb-6`}>
+              <div className="flex items-start">
+                <span className="text-2xl mr-3 mt-0.5">{getErrorStyle(error.type).icon}</span>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className={`${getErrorStyle(error.type).color} font-medium`}>{error.message}</span>
+                    {error.retryable && (
+                      <button
+                        onClick={handleRetry}
+                        disabled={isSubmitting}
+                        className="ml-4 px-3 py-1 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSubmitting ? 'Retry...' : 'Réessayer'}
+                      </button>
+                    )}
+                  </div>
+                  {retryCount > 0 && error.retryable && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      Tentative {retryCount}/3
+                    </p>
+                  )}
+                  {error.type === 'network' && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      Vérifiez votre connexion internet ou réessayez dans quelques instants.
+                    </p>
+                  )}
+                  {error.type === 'server' && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      Notre équipe technique a été notifiée. Réessayez dans quelques minutes.
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -171,6 +357,16 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
               <label className="block text-lg font-semibold text-gray-800 mb-6">
                 Choisissez votre situation actuelle *
               </label>
+              {fieldErrors.situation && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                  <p className="text-red-600 text-sm flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {fieldErrors.situation}
+                  </p>
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Rouge - Étudiants */}
                 <div 
@@ -290,8 +486,20 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                     value={formData.nom}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                      fieldErrors.nom 
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                        : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                    }`}
                   />
+                  {fieldErrors.nom && (
+                    <p className="text-red-600 text-sm mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.nom}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -303,8 +511,20 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                     value={formData.prenom}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                      fieldErrors.prenom 
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                        : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                    }`}
                   />
+                  {fieldErrors.prenom && (
+                    <p className="text-red-600 text-sm mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.prenom}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -321,8 +541,20 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                     required
                     min="1"
                     max="120"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                      fieldErrors.age 
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                        : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                    }`}
                   />
+                  {fieldErrors.age && (
+                    <p className="text-red-600 text-sm mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.age}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -334,8 +566,20 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                     value={formData.quartier}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                      fieldErrors.quartier 
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                        : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                    }`}
                   />
+                  {fieldErrors.quartier && (
+                    <p className="text-red-600 text-sm mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.quartier}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -347,13 +591,25 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                     value={formData.sexe}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                      fieldErrors.sexe 
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                        : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                    }`}
                   >
                     <option value="">Sélectionnez...</option>
                     <option value="Homme">Homme</option>
                     <option value="Femme">Femme</option>
                     {/* <option value="Autre">Autre</option> */}
                   </select>
+                  {fieldErrors.sexe && (
+                    <p className="text-red-600 text-sm mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.sexe}
+                    </p>
+                  )}
                 </div>
                 
               </div>
@@ -373,25 +629,61 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                     value={formData.numeroTelephone}
                     onChange={handleInputChange}
                     required
-                    placeholder="6 XX XX XX XX ou +237 6 XX XX XX XX"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                    placeholder="+237 6XX XX XX XX, +33 1XX XX XX XX, +1 XXX XXX XXXX"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                      fieldErrors.numeroTelephone 
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                        : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                    }`}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Format: 6XXXXXXXX, 237XXXXXXXXX ou +237XXXXXXXXX
-                  </p>
+                  {fieldErrors.numeroTelephone ? (
+                    <p className="text-red-600 text-sm mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.numeroTelephone}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Format international avec indicatif pays (ex: +237, +33, +1, etc.)
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email *
                   </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
-                  />
+                  <div className="relative">
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      onBlur={handleEmailBlur}
+                      required
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                        fieldErrors.email 
+                          ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                          : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                      }`}
+                    />
+                    {isCheckingEmail && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <svg className="w-5 h-5 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  {fieldErrors.email && (
+                    <p className="text-red-600 text-sm mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.email}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -405,8 +697,20 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                   value={formData.nationalite}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                    fieldErrors.nationalite 
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                      : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                  }`}
                 />
+                {fieldErrors.nationalite && (
+                  <p className="text-red-600 text-sm mt-1 flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {fieldErrors.nationalite}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -423,7 +727,11 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                     value={formData.statut}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                      fieldErrors.statut 
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50' 
+                        : 'border-gray-300 focus:ring-orange-500 focus:border-orange-500'
+                    }`}
                   >
                     <option value="">Sélectionnez...</option>
                     <option value="eleve">Élève</option>
@@ -432,6 +740,14 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
                     <option value="entrepreneur">Entrepreneur</option>
                     <option value="autre">Autre</option>
                   </select>
+                  {fieldErrors.statut && (
+                    <p className="text-red-600 text-sm mt-1 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {fieldErrors.statut}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -455,6 +771,16 @@ const ConferenceRegistrationModal = ({ isOpen, onClose }: ConferenceRegistration
               <label className="block text-sm font-medium text-gray-700 mb-4">
                 Avez-vous déjà participé à une conférence ? *
               </label>
+              {fieldErrors.aDejaParticipe && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                  <p className="text-red-600 text-sm flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {fieldErrors.aDejaParticipe}
+                  </p>
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div 
                   className={`relative cursor-pointer transition-all duration-300 ${

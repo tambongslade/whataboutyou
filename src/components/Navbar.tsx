@@ -29,8 +29,8 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
             <Link to="/" className="flex items-center">
               <img 
                 src="/Logo.webp" 
-                alt="WhataboutYou Logo" 
-                className="h-10 w-auto"
+                alt="What About You - WAY 2025" 
+                className="h-10 w-auto transition-opacity hover:opacity-80"
               />
             </Link>
           </div>
