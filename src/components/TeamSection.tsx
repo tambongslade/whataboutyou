@@ -16,7 +16,7 @@ const TeamSection: React.FC = () => {
       id: 1,
       name: "EDZOGO AKINI FRANCK DONALD",
       role: "PRÉSIDENT DE L'APAEC",
-      image: "/Notre Equipe/IMG_8869.webp",
+      image: "/Notre Equipe/IMG_0831.webp",
       colorBg: "bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400"
     },
     {
@@ -107,7 +107,7 @@ const TeamSection: React.FC = () => {
       id: 14,
       name: "ALAIN MOUKOURI",
       role: "COORDINATEUR TECHNIQUE",
-      image: "/Notre Equipe/IMG_0831.webp",
+      image: "/Notre Equipe/IMG_8869.webp",
       colorBg: "bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500"
     }
   ];

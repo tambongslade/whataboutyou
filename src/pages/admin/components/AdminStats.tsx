@@ -108,7 +108,7 @@ const AdminStats = ({ registrations }: AdminStatsProps) => {
               <span className="text-2xl mr-3">🔵</span>
               <div>
                 <p className="font-medium text-blue-800">BLEU</p>
-                <p className="text-sm text-blue-600">Travailleurs, Entrepreneurs</p>
+                <p className="text-sm text-blue-600">Collégiens, Lycéens</p>
               </div>
             </div>
             <div className="text-2xl font-bold text-blue-800">
@@ -121,7 +121,7 @@ const AdminStats = ({ registrations }: AdminStatsProps) => {
               <span className="text-2xl mr-3">🟡</span>
               <div>
                 <p className="font-medium text-yellow-800">JAUNE</p>
-                <p className="text-sm text-yellow-600">Collégiens, Lycéens</p>
+                <p className="text-sm text-yellow-600">Travailleurs, Entrepreneurs</p>
               </div>
             </div>
             <div className="text-2xl font-bold text-yellow-800">
