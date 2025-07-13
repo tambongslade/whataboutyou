@@ -21,54 +21,180 @@ const CandidatesSection = () => {
       category: 'miss',
       ranking: 1,
       points: 251,
-      image: "/miss1.webp", // Using existing image as placeholder
+      image: "/miss1.webp",
       sash: "MISS FESTIVAL 2024"
-    },
-    {
-      id: 2,
-      name: "VANESSA KOUMBA",
-      category: 'miss',
-      ranking: 2,
-      points: 251,
-      image: "/miss1.webp", // Using existing image as placeholder
-      sash: "MISS FESTIVAL 2024"
-    },
-    {
-      id: 3,
-      name: "KELLY NDIONE",
-      category: 'miss',
-      ranking: 3,
-      points: 184,
-      image: "/miss1.webp", // Using existing image as placeholder
-      sash: "MISS FESTIVAL 2024"
-    },
-    {
-      id: 4,
-      name: "MARIE DUBOIS",
-      category: 'miss',
-      ranking: 4,
-      points: 167,
-      image: "/miss1.webp", // Using existing image as placeholder
-      sash: "MISS FESTIVAL 2024"
-    },
-    {
-      id: 5,
-      name: "SARAH JOHNSON",
-      category: 'miss',
-      ranking: 5,
-      points: 145,
-      image: "/miss1.webp", // Using existing image as placeholder
-      sash: "MISS FESTIVAL 2024"
-    },
-    {
-      id: 6,
-      name: "EMMA WILSON",
-      category: 'miss',
-      ranking: 6,
-      points: 132,
-      image: "/miss1.webp", // Using existing image as placeholder
-      sash: "MISS FESTIVAL 2024"
-    }
+  },
+  {
+    id: 2,
+    name: "VANESSA KOUMBA",
+    category: 'miss',
+    ranking: 2,
+    points: 251,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 3,
+    name: "KELLY NDIONE",
+    category: 'miss',
+    ranking: 3,
+    points: 184,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 4,
+    name: "MARIE DUBOIS",
+    category: 'miss',
+    ranking: 4,
+    points: 167,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 5,
+    name: "SARAH JOHNSON",
+    category: 'miss',
+    ranking: 5,
+    points: 145,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 6,
+    name: "EMMA WILSON",
+    category: 'miss',
+    ranking: 6,
+    points: 132,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 7,
+    name: "LÉA MARTIN",
+    category: 'miss',
+    ranking: 7,
+    points: 128,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 8,
+    name: "ZOÉ LEFÈVRE",
+    category: 'miss',
+    ranking: 8,
+    points: 118,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 9,
+    name: "AMINATA DIALLO",
+    category: 'miss',
+    ranking: 9,
+    points: 112,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 10,
+    name: "FATOU BÂ",
+    category: 'miss',
+    ranking: 10,
+    points: 105,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 11,
+    name: "SOPHIE LEROY",
+    category: 'miss',
+    ranking: 11,
+    points: 98,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 12,
+    name: "CLARA DUPONT",
+    category: 'miss',
+    ranking: 12,
+    points: 92,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 13,
+    name: "JADE BERTRAND",
+    category: 'miss',
+    ranking: 13,
+    points: 87,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 14,
+    name: "LUCIA FERNANDEZ",
+    category: 'miss',
+    ranking: 14,
+    points: 82,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 15,
+    name: "MARWA BENAHMED",
+    category: 'miss',
+    ranking: 15,
+    points: 76,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 16,
+    name: "ANNA KOWALSKA",
+    category: 'miss',
+    ranking: 16,
+    points: 71,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 17,
+    name: "YASMINA OUAHBI",
+    category: 'miss',
+    ranking: 17,
+    points: 65,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 18,
+    name: "LINA PETROVA",
+    category: 'miss',
+    ranking: 18,
+    points: 59,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 19,
+    name: "NADIA EL-MASRI",
+    category: 'miss',
+    ranking: 19,
+    points: 54,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  },
+  {
+    id: 20,
+    name: "HANA ABDI",
+    category: 'miss',
+    ranking: 20,
+    points: 48,
+    image: "/miss1.webp",
+    sash: "MISS FESTIVAL 2024"
+  }
   ];
 
   const handleVoteClick = (candidate: Candidate) => {

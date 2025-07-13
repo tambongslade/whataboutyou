@@ -151,6 +151,7 @@ const ContactPage: React.FC = () => {
                     <h3 className="text-lg font-semibold mb-1">Téléphone</h3>
                     <p className="text-gray-600">
                       +237 6 91 94 58 95<br />
+                      +237 6 98 05 27 09<br />
                       +237 6 55 64 38 59<br />
                       +237 6 73 03 52 57
                     </p>

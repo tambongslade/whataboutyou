@@ -74,7 +74,7 @@ const IdentitySection = () => {
               <h3 className="text-3xl font-bold text-black mb-6">What About You (WAY)</h3>
               <div className="space-y-4 text-gray-700">
                 <p className="leading-relaxed">
-                  What About You, abrégé « WAY », dont le slogan est « Quelle est ta situation actuelle ? » renvoie à la fois à l'appartenance ethnique, à la classe sociale et aussi à sa position pour le développement communautaire.
+                  What About You, abrégé « WAY », dont le slogan est « Quelle est ta situation actuelle ? » renvoie à la fois à l'appartenance de la classe sociale et aussi à sa position pour le développement communautaire.
                 </p>
                 <p className="leading-relaxed">
                   C'est une foire qui met en avant l'entrepreneuriat jeune dans un espace diversifiant. Cette identité est le cœur de la foire car elle crée une ambiance magique à travers laquelle les jeunes s'identifient facilement.

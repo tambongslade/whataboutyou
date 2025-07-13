@@ -21,95 +21,89 @@ const TeamSection: React.FC = () => {
     },
     {
       id: 2,
-      name: "PAUL MBALLA", 
-      role: "DIRECTEUR MARKETING",
-      image: "/Notre Equipe/IMG_8876.webp",
-      colorBg: "bg-gradient-to-br from-cyan-400 via-blue-500 to-yellow-400"
+      name: "SANDJOK FREDDY ARSENE",
+      role: "VICE PRÉSIDENT",
+      image: "/Notre Equipe/IMG_8869.webp",
+      colorBg: "bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500"
     },
     {
       id: 3,
-      name: "GRACE NKOMO",
-      role: "RESPONSABLE ÉVÉNEMENTIEL", 
-      image: "/Notre Equipe/IMG_8875.webp",
-      colorBg: "bg-gradient-to-br from-red-500 via-pink-500 to-purple-600"
-    },
-    {
-      id: 4,
-      name: "JEAN TSAFACK",
-      role: "CHEF DE PROJET",
-      image: "/Notre Equipe/IMG_8874.webp",
-      colorBg: "bg-gradient-to-br from-green-400 via-teal-500 to-blue-500"
-    },
-    {
-      id: 5,
-      name: "SANDRA FOUDA",
-      role: "RESPONSABLE COMMUNICATION",
-      image: "/Notre Equipe/IMG_8873.webp",
-      colorBg: "bg-gradient-to-br from-orange-400 via-red-500 to-pink-500"
-    },
-    {
-      id: 6,
-      name: "MICHEL NJOYA",
-      role: "DIRECTEUR TECHNIQUE",
-      image: "/Notre Equipe/IMG_8872.webp",
-      colorBg: "bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500"
-    },
-    {
-      id: 7,
-      name: "LINDA BIYA",
-      role: "COORDINATRICE LOGISTIQUE",
-      image: "/Notre Equipe/IMG_8871.webp",
-      colorBg: "bg-gradient-to-br from-emerald-400 via-cyan-500 to-blue-500"
-    },
-    {
-      id: 8,
-      name: "BORIS TCHUENTE",
-      role: "RESPONSABLE PARTENARIATS",
+      name: "TCHEKE NKOMANE CLAUDE JUNIOR",
+      role: "DIRECTEUR DES OPERATIONS",
       image: "/Notre Equipe/IMG_8870.webp",
       colorBg: "bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500"
     },
     {
-      id: 9,
-      name: "CLAIRE ONANA",
-      role: "GESTIONNAIRE FINANCIER",
-      image: "/Notre Equipe/IMG_8869.webp",
-      colorBg: "bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500"
+      id: 4,
+      name: "EMBOLO EMBOLO JOSEPH ARIEL JUNIOR",
+      role: "DIRECTEUR DE LA COMMUNICATION",
+      image: "/Notre Equipe/IMG_0038.webp",
+      colorBg: "bg-gradient-to-br from-fuchsia-500 via-pink-500 to-rose-500"
     },
     {
-      id: 10,
-      name: "DANIEL MEVA",
-      role: "CHARGÉ DE MISSION",
-      image: "/Notre Equipe/IMG_8877.webp",
-      colorBg: "bg-gradient-to-br from-teal-400 via-green-500 to-emerald-500"
+      id: 5,
+      name: "NGONGANG TCHOUAFFE LESLIE MEGANE",
+      role: "DIRECTRICE DE COMMUNICATION ADJOINTE",
+      image: "/Notre Equipe/IMG_8871.webp",
+      colorBg: "bg-gradient-to-br from-emerald-400 via-cyan-500 to-blue-500"
     },
     {
-      id: 11,
-      name: "VANESSA NDONGO",
-      role: "ASSISTANTE DIRECTION",
-      image: "/Notre Equipe/IMG_8878.webp",
-      colorBg: "bg-gradient-to-br from-rose-400 via-pink-500 to-purple-500"
-    },
-    {
-      id: 12,
-      name: "HERVÉ MANGA",
+      id: 6,
+      name: "TCHINDA TSOZA ELBER PRODI",
       role: "RESPONSABLE SÉCURITÉ",
       image: "/Notre Equipe/IMG_7489.webp",
       colorBg: "bg-gradient-to-br from-slate-500 via-gray-500 to-zinc-500"
     },
     {
-      id: 13,
-      name: "PATRICIA EYOUM",
-      role: "CHARGÉE DES RELATIONS PUBLIQUES",
-      image: "/Notre Equipe/IMG_0038.webp",
-      colorBg: "bg-gradient-to-br from-fuchsia-500 via-pink-500 to-rose-500"
+      id: 7,
+      name: "NSEGBE NSEGBE RAPHAEL JUNIOR",
+      role: "SECRÉTAIRE GÉNÉRAL",
+      image: "/Notre Equipe/IMG_8872.webp",
+      colorBg: "bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500"
     },
     {
-      id: 14,
-      name: "ALAIN MOUKOURI",
-      role: "COORDINATEUR TECHNIQUE",
-      image: "/Notre Equipe/IMG_8869.webp",
-      colorBg: "bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500"
-    }
+      id: 8,
+      name: "AVA SERENA",
+      role: "SECRÉTAIRE ADJOINTE",
+      image: "/Notre Equipe/IMG_8873.webp",
+      colorBg: "bg-gradient-to-br from-orange-400 via-red-500 to-pink-500"
+    },
+    {
+      id: 9,
+      name: "OHANDZA AKA LEONEL ARNAUD",
+      role: "CHARGÉ DE LA LOGISTIQUE", 
+      image: "/Notre Equipe/IMG_8875.webp",
+      colorBg: "bg-gradient-to-br from-red-500 via-pink-500 to-purple-600"
+    },
+     {
+      id: 10,
+      name: "ONDOBO LOIC ANDY RYAN",
+      role: "SUPERVISEUR GÉNÉRAL",
+      image: "/Notre Equipe/IMG_8876.webp",
+      colorBg: "bg-gradient-to-br from-cyan-400 via-blue-500 to-yellow-400"
+    },
+    {
+      id: 11,
+      name: "GRACE MEKOUN",
+      role: "TRÉSORIÈRE",
+      image: "/Notre Equipe/IMG_8877.webp",
+      colorBg: "bg-gradient-to-br from-teal-400 via-green-500 to-emerald-500"
+    },
+    {
+      id: 12,
+      name: "KAMDEM MICHAEL TRESOR",
+      role: "CHARGÉ DES AFFAIRES JURIDIQUE",
+      image: "/Notre Equipe/IMG_8874.webp",
+      colorBg: "bg-gradient-to-br from-green-400 via-teal-500 to-blue-500"
+    },
+    {  
+      id: 13,
+      name: "BOUCHENG SEUWUI WILFRIED KAREL",
+      role: "CHARGÉ DE LA LOGISTIQUE ADJOINT",
+      image: "/Notre Equipe/IMG_8878.webp",
+      colorBg: "bg-gradient-to-br from-rose-400 via-pink-500 to-purple-500"
+    },
+   
   ];
 
   return (
