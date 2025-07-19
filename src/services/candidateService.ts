@@ -3,7 +3,7 @@ import axios from 'axios';
 // API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
   (import.meta.env.MODE === 'production' 
-    ? 'https://your-production-api.com/api' 
+    ? 'https://https://wayback-1xgm.onrender.com/api' 
     : 'http://localhost:3001/api');
 
 const apiClient = axios.create({
