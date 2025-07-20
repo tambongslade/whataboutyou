@@ -530,6 +530,7 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
   const [paymentMethod, setPaymentMethod] = useState<'MTN' | 'ORANGEMONEY'>('MTN');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [amount, setAmount] = useState(500);
+  const [amountInput, setAmountInput] = useState('500'); // Separate state for input display
   const [email, setEmail] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -541,6 +542,29 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
   };
 
   const points = calculatePoints(amount);
+
+  // Handle amount input changes
+  const handleAmountChange = (value: string) => {
+    setAmountInput(value);
+    
+    // Only update the actual amount if it's a valid number >= 100
+    const numValue = parseInt(value) || 0;
+    if (numValue >= 100) {
+      setAmount(numValue);
+    } else if (value === '' || numValue === 0) {
+      // Allow empty input for editing, but keep minimum amount for calculations
+      setAmount(100);
+    }
+  };
+
+  // Handle input blur (when user finishes editing)
+  const handleAmountBlur = () => {
+    const numValue = parseInt(amountInput) || 0;
+    if (numValue < 100) {
+      setAmountInput('100');
+      setAmount(100);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -709,11 +733,9 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                 <div className="relative">
                   <input
                     type="number"
-                    value={amount}
-                    onChange={(e) => {
-                      const value = parseInt(e.target.value) || 0;
-                      setAmount(Math.max(100, value)); // Minimum 100 FCFA
-                    }}
+                    value={amountInput}
+                    onChange={(e) => handleAmountChange(e.target.value)}
+                    onBlur={handleAmountBlur}
                     min="100"
                     step="100"
                     placeholder="Entrez le montant"
@@ -752,7 +774,10 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                     <button
                       key={quickAmount}
                       type="button"
-                      onClick={() => setAmount(quickAmount)}
+                      onClick={() => {
+                        setAmount(quickAmount);
+                        setAmountInput(quickAmount.toString());
+                      }}
                       className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${amount === quickAmount
                           ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
