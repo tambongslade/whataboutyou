@@ -18,7 +18,7 @@ const CandidatesSection = () => {
       setLoading(true);
       setError(null);
       const response = await candidateService.getMissCandidates();
-      
+
       if (response.success && response.data) {
         // Sort by ranking
         const sortedCandidates = response.data.sort((a, b) => a.ranking - b.ranking);
@@ -58,7 +58,7 @@ const CandidatesSection = () => {
       votes: 76,
       createdAt: '2025-01-19T20:00:00Z',
       updatedAt: '2025-01-19T21:30:00Z'
-      
+
     },
     {
       id: '2',
@@ -78,10 +78,10 @@ const CandidatesSection = () => {
         facebook: "Marthe Yvana",
         tiktok: "@martheyvana",
       },
-        isActive: true,
-        votes: 76,
-        createdAt: '2025-01-19T20:00:00Z',
-        updatedAt: '2025-01-19T21:30:00Z',
+      isActive: true,
+      votes: 76,
+      createdAt: '2025-01-19T20:00:00Z',
+      updatedAt: '2025-01-19T21:30:00Z',
     },
     {
       id: '3',
@@ -100,9 +100,9 @@ const CandidatesSection = () => {
         instagram: "@ornella_menye",
         facebook: "Ornella Menye Abouna",
         tiktok: "@ornellamenye",
-       
+
       }
-      ,isActive: true,
+      , isActive: true,
       votes: 76,
       createdAt: '2025-01-19T20:00:00Z',
       updatedAt: '2025-01-19T21:30:00Z'
@@ -147,7 +147,7 @@ const CandidatesSection = () => {
         instagram: "@chantal_astrid",
         facebook: "Chantal Astrid Mbarga",
         tiktok: "@chantalastrid",
-        
+
       },
       isActive: true,
       votes: 76,
@@ -195,7 +195,7 @@ const CandidatesSection = () => {
         instagram: "@lovely_mendja",
         facebook: "Lovely Mendja",
         tiktok: "@lovelymendja",
-        
+
       },
       isActive: true,
       votes: 76,
@@ -529,11 +529,18 @@ interface VotingInterfaceProps {
 const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose }) => {
   const [paymentMethod, setPaymentMethod] = useState<'MTN' | 'ORANGEMONEY'>('MTN');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [amount, setAmount] = useState(1000);
+  const [amount, setAmount] = useState(500);
   const [email, setEmail] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Calculate points based on amount (100 FCFA = 1 point)
+  const calculatePoints = (amount: number): number => {
+    return Math.floor(amount / 100);
+  };
+
+  const points = calculatePoints(amount);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -694,28 +701,67 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                 />
               </div>
 
-              {/* Enhanced Amount */}
+              {/* Enhanced Amount with Custom Input */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-3">
                   Montant du vote (FCFA)
                 </label>
                 <div className="relative">
-                  <select
+                  <input
+                    type="number"
                     value={amount}
-                    onChange={(e) => setAmount(parseInt(e.target.value))}
-                    className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-100 shadow-sm font-bold text-lg appearance-none bg-white"
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      setAmount(Math.max(100, value)); // Minimum 100 FCFA
+                    }}
+                    min="100"
+                    step="100"
+                    placeholder="Entrez le montant"
+                    className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-100 shadow-sm font-bold text-lg"
                     required
-                  >
-                    <option value={500}>500 FCFA (1 point)</option>
-                    <option value={1000}>1000 FCFA (2 points)</option>
-                    <option value={2500}>2500 FCFA (5 points)</option>
-                    <option value={5000}>5000 FCFA (10 points)</option>
-                  </select>
+                  />
                   <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-500 font-bold">
                     FCFA
                   </span>
                 </div>
-                <p className="text-sm text-gray-500 mt-2">{Math.floor(amount / 500)} point{Math.floor(amount / 500) > 1 ? 's' : ''}</p>
+
+                {/* Points Display */}
+                <div className="mt-3 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-700 font-semibold">Points à gagner:</span>
+                    <div className="flex items-center space-x-2">
+                      <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                      <span className="text-2xl font-black text-pink-600">
+                        {points}
+                      </span>
+                      <span className="text-gray-600 font-semibold">
+                        point{points > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-2">
+                    100 FCFA = 1 point • Minimum: 100 FCFA
+                  </p>
+                </div>
+
+                {/* Quick Amount Buttons */}
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {[500, 1000, 2500, 5000].map((quickAmount) => (
+                    <button
+                      key={quickAmount}
+                      type="button"
+                      onClick={() => setAmount(quickAmount)}
+                      className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${amount === quickAmount
+                          ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                    >
+                      {quickAmount} FCFA ({Math.floor(quickAmount / 100)} pts)
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Email Field */}
@@ -768,7 +814,7 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </button>
-              
+
               {!candidate.isActive && (
                 <p className="text-center text-red-600 font-semibold mt-4">
                   Ce candidat n'accepte plus de votes
