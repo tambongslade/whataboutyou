@@ -551,18 +551,18 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
     const numValue = parseInt(value) || 0;
     if (numValue >= 100) {
       setAmount(numValue);
-    } else if (value === '' || numValue === 0) {
-      // Allow empty input for editing, but keep minimum amount for calculations
-      setAmount(100);
     }
+    // Don't update amount for invalid/empty values, let user continue typing
   };
 
   // Handle input blur (when user finishes editing)
   const handleAmountBlur = () => {
     const numValue = parseInt(amountInput) || 0;
-    if (numValue < 100) {
+    if (numValue < 100 || amountInput === '') {
       setAmountInput('100');
       setAmount(100);
+    } else {
+      setAmount(numValue);
     }
   };
 
