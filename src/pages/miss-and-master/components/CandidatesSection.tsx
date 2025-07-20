@@ -372,7 +372,7 @@ const CandidatesSection = () => {
   }
 
   return (
-    <section className="py-20 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 min-h-screen">
+    <section id="candidates-section" className="py-20 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 min-h-screen">
       <div className="container mx-auto px-4">
         {/* Section Title with Enhanced Styling */}
         <div className="text-center mb-16">
