@@ -1,6 +1,10 @@
 // import React from 'react';
 
-const TombolaHeroSection = () => {
+interface TombolaHeroSectionProps {
+  onOpenModal: () => void;
+}
+
+const TombolaHeroSection = ({ onOpenModal }: TombolaHeroSectionProps) => {
   return (
     <section className="relative min-h-screen overflow-hidden">
       {/* Hero Background Image Container */}
@@ -107,7 +111,10 @@ const TombolaHeroSection = () => {
 
           {/* Action Button */}
           <div className="flex justify-center">
-            <button className="group flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg min-w-[250px]">
+            <button 
+              onClick={onOpenModal}
+              className="group flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg min-w-[250px]"
+            >
               <div className="w-5 h-5 mr-3 flex-shrink-0">
                 <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>

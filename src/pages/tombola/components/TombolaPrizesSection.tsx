@@ -6,58 +6,62 @@ interface Prize {
   name: string;
   description: string;
   image: string;
-  category: 'tv' | 'smartphone';
+  category: 'ps5';
 }
 
-const TombolaPrizesSection = () => {
+interface TombolaPrizesSectionProps {
+  onOpenModal: () => void;
+}
+
+const TombolaPrizesSection = ({ onOpenModal }: TombolaPrizesSectionProps) => {
   const prizes: Prize[] = [
     {
       id: 1,
       rank: 1,
-      name: "TÉLÉVISEUR ÉCRAN PLAT 50\"",
-      description: "Smart TV 4K Ultra HD",
-      image: "/Store.webp", // Using existing image as placeholder
-      category: 'tv'
+      name: "PLAYSTATION 5",
+      description: "Console de jeu nouvelle génération",
+      image: "/tombola/ps5.webp",
+      category: 'ps5'
     },
     {
       id: 2,
       rank: 2,
-      name: "SMARTPHONE HAUT DE GAMME",
-      description: "Dernière génération",
-      image: "/Store.webp", // Using existing image as placeholder
-      category: 'smartphone'
+      name: "PLAYSTATION 5",
+      description: "Console de jeu nouvelle génération",
+      image: "/tombola/ps5.webp",
+      category: 'ps5'
     },
     {
       id: 3,
       rank: 3,
-      name: "TÉLÉVISEUR ÉCRAN PLAT 50\"",
-      description: "Smart TV 4K Ultra HD",
-      image: "/Store.webp", // Using existing image as placeholder
-      category: 'tv'
+      name: "PLAYSTATION 5",
+      description: "Console de jeu nouvelle génération",
+      image: "/tombola/ps5.webp",
+      category: 'ps5'
     },
     {
       id: 4,
       rank: 4,
-      name: "SMARTPHONE HAUT DE GAMME",
-      description: "Dernière génération",
-      image: "/Store.webp", // Using existing image as placeholder
-      category: 'smartphone'
+      name: "PLAYSTATION 5",
+      description: "Console de jeu nouvelle génération",
+      image: "/tombola/ps5.webp",
+      category: 'ps5'
     },
     {
       id: 5,
       rank: 5,
-      name: "TÉLÉVISEUR ÉCRAN PLAT 50\"",
-      description: "Smart TV 4K Ultra HD",
-      image: "/Store.webp", // Using existing image as placeholder
-      category: 'tv'
+      name: "PLAYSTATION 5",
+      description: "Console de jeu nouvelle génération",
+      image: "/tombola/ps5.webp",
+      category: 'ps5'
     },
     {
       id: 6,
       rank: 6,
-      name: "SMARTPHONE HAUT DE GAMME",
-      description: "Dernière génération",
-      image: "/Store.webp", // Using existing image as placeholder
-      category: 'smartphone'
+      name: "PLAYSTATION 5",
+      description: "Console de jeu nouvelle génération",
+      image: "/tombola/ps5.webp",
+      category: 'ps5'
     }
   ];
 
@@ -84,26 +88,12 @@ const TombolaPrizesSection = () => {
               className="relative bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
             >
               {/* Prize Image */}
-              <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                {prize.category === 'tv' ? (
-                  <div className="relative">
-                    {/* TV Icon */}
-                    <div className="w-32 h-20 bg-gray-800 rounded-lg flex items-center justify-center relative">
-                      <div className="w-28 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded"></div>
-                      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 rounded-full"></div>
-                      <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-2 bg-gray-600 rounded-full"></div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="relative">
-                    {/* Smartphone Icon */}
-                    <div className="w-16 h-28 bg-gray-800 rounded-xl flex items-center justify-center relative">
-                      <div className="w-14 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg"></div>
-                      <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-6 h-1 bg-gray-600 rounded-full"></div>
-                      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-600 rounded-full"></div>
-                    </div>
-                  </div>
-                )}
+              <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                <img 
+                  src={prize.image} 
+                  alt={prize.name}
+                  className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-300"
+                />
                 
                 {/* Rank Badge */}
                 <div className="absolute -top-3 -left-3 bg-yellow-400 text-black font-bold text-2xl w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-4 border-white z-10 group-hover:scale-110 transition-transform duration-300">
@@ -126,26 +116,11 @@ const TombolaPrizesSection = () => {
                 </p>
                 
                 {/* Prize Category Badge */}
-                <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                  prize.category === 'tv' 
-                    ? 'bg-purple-100 text-purple-800' 
-                    : 'bg-cyan-100 text-cyan-800'
-                }`}>
-                  {prize.category === 'tv' ? (
-                    <>
-                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5l-1 2v1h8v-1l-1-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12H3V5h18v10z"/>
-                      </svg>
-                      TÉLÉVISEUR
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17 2H7c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 4h10v16H7V4z"/>
-                      </svg>
-                      SMARTPHONE
-                    </>
-                  )}
+                <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M21.58,16.09l-1.09-7A1,1,0,0,0,19.5,8.5H4.5a1,1,0,0,0-1,0.59l-1.09,7a1,1,0,0,0,1,1.41H5v2a1,1,0,0,0,1,1H7a1,1,0,0,0,1-1V17.5H16V19a1,1,0,0,0,1,1h1a1,1,0,0,0,1-1V17.5h1.67A1,1,0,0,0,21.58,16.09ZM5.5,10.5H18.5l0.73,5H4.77Z"/>
+                  </svg>
+                  CONSOLE
                 </div>
               </div>
 
@@ -164,7 +139,10 @@ const TombolaPrizesSection = () => {
             <p className="text-gray-600 mb-6">
               Achetez vos tickets de tombola et maximisez vos chances de gagner ces prix incroyables !
             </p>
-            <button className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+            <button 
+              onClick={onOpenModal}
+              className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
               <span className="flex items-center justify-center">
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
