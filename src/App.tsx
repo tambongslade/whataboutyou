@@ -46,8 +46,10 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/miss-and-master" element={<MissAndMasterPage />} />
-
           <Route path="/payment-return" element={<PaymentReturn />} />
+          <Route path="/payment/verify" element={<PaymentReturn />} />
+          <Route path="/payment/success" element={<PaymentReturn />} />
+          <Route path="/payment/failed" element={<PaymentReturn />} />
           <Route path="/tombola" element={<TombolaPage />} />
           <Route path="/boutique" element={<BoutiquePage />} />
           <Route path="/about" element={<AboutPage />} />
