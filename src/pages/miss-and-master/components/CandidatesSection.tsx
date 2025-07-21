@@ -20,8 +20,18 @@ const CandidatesSection = () => {
       const response = await candidateService.getMissCandidates();
 
       if (response.success && response.data) {
-        // Sort by ranking
-        const sortedCandidates = response.data.sort((a, b) => a.ranking - b.ranking);
+        // Sort by points (highest first), then by votes as tiebreaker
+        const sortedCandidates = response.data
+          .sort((a, b) => {
+            if (b.points !== a.points) {
+              return b.points - a.points; // Higher points first
+            }
+            return (b.votes || 0) - (a.votes || 0); // Higher votes as tiebreaker
+          })
+          .map((candidate, index) => ({
+            ...candidate,
+            ranking: index + 1 // Dynamic ranking based on points
+          }));
         setCandidates(sortedCandidates);
       } else {
         setError(response.error || 'Erreur lors du chargement des candidates');
@@ -308,8 +318,19 @@ const CandidatesSection = () => {
     }
   ];
 
-  // Use fallback data if API fails
-  const displayCandidates = candidates.length > 0 ? candidates : fallbackCandidates;
+  // Use fallback data if API fails, apply same sorting logic
+  const displayCandidates = candidates.length > 0 ? candidates : 
+    fallbackCandidates
+      .sort((a, b) => {
+        if (b.points !== a.points) {
+          return b.points - a.points; // Higher points first
+        }
+        return (b.votes || 0) - (a.votes || 0); // Higher votes as tiebreaker
+      })
+      .map((candidate, index) => ({
+        ...candidate,
+        ranking: index + 1 // Dynamic ranking based on points
+      }));
 
   const handleVoteClick = (candidate: Candidate) => {
     setSelectedCandidate(candidate);
