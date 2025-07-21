@@ -438,9 +438,9 @@ const CandidatesSection = () => {
                   </div>
                 )}
 
-                {/* Points Badge */}
+                {/* Votes Badge */}
                 <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-gray-800 font-bold px-3 py-1 rounded-full shadow-lg">
-                  <span className="text-sm">{candidate.points} PTS</span>
+                  <span className="text-sm">{candidate.votes} VOTES</span>
                 </div>
 
                 {/* Sash with Better Design */}
@@ -612,7 +612,7 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
               </div>
               <div>
                 <span className="font-bold text-white text-lg">Vote Now</span>
-                <p className="text-white/80 text-sm">500 FCFA = 1 VOTE</p>
+                <p className="text-white/80 text-sm">100 FCFA = 1 VOTE • Minimum: 100 FCFA</p>
               </div>
             </div>
             <button
@@ -654,9 +654,9 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                 )}
               </div>
 
-              {/* Points Badge */}
+              {/* Votes Badge */}
               <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm text-gray-800 font-bold px-4 py-2 rounded-full shadow-lg">
-                <span className="text-lg">{candidate.points} PTS</span>
+                <span className="text-lg">{candidate.votes} VOTES</span>
               </div>
 
               {/* Floating Decorative Elements */}
@@ -681,7 +681,7 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
               <div className="flex items-center space-x-4 text-gray-600 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full inline-flex">
                 <span className="font-semibold">MISS 2025</span>
                 <span>•</span>
-                <span className="font-bold">{candidate.points} PTS</span>
+                <span className="font-bold">{candidate.votes} VOTES</span>
                 <span>•</span>
                 <span>#{candidate.ranking} / 15</span>
               </div>
@@ -730,6 +730,22 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                 <label className="block text-sm font-bold text-gray-700 mb-3">
                   Montant du vote (FCFA)
                 </label>
+                
+                {/* Voting Rules Notice */}
+                <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-blue-800 font-bold text-sm">RÈGLES DE VOTE</span>
+                  </div>
+                  <div className="text-sm text-blue-700 space-y-1">
+                    <p>• <strong>100 FCFA = 1 VOTE</strong></p>
+                    <p>• <strong>Minimum requis: 100 FCFA (1 vote)</strong></p>
+                    <p>• Plus vous payez, plus vous donnez de votes à votre candidate!</p>
+                  </div>
+                </div>
+
                 <div className="relative">
                   <input
                     type="number"
@@ -738,7 +754,7 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                     onBlur={handleAmountBlur}
                     min="100"
                     step="100"
-                    placeholder="Entrez le montant"
+                    placeholder="Minimum 100 FCFA"
                     className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-100 shadow-sm font-bold text-lg"
                     required
                   />
@@ -747,30 +763,14 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                   </span>
                 </div>
 
-                {/* Points Display */}
-                <div className="mt-3 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-700 font-semibold">Points à gagner:</span>
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
-                      <span className="text-2xl font-black text-pink-600">
-                        {points}
-                      </span>
-                      <span className="text-gray-600 font-semibold">
-                        point{points > 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-500 mt-2">
+                {/* Votes Displatext-sm text-gray-500 mt-2">
                     100 FCFA = 1 point • Minimum: 100 FCFA
                   </p>
                 </div>
 
                 {/* Quick Amount Buttons */}
                 <div className="mt-3 grid grid-cols-2 gap-2">
-                  {[500, 1000, 2500, 5000].map((quickAmount) => (
+                  {[100, 500, 1000, 2500].map((quickAmount) => (
                     <button
                       key={quickAmount}
                       type="button"
@@ -783,7 +783,7 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                     >
-                      {quickAmount} FCFA ({Math.floor(quickAmount / 100)} pts)
+                      {quickAmount} FCFA ({Math.floor(quickAmount / 100)} votes)
                     </button>
                   ))}
                 </div>
@@ -881,7 +881,7 @@ const CandidateDetailsPage: React.FC<CandidateDetailsPageProps> = ({ candidate, 
               <div className={`${candidate.ranking <= 3 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' : 'bg-gradient-to-r from-gray-400 to-gray-600'} text-white font-bold px-3 py-1 rounded-full`}>
                 #{candidate.ranking}
               </div>
-              <span className="text-gray-600 font-semibold">{candidate.points} PTS</span>
+              <span className="text-gray-600 font-semibold">{candidate.votes} VOTES</span>
             </div>
           </div>
         </div>
