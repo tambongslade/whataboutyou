@@ -26,6 +26,7 @@ const PaymentReturn: React.FC = () => {
       // Get URL parameters from Flutterwave redirect
       const txRef = searchParams.get('tx_ref');
       const paymentStatus = searchParams.get('status');
+      const transactionId = searchParams.get('transaction_id');
 
       // Get candidate info from localStorage if available
       const pendingVote = JSON.parse(localStorage.getItem('pendingVote') || '{}');
@@ -35,7 +36,7 @@ const PaymentReturn: React.FC = () => {
 
       // If we have URL parameters, check payment status first
       if (txRef && paymentStatus) {
-        console.log('Payment return with params:', { txRef, paymentStatus });
+        console.log('Payment return with params:', { txRef, paymentStatus, transactionId });
 
         if (paymentStatus === 'successful') {
           // Verify the payment with the backend

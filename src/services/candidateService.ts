@@ -1,17 +1,19 @@
 import axios from 'axios';
 
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.MODE === 'production' 
-    ? 'https://api.whataboutyou.net/api/' 
+const API_BASE_URL = import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === 'production'
+    ? 'https://api.whataboutyou.net/api/'
     : 'http://localhost:3001/api');
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
   timeout: 30000, // 30 seconds for payment operations
+  withCredentials: false, // Explicitly set credentials policy
 });
 
 // TypeScript Interfaces
@@ -103,7 +105,7 @@ export const handleApiError = (error: any): string => {
   if (error.response) {
     // Server responded with error status
     const { status, data } = error.response;
-    
+
     switch (status) {
       case 400:
         return `Erreur de validation: ${data.error || data.message}`;
@@ -219,9 +221,9 @@ export const candidateService = {
 export const votingService = {
   // Complete voting flow
   async handleVoteSubmission(
-    candidateId: string, 
-    voterInfo: { phone: string; email: string; name: string }, 
-    amount: number, 
+    candidateId: string,
+    voterInfo: { phone: string; email: string; name: string },
+    amount: number,
     paymentMethod: 'MTN' | 'ORANGEMONEY',
     candidateName?: string
   ) {
@@ -265,7 +267,7 @@ export const votingService = {
   // Handle payment return and verification
   async handlePaymentReturn() {
     const pendingVote = JSON.parse(localStorage.getItem('pendingVote') || '{}');
-    
+
     if (!pendingVote.txRef) {
       console.error('No pending vote found');
       return { success: false, error: 'Aucun vote en attente trouvé' };
@@ -274,15 +276,15 @@ export const votingService = {
     try {
       // Verify payment with Flutterwave
       const paymentResult = await candidateService.verifyPayment(pendingVote.txRef);
-      
+
       if (paymentResult.status === 'successful') {
         // Confirm vote and add points
         const voteResult = await candidateService.confirmVote(pendingVote.txRef);
-        
+
         if (voteResult.success) {
           console.log(`Vote confirmed! ${voteResult.data?.points} points added`);
           localStorage.removeItem('pendingVote');
-          
+
           return { success: true, points: voteResult.data?.points || 0 };
         }
       } else {
@@ -298,22 +300,22 @@ export const votingService = {
   // Poll payment status for better UX
   async pollPaymentStatus(txRef: string, maxAttempts: number = 20) {
     let attempts = 0;
-    
+
     const poll = async (): Promise<any> => {
       try {
         const result = await candidateService.verifyPayment(txRef);
-        
+
         if (result.status === 'successful') {
           return { status: 'completed', data: result };
         } else if (result.status === 'failed') {
           return { status: 'failed', data: result };
         }
-        
+
         attempts++;
         if (attempts >= maxAttempts) {
           return { status: 'timeout', data: null };
         }
-        
+
         // Wait 3 seconds before next attempt
         await new Promise(resolve => setTimeout(resolve, 3000));
         return poll();
@@ -322,12 +324,12 @@ export const votingService = {
         if (attempts >= maxAttempts) {
           return { status: 'error', error: handleApiError(error) };
         }
-        
+
         await new Promise(resolve => setTimeout(resolve, 3000));
         return poll();
       }
     };
-    
+
     return poll();
   }
 };
