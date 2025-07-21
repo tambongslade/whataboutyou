@@ -18,9 +18,9 @@ const MissAndMasterHeroSection = () => {
         {/* Hero Background Image */}
         <div className="absolute inset-0">
           <img
-            src="/missandmasterhero.webp"
+            src="/hero.jpg"
             alt="Miss Background"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain object-center bg-gradient-to-br from-pink-100 to-purple-100"
             onLoad={() => console.log('Miss background image loaded successfully')}
             onError={(e) => {
               console.error('Failed to load background image:', e);
