@@ -763,8 +763,24 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
                   </span>
                 </div>
 
-                {/* Votes Displatext-sm text-gray-500 mt-2">
-                    100 FCFA = 1 point • Minimum: 100 FCFA
+                {/* Votes Display */}
+                <div className="mt-3 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-700 font-semibold">Votes à donner:</span>
+                    <div className="flex items-center space-x-2">
+                      <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                      <span className="text-2xl font-black text-pink-600">
+                        {points}
+                      </span>
+                      <span className="text-gray-600 font-semibold">
+                        vote{points > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-2">
+                    100 FCFA = 1 vote • Minimum: 100 FCFA
                   </p>
                 </div>
 
