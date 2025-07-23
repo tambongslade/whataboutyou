@@ -3,8 +3,12 @@ import axios from 'axios';
 // API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL ||
   (import.meta.env.MODE === 'production'
-    ? 'https://api.whataboutyou.net/api/'
-    : 'http://localhost:3001/api');
+    ? 'https://whataboutyou.net/api/'
+    : 'http://localhost:3001/api/');
+
+// Debug: Log the API base URL being used
+console.log('🔗 API Base URL:', API_BASE_URL);
+console.log('🔗 Environment Mode:', import.meta.env.MODE);
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -24,7 +28,7 @@ export interface Candidate {
   name: string;
   category: 'miss' | 'master';
   ranking: number;
-  points?: number; // Calculated from votes if missing
+  points?: number; // Legacy field (1 point = 1 vote)
   votes: number;
   image: string;
   sash: string;
@@ -190,10 +194,57 @@ export const candidateService = {
   // Create vote with payment
   async createVote(voteData: CreateVoteRequest): Promise<VoteResponse> {
     try {
+      console.log('🗳️ Sending vote data to backend:', voteData);
+      console.log('🗳️ Candidate ID in request:', voteData.candidateId);
+      console.log('🗳️ Full vote API URL:', `${API_BASE_URL}/candidates/votes`);
+      
       const response = await apiClient.post('/candidates/votes', voteData);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating vote:', error);
+      
+      // Log the error response for debugging
+      if (error?.response) {
+        console.error('🗳️ Backend error response:', error.response.data);
+        console.error('🗳️ Backend error status:', error.response.status);
+        console.error('🗳️ Full error URL:', error.config?.url);
+      }
+      
+      throw error;
+    }
+  },
+
+  // Check vote payment status (new endpoint for modal flow)
+  async checkVoteStatus(txRef: string): Promise<ApiResponse<{
+    txRef: string;
+    paymentStatus: 'pending' | 'confirmed' | 'failed';
+    candidateId: string;
+    amount: number;
+    points: number;
+    createdAt: string;
+    confirmedAt?: string;
+  }>> {
+    try {
+      const response = await apiClient.get(`/candidates/votes/status/${txRef}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking vote status:', error);
+      throw error;
+    }
+  },
+
+  // Manually verify vote payment (new endpoint for modal flow)
+  async verifyVotePayment(txRef: string): Promise<ApiResponse<{
+    verified: boolean;
+    paymentStatus: 'confirmed' | 'failed';
+    message: string;
+    points?: number;
+  }>> {
+    try {
+      const response = await apiClient.post(`/candidates/votes/${txRef}/verify-payment`);
+      return response.data;
+    } catch (error) {
+      console.error('Error verifying vote payment:', error);
       throw error;
     }
   },
@@ -276,13 +327,102 @@ export const votingService = {
         voterInfo
       }));
 
-      // Step 3: Redirect to Flutterwave payment
-      window.location.href = paymentLink;
+      // Step 3: Return payment info for modal handling (no redirect)
+      console.log('🗳️ Payment link generated:', paymentLink);
 
       return { success: true, txRef, paymentLink };
     } catch (error) {
       console.error('Vote submission failed:', error);
       return { success: false, error: handleApiError(error) };
+    }
+  },
+
+  // Modal flow polling (new method for secure polling)
+  async startModalPolling(
+    txRef: string, 
+    onStatusChange: (status: 'pending' | 'confirmed' | 'failed') => void,
+    onSuccess: (data: any) => void,
+    onError: (error: string) => void
+  ): Promise<() => void> {
+    let pollInterval: NodeJS.Timeout;
+    let totalAttempts = 0;
+    const maxAttempts = 100; // Poll for up to 5 minutes (100 * 3 seconds)
+    
+    const poll = async (): Promise<void> => {
+      try {
+        totalAttempts++;
+        
+        const result = await candidateService.checkVoteStatus(txRef);
+        
+        if (result.success && result.data) {
+          const { paymentStatus } = result.data;
+          onStatusChange(paymentStatus);
+          
+          if (paymentStatus === 'confirmed') {
+            clearInterval(pollInterval);
+            onSuccess(result.data);
+            return;
+          }
+          
+          if (paymentStatus === 'failed') {
+            clearInterval(pollInterval);
+            onError('Paiement échoué ou expiré');
+            return;
+          }
+        }
+        
+        // Continue polling if pending
+        if (totalAttempts >= maxAttempts) {
+          clearInterval(pollInterval);
+          onError('Délai d\'attente dépassé. Le paiement pourrait encore être traité par notre système automatique.');
+          return;
+        }
+        
+      } catch (error) {
+        console.error('Polling error:', error);
+        totalAttempts++;
+        
+        if (totalAttempts >= maxAttempts) {
+          clearInterval(pollInterval);
+          onError('Erreur lors de la vérification du paiement');
+          return;
+        }
+      }
+    };
+    
+    // Start polling every 3 seconds
+    pollInterval = setInterval(poll, 3000);
+    
+    // Initial poll
+    poll();
+    
+    // Return cleanup function
+    return () => {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
+    };
+  },
+
+  // Enhanced manual verification for modal flow
+  async handleManualVerification(txRef: string): Promise<{ success: boolean; data?: any; error?: string }> {
+    try {
+      const result = await candidateService.verifyVotePayment(txRef);
+      
+      if (result.success && result.data && result.data.verified) {
+        return { success: true, data: result.data };
+      } else {
+        return { 
+          success: false, 
+          error: result.data?.message || 'Vérification échouée. Le paiement sera vérifié automatiquement par notre système.' 
+        };
+      }
+    } catch (error) {
+      console.error('Manual verification failed:', error);
+      return { 
+        success: false, 
+        error: 'Erreur de vérification. Notre système automatique continuera à vérifier le paiement.' 
+      };
     }
   },
 

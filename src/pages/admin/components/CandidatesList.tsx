@@ -22,7 +22,7 @@ const CandidatesList = ({ candidates, isPreview = false }: CandidatesListProps) 
 
             switch (sortBy) {
                 case 'points':
-                    comparison = a.points - b.points;
+                    comparison = (a.points || 0) - (b.points || 0);
                     break;
                 case 'votes':
                     comparison = a.votes - b.votes;

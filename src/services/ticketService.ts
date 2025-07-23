@@ -106,12 +106,16 @@ export interface TicketsStatisticsResponse {
 }
 
 // ==========================================
-// CONFIGURATION
+// API CONFIGURATION
 // ==========================================
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://wayback-1xgm.onrender.com' // Your actual Render backend URL
+  ? 'https://api.whataboutyou.net' // Updated to correct production URL
   : 'http://localhost:3001';
+
+// Debug: Log the API base URL being used
+console.log('🎫 Ticket API Base URL:', API_BASE_URL);
+console.log('🎫 Environment:', process.env.NODE_ENV);
 
 // ==========================================
 // API SERVICE CLASS
@@ -184,6 +188,70 @@ class TicketAPI {
     throw new Error(response.message || 'Erreur lors de l\'achat du ticket');
   }
 
+  // New methods for modal flow - Check ticket payment status
+  async checkTicketStatus(txRef: string): Promise<{
+    success: boolean;
+    data?: {
+      txRef: string;
+      paymentStatus: 'pending' | 'confirmed' | 'failed';
+      ticketNumber: string;
+      amount: number;
+      customerName: string;
+      situation: 'rouge' | 'bleu' | 'jaune';
+      createdAt: string;
+    };
+    message?: string;
+  }> {
+    console.log('🎫 Checking ticket status for:', txRef);
+    
+    const response = await this.makeRequest<{
+      success: boolean;
+      data?: {
+        txRef: string;
+        paymentStatus: 'pending' | 'confirmed' | 'failed';
+        ticketNumber: string;
+        amount: number;
+        customerName: string;
+        situation: 'rouge' | 'bleu' | 'jaune';
+        createdAt: string;
+      };
+      message?: string;
+    }>(`/api/tickets/status/${txRef}`);
+
+    return response;
+  }
+
+  // New methods for modal flow - Manually verify ticket payment
+  async verifyTicketPayment(txRef: string): Promise<{
+    success: boolean;
+    data?: {
+      verified: boolean;
+      paymentStatus: 'confirmed' | 'failed';
+      message: string;
+      ticketNumber?: string;
+      qrCode?: string;
+    };
+    message?: string;
+  }> {
+    console.log('🎫 Manually verifying ticket payment for:', txRef);
+    
+    const response = await this.makeRequest<{
+      success: boolean;
+      data?: {
+        verified: boolean;
+        paymentStatus: 'confirmed' | 'failed';
+        message: string;
+        ticketNumber?: string;
+        qrCode?: string;
+      };
+      message?: string;
+    }>(`/api/tickets/verify-payment/${txRef}`, {
+      method: 'POST',
+    });
+
+    return response;
+  }
+
   async confirmPayment(txRef: string): Promise<TicketConfirmResponse> {
     const response = await this.makeRequest<TicketConfirmResponse>(`/api/tickets/confirm/${txRef}`, {
       method: 'POST',
@@ -196,11 +264,40 @@ class TicketAPI {
     throw new Error(response.message || 'Erreur lors de la confirmation du paiement');
   }
 
+  // Option 1: QR Code Validation (existing method)
   async validateTicket(qrCode: string, validatedBy: string, validationLocation: string): Promise<TicketValidationResponse> {
     const response = await this.makeRequest<TicketValidationResponse>('/api/tickets/validate', {
       method: 'POST',
       body: JSON.stringify({
         qrCode,
+        validatedBy,
+        validationLocation
+      }),
+    });
+
+    return response;
+  }
+
+  // Option 2: ID-Only Validation (new method)
+  async validateTicketById(ticketNumber: string, validatedBy: string, validationLocation: string): Promise<TicketValidationResponse> {
+    const response = await this.makeRequest<TicketValidationResponse>('/api/tickets/validate', {
+      method: 'POST',
+      body: JSON.stringify({
+        ticketNumber,
+        idOnlyValidation: true,
+        validatedBy,
+        validationLocation
+      }),
+    });
+
+    return response;
+  }
+
+  // Option 3: Convenient ID Endpoint (new)
+  async validateTicketByIdEndpoint(ticketNumber: string, validatedBy: string, validationLocation: string): Promise<TicketValidationResponse> {
+    const response = await this.makeRequest<TicketValidationResponse>(`/api/tickets/validate-by-id/${encodeURIComponent(ticketNumber)}`, {
+      method: 'POST',
+      body: JSON.stringify({
         validatedBy,
         validationLocation
       }),
@@ -252,11 +349,118 @@ const ticketAPI = new TicketAPI();
 export const purchaseTicket = (data: TicketPurchaseData): Promise<TicketPurchaseResponse> => 
   ticketAPI.purchaseTicket(data);
 
-export const confirmTicketPayment = (txRef: string): Promise<TicketConfirmResponse> => 
+export const confirmPayment = (txRef: string): Promise<TicketConfirmResponse> => 
   ticketAPI.confirmPayment(txRef);
+
+export const checkTicketStatusAPI = (txRef: string) => 
+  ticketAPI.checkTicketStatus(txRef);
+
+export const verifyTicketPaymentAPI = (txRef: string) => 
+  ticketAPI.verifyTicketPayment(txRef);
+
+// ==========================================
+// TICKET MODAL FLOW UTILITIES
+// ==========================================
+
+export const ticketModalService = {
+  // Start polling ticket payment status for modal flow
+  async startModalPolling(
+    txRef: string,
+    onStatusChange: (status: 'pending' | 'confirmed' | 'failed') => void,
+    onSuccess: (data: any) => void,
+    onError: (error: string) => void
+  ): Promise<() => void> {
+    let pollInterval: NodeJS.Timeout;
+    let totalAttempts = 0;
+    const maxAttempts = 100; // Poll for up to 5 minutes (100 * 3 seconds)
+    
+    const poll = async (): Promise<void> => {
+      try {
+        totalAttempts++;
+        
+        const result = await ticketAPI.checkTicketStatus(txRef);
+        
+        if (result.success && result.data) {
+          const { paymentStatus } = result.data;
+          onStatusChange(paymentStatus);
+          
+          if (paymentStatus === 'confirmed') {
+            clearInterval(pollInterval);
+            onSuccess(result.data);
+            return;
+          }
+          
+          if (paymentStatus === 'failed') {
+            clearInterval(pollInterval);
+            onError('Paiement échoué ou expiré');
+            return;
+          }
+        }
+        
+        // Continue polling if pending
+        if (totalAttempts >= maxAttempts) {
+          clearInterval(pollInterval);
+          onError('Délai d\'attente dépassé. Le ticket pourrait encore être traité par notre système automatique.');
+          return;
+        }
+        
+      } catch (error) {
+        console.error('Ticket polling error:', error);
+        totalAttempts++;
+        
+        if (totalAttempts >= maxAttempts) {
+          clearInterval(pollInterval);
+          onError('Erreur lors de la vérification du paiement');
+          return;
+        }
+      }
+    };
+    
+    // Start polling every 3 seconds
+    pollInterval = setInterval(poll, 3000);
+    
+    // Initial poll
+    poll();
+    
+    // Return cleanup function
+    return () => {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
+    };
+  },
+
+  // Enhanced manual verification for modal flow
+  async handleManualVerification(txRef: string): Promise<{ success: boolean; data?: any; error?: string }> {
+    try {
+      const result = await ticketAPI.verifyTicketPayment(txRef);
+      
+      if (result.success && result.data && result.data.verified) {
+        return { success: true, data: result.data };
+      } else {
+        return { 
+          success: false, 
+          error: result.data?.message || 'Vérification échouée. Le ticket sera vérifié automatiquement par notre système.' 
+        };
+      }
+    } catch (error) {
+      console.error('Manual ticket verification failed:', error);
+      return { 
+        success: false, 
+        error: 'Erreur de vérification. Notre système automatique continuera à vérifier le paiement.' 
+      };
+    }
+  },
+};
 
 export const validateTicket = (qrCode: string, validatedBy: string, validationLocation: string): Promise<TicketValidationResponse> => 
   ticketAPI.validateTicket(qrCode, validatedBy, validationLocation);
+
+export const validateTicketById = (ticketNumber: string, validatedBy: string, validationLocation: string): Promise<TicketValidationResponse> => 
+  ticketAPI.validateTicketById(ticketNumber, validatedBy, validationLocation);
+
+export const validateTicketByIdEndpoint = (ticketNumber: string, validatedBy: string, validationLocation: string): Promise<TicketValidationResponse> => 
+  ticketAPI.validateTicketByIdEndpoint(ticketNumber, validatedBy, validationLocation);
 
 export const getTicketStatistics = (): Promise<TicketsStatistics> => 
   ticketAPI.getTicketStatistics();

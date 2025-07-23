@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { searchTicketByEmail, confirmTicketPayment, validateTicket, type Ticket } from '../../../services/ticketService';
+import { searchTicketByEmail, confirmPayment, validateTicket, validateTicketById, validateTicketByIdEndpoint, type Ticket } from '../../../services/ticketService';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 interface TicketsListProps {
@@ -21,6 +21,8 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
   const [qrCodeInput, setQrCodeInput] = useState('');
   const [scanMode, setScanMode] = useState<'manual' | 'camera'>('camera');
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [validationMethod, setValidationMethod] = useState<'qr' | 'id-only' | 'id-endpoint'>('qr');
+  const [ticketNumberInput, setTicketNumberInput] = useState('');
   
   const qrScannerRef = useRef<Html5QrcodeScanner | null>(null);
   const scannerElementRef = useRef<HTMLDivElement | null>(null);
@@ -72,7 +74,7 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
     
     try {
       setActionLoading(txRef);
-      await confirmTicketPayment(txRef);
+      await confirmPayment(txRef);
       alert('Paiement confirmé avec succès!');
       // Refresh the ticket data
       if (searchTerm) {
@@ -96,23 +98,46 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
     }
   };
 
-  // Validate QR code
-  const handleValidateQR = async () => {
-    if (!qrCodeInput.trim()) return;
+  // Unified validation function supporting all three methods
+  const handleValidateTicket = async () => {
+    let inputValue = '';
+    let validationFunction: (input: string, validatedBy: string, location: string) => Promise<any>;
+    
+    // Determine input and validation method
+    switch (validationMethod) {
+      case 'qr':
+        inputValue = qrCodeInput.trim();
+        validationFunction = validateTicket;
+        break;
+      case 'id-only':
+        inputValue = ticketNumberInput.trim();
+        validationFunction = validateTicketById;
+        break;
+      case 'id-endpoint':
+        inputValue = ticketNumberInput.trim();
+        validationFunction = validateTicketByIdEndpoint;
+        break;
+      default:
+        return;
+    }
+    
+    if (!inputValue) return;
     
     try {
-      setActionLoading('qr-validation');
-      const result = await validateTicket(qrCodeInput, 'Admin', 'Admin Interface');
+      setActionLoading('ticket-validation');
+      const result = await validationFunction(inputValue, 'Admin', 'Admin Interface');
       
       if (result.success && result.data.isValid) {
         alert(`✅ ${result.data.message}`);
+        // Clear inputs and close modal
         setQrCodeInput('');
+        setTicketNumberInput('');
         setQrScannerOpen(false);
       } else {
         alert(`❌ ${result.data.message}`);
       }
     } catch (err) {
-      console.error('Error validating QR:', err);
+      console.error('Error validating ticket:', err);
       
       // Handle authentication errors
       let errorMessage = 'Erreur lors de la validation';
@@ -128,6 +153,9 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
       setActionLoading(null);
     }
   };
+
+  // Legacy QR validation for backward compatibility
+  const handleValidateQR = () => handleValidateTicket();
 
   // Clean up scanner when modal closes
   useEffect(() => {
@@ -189,33 +217,10 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
 
   // Handle QR validation from camera
   const handleValidateQRFromCamera = async (qrData: string) => {
-    try {
-      setActionLoading('qr-validation');
-      const result = await validateTicket(qrData, 'Admin', 'Admin Interface - Camera');
-      
-      if (result.success && result.data.isValid) {
-        alert(`✅ ${result.data.message}`);
-        setQrCodeInput('');
-        setQrScannerOpen(false);
-        stopCameraScanner();
-      } else {
-        alert(`❌ ${result.data.message}`);
-      }
-    } catch (err) {
-      console.error('Error validating QR:', err);
-      
-      let errorMessage = 'Erreur lors de la validation';
-      if (err instanceof Error) {
-        if (err.message.includes('Unauthorized') || err.message.includes('401')) {
-          errorMessage = 'Accès non autorisé. Veuillez vous reconnecter à l\'administration.';
-        } else {
-          errorMessage = err.message;
-        }
-      }
-      alert(errorMessage);
-    } finally {
-      setActionLoading(null);
-    }
+    setQrCodeInput(qrData);
+    setValidationMethod('qr');
+    await handleValidateTicket();
+    stopCameraScanner();
   };
 
   // Handle mode change
@@ -334,8 +339,8 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold text-gray-800 flex items-center">
-                  <span className="mr-2">📱</span>
-                  Scanner QR Code
+                  <span className="mr-2">🎫</span>
+                  Validation de Ticket
                 </h3>
                 <button
                   onClick={handleCloseScannerModal}
@@ -344,33 +349,75 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
                   ✕
                 </button>
               </div>
-              
-              {/* Mode Toggle */}
-              <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={() => handleScanModeChange('camera')}
-                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                    scanMode === 'camera'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  📷 Caméra
-                </button>
-                <button
-                  onClick={() => handleScanModeChange('manual')}
-                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                    scanMode === 'manual'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  ⌨️ Manuel
-                </button>
-              </div>
 
-              {/* Camera Scanner */}
-              {scanMode === 'camera' && (
+              {/* Validation Method Selector */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Méthode de validation
+                </label>
+                <select
+                  value={validationMethod}
+                  onChange={(e) => setValidationMethod(e.target.value as 'qr' | 'id-only' | 'id-endpoint')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <option value="qr">📱 QR Code (Scanner + Manuel)</option>
+                  <option value="id-only">🆔 ID Only (Validation par numéro)</option>
+                  <option value="id-endpoint">🚀 ID Endpoint (Validation rapide)</option>
+                </select>
+              </div>
+              
+              {/* QR Code Input - only show for QR validation method */}
+              {validationMethod === 'qr' && (
+                <>
+                  {/* Mode Toggle for QR */}
+                  <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+                    <button
+                      onClick={() => handleScanModeChange('camera')}
+                      className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                        scanMode === 'camera'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      📷 Caméra
+                    </button>
+                    <button
+                      onClick={() => handleScanModeChange('manual')}
+                      className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                        scanMode === 'manual'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      ⌨️ Manuel
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* Ticket Number Input - show for ID-based validation methods */}
+              {(validationMethod === 'id-only' || validationMethod === 'id-endpoint') && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Numéro de ticket
+                  </label>
+                  <input
+                    type="text"
+                    value={ticketNumberInput}
+                    onChange={(e) => setTicketNumberInput(e.target.value)}
+                    placeholder="WAY2025-TICKET-001"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {validationMethod === 'id-only' ? 
+                      'Validation ID avec vérification standard' : 
+                      'Validation rapide par endpoint dédié'}
+                  </p>
+                </div>
+              )}
+
+              {/* Camera Scanner - only for QR method */}
+              {validationMethod === 'qr' && scanMode === 'camera' && (
                 <div className="space-y-4">
                   {cameraError ? (
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -414,8 +461,8 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
                 </div>
               )}
 
-              {/* Manual Input */}
-              {scanMode === 'manual' && (
+              {/* Manual QR Input - only for QR method */}
+              {validationMethod === 'qr' && scanMode === 'manual' && (
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
