@@ -5,6 +5,9 @@ import AdminStats from './components/AdminStats';
 import AdminLogin from './components/AdminLogin';
 import MissAndMasterStats from './components/MissAndMasterStats';
 import CandidatesList from './components/CandidatesList';
+import TicketStats from './components/TicketStats';
+import TicketsList from './components/TicketsList';
+import QRValidationInterface from './components/QRValidationInterface';
 import { type ConferenceRegistration } from '../../services/registrationService';
 import { type Candidate } from '../../services/candidateService';
 
@@ -109,7 +112,23 @@ const AdminPage = () => {
               </div>
             </div>
             
-            <AdminStats registrations={registrations} />
+            {/* Conference Stats */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold text-gray-800 flex items-center">
+                <span className="mr-2">👥</span>
+                Inscriptions Conférence
+              </h2>
+              <AdminStats registrations={registrations} />
+            </div>
+
+            {/* Ticket Stats */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold text-gray-800 flex items-center">
+                <span className="mr-2">🎫</span>
+                Tickets WAY 2025
+              </h2>
+              <TicketStats />
+            </div>
             
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -134,6 +153,40 @@ const AdminPage = () => {
               setRegistrations={setRegistrations}
               isPreview={false}
             />
+          </div>
+        )}
+
+        {activeTab === 'tickets' && (
+          <div className="space-y-8">
+            <div className="flex justify-between items-center">
+              <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+                <span className="mr-3">🎫</span>
+                Gestion des Tickets
+              </h1>
+              <div className="text-sm text-gray-600">
+                WAY 2025 - 23-26 Janvier
+              </div>
+            </div>
+            
+            <TicketStats />
+            
+            <TicketsList />
+          </div>
+        )}
+
+        {activeTab === 'qr-validation' && (
+          <div>
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+                <span className="mr-3">📱</span>
+                Validation QR Code
+              </h1>
+              <div className="text-sm text-gray-600 bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                Interface Entrée
+              </div>
+            </div>
+            
+            <QRValidationInterface />
           </div>
         )}
 

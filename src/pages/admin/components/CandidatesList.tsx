@@ -110,13 +110,13 @@ const CandidatesList = ({ candidates, isPreview = false }: CandidatesListProps) 
                             <div className="flex items-center space-x-2">
                                 <span className="text-sm text-gray-600">Points:</span>
                                 <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm font-bold">
-                                    {candidate.points.toLocaleString()}
+                                    {(candidate.points || 0).toLocaleString()}
                                 </span>
                             </div>
                             <div className="flex items-center space-x-2">
                                 <span className="text-sm text-gray-600">Votes:</span>
                                 <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-bold">
-                                    {candidate.votes.toLocaleString()}
+                                    {(candidate.votes || 0).toLocaleString()}
                                 </span>
                             </div>
                         </div>

@@ -60,21 +60,25 @@ const MissAndMasterStats = ({ candidates, setCandidates }: MissAndMasterStatsPro
     );
   }
 
-  // Calculate additional metrics
-  const totalVotes = candidates.reduce((sum, candidate) => sum + candidate.votes, 0);
-  const totalPoints = candidates.reduce((sum, candidate) => sum + candidate.points, 0);
+  // Calculate additional metrics (safe handling of undefined votes)
+  const totalVotes = candidates.reduce((sum, candidate) => sum + (candidate.votes || 0), 0);
+  const missVotes = candidates
+    .filter(c => c.category === 'miss')
+    .reduce((sum, candidate) => sum + (candidate.votes || 0), 0);
+  const masterVotes = candidates
+    .filter(c => c.category === 'master')
+    .reduce((sum, candidate) => sum + (candidate.votes || 0), 0);
   
-  // Find leading candidates
+  // Find leading candidates (sorted by votes)
   const leadingMiss = candidates
     .filter(c => c.category === 'miss' && c.isActive)
-    .sort((a, b) => b.points - a.points)[0];
+    .sort((a, b) => (b.votes || 0) - (a.votes || 0))[0];
   
   const leadingMaster = candidates
     .filter(c => c.category === 'master' && c.isActive)
-    .sort((a, b) => b.points - a.points)[0];
+    .sort((a, b) => (b.votes || 0) - (a.votes || 0))[0];
 
-  // Calculate account balance (assuming 1000 FCFA per vote)
-  const accountBalance = totalVotes * 1000;
+
 
   const StatCard = ({ title, value, subtitle, color, icon }: {
     title: string;
@@ -114,11 +118,8 @@ const MissAndMasterStats = ({ candidates, setCandidates }: MissAndMasterStatsPro
           <h3 className="text-lg font-bold text-gray-800">{candidate.name}</h3>
           <p className="text-sm text-gray-600 capitalize">{category} en tête</p>
           <div className="flex items-center space-x-4 mt-2">
-            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium">
-              {candidate.points} points
-            </span>
-            <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
-              {candidate.votes} votes
+            <span className="bg-green-100 text-green-800 px-3 py-2 rounded-lg text-lg font-bold">
+              {(candidate.votes || 0)} votes
             </span>
           </div>
         </div>
@@ -139,19 +140,19 @@ const MissAndMasterStats = ({ candidates, setCandidates }: MissAndMasterStatsPro
         />
         
         <StatCard
-          title="Total Points"
-          value={totalPoints.toLocaleString()}
-          subtitle="Cumulés"
+          title="Votes Miss"
+          value={missVotes.toLocaleString()}
+          subtitle="Candidats Miss"
           color="#10b981"
-          icon="⭐"
+          icon="👸"
         />
         
         <StatCard
-          title="Solde Compte"
-          value={`${accountBalance.toLocaleString()} FCFA`}
-          subtitle="Revenus générés"
+          title="Votes Master"
+          value={masterVotes.toLocaleString()}
+          subtitle="Candidats Master"
           color="#3b82f6"
-          icon="💰"
+          icon="🤴"
         />
         
         <StatCard

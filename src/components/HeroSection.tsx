@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import OptimizedImage from './OptimizedImage';
-import ConferenceRegistrationModal from './ConferenceRegistrationModal';
+import TicketPurchaseModal from './TicketPurchaseModal';
 
 const HeroSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -119,10 +119,10 @@ const HeroSection = () => {
             >
               <div className="w-8 h-8 mr-4 flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-full h-full">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  <path d="M22,15.04C22,17.23 20.24,19 18.07,19H5.93C3.76,19 2,17.23 2,15.04C2,13.07 3.43,11.44 5.31,11.14C5.28,11 5.27,10.86 5.27,10.71C5.27,9.33 6.38,8.2 7.76,8.2C8.37,8.2 8.94,8.43 9.37,8.8C10.14,7.05 11.13,5.44 13.91,5.44C17.28,5.44 18.87,8.06 18.87,10.83C18.87,10.94 18.87,11.06 18.86,11.17C20.65,11.54 22,13.13 22,15.04Z"/>
                 </svg>
               </div>
-              <span>PARTICIPEZ À LA CONFÉRENCE!</span>
+              <span>ACHETEZ VOTRE TICKET!</span>
             </button>
           </div>
         </div>
@@ -145,8 +145,8 @@ const HeroSection = () => {
       <div className="absolute top-10 right-10 w-16 h-16 bg-yellow-400 rounded-full opacity-80 animate-bounce slow hidden lg:block" style={{ animationDelay: '2s' }}></div>
       <div className="absolute bottom-20 left-10 w-12 h-12 bg-yellow-400 rounded-full opacity-60 animate-pulse hidden lg:block"></div>
 
-      {/* Conference Registration Modal */}
-      <ConferenceRegistrationModal 
+      {/* Ticket Purchase Modal */}
+      <TicketPurchaseModal 
         isOpen={isModalOpen} 
         onClose={handleCloseModal} 
       />

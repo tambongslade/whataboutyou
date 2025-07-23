@@ -42,6 +42,26 @@ const AdminNavbar = ({ activeTab, setActiveTab, onLogout }: AdminNavbarProps) =>
               Inscriptions
             </button>
             <button
+              onClick={() => setActiveTab('tickets')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                activeTab === 'tickets'
+                  ? 'bg-orange-100 text-orange-600'
+                  : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
+              }`}
+            >
+              🎫 Tickets
+            </button>
+            <button
+              onClick={() => setActiveTab('qr-validation')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                activeTab === 'qr-validation'
+                  ? 'bg-green-100 text-green-600'
+                  : 'text-gray-600 hover:text-green-600 hover:bg-green-50'
+              }`}
+            >
+              📱 Scanner QR
+            </button>
+            <button
               onClick={() => setActiveTab('miss-master')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeTab === 'miss-master'

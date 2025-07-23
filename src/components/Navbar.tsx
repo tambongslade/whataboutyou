@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import TicketPurchaseModal from './TicketPurchaseModal';
 
 interface NavbarProps {
   isAuthenticated?: boolean;
@@ -11,6 +12,7 @@ interface NavbarProps {
 const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isWhataboutyouDropdownOpen, setIsWhataboutyouDropdownOpen] = useState(false);
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -114,6 +116,12 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
               >
                 CONTACT
               </Link>
+              <button
+                onClick={() => setIsTicketModalOpen(true)}
+                className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105"
+              >
+                TICKETS
+              </button>
             </div>
           </div>
 
@@ -292,6 +300,12 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
             >
               CONTACT
             </Link>
+            <button
+              onClick={() => setIsTicketModalOpen(true)}
+              className="bg-gradient-to-r from-orange-500 to-red-500 text-white mx-3 px-4 py-2 rounded-lg text-base font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-200"
+            >
+              TICKETS
+            </button>
 
             {/* Mobile Auth Section */}
             <div className="pt-4 border-t border-gray-700">
@@ -352,6 +366,12 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
           </div>
         </div>
       )}
+
+      {/* Ticket Purchase Modal */}
+      <TicketPurchaseModal 
+        isOpen={isTicketModalOpen} 
+        onClose={() => setIsTicketModalOpen(false)} 
+      />
     </nav>
   );
 };
