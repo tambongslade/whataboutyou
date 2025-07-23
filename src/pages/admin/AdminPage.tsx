@@ -11,6 +11,15 @@ import QRValidationInterface from './components/QRValidationInterface';
 import { type ConferenceRegistration } from '../../services/registrationService';
 import { type Candidate } from '../../services/candidateService';
 
+// API Configuration for admin
+const API_BASE_URL = import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === 'production'
+    ? 'https://api.whataboutyou.net/api/'
+    : 'http://localhost:3001/api/');
+
+// Debug: Log the API base URL being used for admin
+console.log('🔐 Admin API Base URL:', API_BASE_URL);
+
 const AdminPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -37,7 +46,10 @@ const AdminPage = () => {
 
   const handleLogin = async (username: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const loginUrl = `${API_BASE_URL}auth/login`;
+      console.log('🔐 Admin login URL:', loginUrl);
+      
+      const response = await fetch(loginUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,10 +71,12 @@ const AdminPage = () => {
         setIsAuthenticated(true);
         return true;
       } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('🔐 Login failed:', response.status, errorData);
         return false;
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('🔐 Login error:', error);
       return false;
     }
   };
