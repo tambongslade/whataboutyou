@@ -154,8 +154,6 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
     }
   };
 
-  // Legacy QR validation for backward compatibility
-  const handleValidateQR = () => handleValidateTicket();
 
   // Clean up scanner when modal closes
   useEffect(() => {
@@ -243,8 +241,10 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
     stopCameraScanner();
     setQrScannerOpen(false);
     setQrCodeInput('');
+    setTicketNumberInput('');
     setCameraError(null);
     setScanMode('camera');
+    setValidationMethod('qr');
   };
 
   // Handle scanner modal open
@@ -413,6 +413,30 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
                       'Validation ID avec vérification standard' : 
                       'Validation rapide par endpoint dédié'}
                   </p>
+                  
+                  {/* Validation button for ID methods */}
+                  <div className="flex space-x-3 mt-4">
+                    <button
+                      onClick={handleValidateTicket}
+                      disabled={!ticketNumberInput.trim() || actionLoading === 'ticket-validation'}
+                      className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {actionLoading === 'ticket-validation' ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Validation...
+                        </div>
+                      ) : (
+                        `✅ Valider ${validationMethod === 'id-only' ? 'ID' : 'Rapide'}`
+                      )}
+                    </button>
+                    <button
+                      onClick={handleCloseScannerModal}
+                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                    >
+                      Annuler
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -478,17 +502,17 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
                   
                   <div className="flex space-x-3">
                     <button
-                      onClick={handleValidateQR}
-                      disabled={!qrCodeInput.trim() || actionLoading === 'qr-validation'}
+                      onClick={handleValidateTicket}
+                      disabled={!qrCodeInput.trim() || actionLoading === 'ticket-validation'}
                       className="flex-1 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {actionLoading === 'qr-validation' ? (
+                      {actionLoading === 'ticket-validation' ? (
                         <div className="flex items-center justify-center">
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                           Validation...
                         </div>
                       ) : (
-                        '✅ Valider'
+                        '✅ Valider QR'
                       )}
                     </button>
                     <button
@@ -522,8 +546,8 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
             onClick={handleOpenScannerModal}
             className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center"
           >
-            <span className="mr-2">📱</span>
-            Scanner QR Code
+            <span className="mr-2">🎫</span>
+            Valider Ticket
           </button>
         </div>
         
