@@ -1,6 +1,16 @@
 import React from 'react';
+import { useSEO } from '../hooks/useSEO';
 
 const BoutiquePage: React.FC = () => {
+  useSEO({
+    title: 'Boutique WAY 2025 | Produits Exclusifs Jeunes Talents - What About You',
+    description: 'Découvrez la boutique officielle WAY 2025. Produits exclusifs créés par de jeunes talents camerounais : vêtements, accessoires, artisanat et bien plus. Commandez en ligne !',
+    keywords: 'boutique WAY 2025, produits jeunes talents Cameroun, vêtements WAY, accessoires, artisanat camerounais, shopping en ligne',
+    image: 'https://whataboutyou.cm/Store.webp',
+    url: 'https://whataboutyou.cm/boutique',
+    type: 'website'
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}

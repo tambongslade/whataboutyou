@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 interface AdminLoginProps {
-  onLogin: (username: string, password: string) => boolean;
+  onLogin: (username: string, password: string) => Promise<boolean>;
 }
 
 const AdminLogin = ({ onLogin }: AdminLoginProps) => {
@@ -39,10 +39,14 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     setLoading(true);
     setError('');
 
-    const success = onLogin(formData.username, formData.password);
-    
-    if (!success) {
-      setError('Nom d\'utilisateur ou mot de passe incorrect');
+    try {
+      const success = await onLogin(formData.username, formData.password);
+      
+      if (!success) {
+        setError('Email ou mot de passe incorrect');
+      }
+    } catch (error) {
+      setError('Erreur de connexion. Veuillez réessayer.');
     }
     
     setLoading(false);
@@ -119,16 +123,16 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nom d'utilisateur
+              Email
             </label>
             <input
-              type="text"
+              type="email"
               name="username"
               value={formData.username}
               onChange={handleInputChange}
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
-              placeholder="Entrez votre nom d'utilisateur"
+              placeholder="Entrez votre email"
             />
           </div>
 
@@ -168,8 +172,8 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
           <div className="text-sm text-gray-600 text-center">
             <div className="font-medium mb-2">Identifiants de démonstration:</div>
             <div className="space-y-1">
-              <div>Utilisateur: <span className="font-mono bg-gray-200 px-2 py-1 rounded">admin</span></div>
-              <div>Mot de passe: <span className="font-mono bg-gray-200 px-2 py-1 rounded">admin123</span></div>
+              <div>Email: <span className="font-mono bg-gray-200 px-2 py-1 rounded">admin@wayback.com</span></div>
+              <div>Mot de passe: <span className="font-mono bg-gray-200 px-2 py-1 rounded">Contactez l'administrateur</span></div>
             </div>
           </div>
         </div>

@@ -3,36 +3,72 @@ import AdminNavbar from './components/AdminNavbar';
 import ConferenceRegistrations from './components/ConferenceRegistrations';
 import AdminStats from './components/AdminStats';
 import AdminLogin from './components/AdminLogin';
+import MissAndMasterStats from './components/MissAndMasterStats';
+import CandidatesList from './components/CandidatesList';
 import { type ConferenceRegistration } from '../../services/registrationService';
+import { type Candidate } from '../../services/candidateService';
 
 const AdminPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [registrations, setRegistrations] = useState<ConferenceRegistration[]>([]);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Check if admin is already authenticated (you can improve this with proper auth later)
+  // Check if admin is already authenticated and token is valid
   useEffect(() => {
     const adminAuth = localStorage.getItem('adminAuthenticated');
-    if (adminAuth === 'true') {
+    const adminToken = localStorage.getItem('adminToken');
+    
+    if (adminAuth === 'true' && adminToken) {
+      // TODO: Optionally verify token with backend
       setIsAuthenticated(true);
+    } else {
+      // Clear any stale auth data
+      localStorage.removeItem('adminAuthenticated');
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
     }
     setLoading(false);
   }, []);
 
-  const handleLogin = (username: string, password: string) => {
-    // Simple authentication for now - replace with proper auth later
-    if (username === 'admin' && password === 'admin123') {
-      setIsAuthenticated(true);
-      localStorage.setItem('adminAuthenticated', 'true');
-      return true;
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: username,
+          password: password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Store the JWT token and user info
+        localStorage.setItem('adminToken', data.access_token);
+        localStorage.setItem('adminUser', JSON.stringify(data.user));
+        localStorage.setItem('adminAuthenticated', 'true');
+        
+        setIsAuthenticated(true);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
     }
-    return false;
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('adminAuthenticated');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
     setActiveTab('dashboard');
   };
 
@@ -98,6 +134,36 @@ const AdminPage = () => {
               setRegistrations={setRegistrations}
               isPreview={false}
             />
+          </div>
+        )}
+
+        {activeTab === 'miss-master' && (
+          <div className="space-y-8">
+            <div className="flex justify-between items-center">
+              <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+                <span className="mr-3">👑</span>
+                Miss & Master Dashboard
+              </h1>
+              <div className="text-sm text-gray-600">
+                Concours en cours
+              </div>
+            </div>
+            
+            <MissAndMasterStats 
+              candidates={candidates} 
+              setCandidates={setCandidates}
+            />
+            
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                <span className="mr-2">🏆</span>
+                Classement des Candidats
+              </h2>
+              <CandidatesList 
+                candidates={candidates}
+                isPreview={false}
+              />
+            </div>
           </div>
         )}
       </div>
