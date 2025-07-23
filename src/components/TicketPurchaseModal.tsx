@@ -91,7 +91,6 @@ const TicketPurchaseModal = ({ isOpen, onClose }: TicketPurchaseModalProps) => {
   ];
 
   const selectedSituationData = situationOptions.find(situation => situation.id === selectedSituation);
-  const ticketPrice = 1000; // Fixed price for all tickets
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

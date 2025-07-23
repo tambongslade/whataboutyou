@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getTicketStatistics, type TicketsStatistics } from '../../../services/ticketService';
 
-interface TicketStatsProps {
-  tickets?: any[];
-}
-
-const TicketStats = ({ tickets }: TicketStatsProps) => {
+const TicketStats = () => {
   const [stats, setStats] = useState<TicketsStatistics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

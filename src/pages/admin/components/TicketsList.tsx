@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { searchTicketByEmail, confirmTicketPayment, validateTicket, type Ticket } from '../../../services/ticketService';
-import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 
 interface TicketsListProps {
   tickets?: Ticket[];
@@ -21,7 +21,6 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
   const [qrCodeInput, setQrCodeInput] = useState('');
   const [scanMode, setScanMode] = useState<'manual' | 'camera'>('camera');
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const [isScanning, setIsScanning] = useState(false);
   
   const qrScannerRef = useRef<Html5QrcodeScanner | null>(null);
   const scannerElementRef = useRef<HTMLDivElement | null>(null);
@@ -145,7 +144,6 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
 
     try {
       setCameraError(null);
-      setIsScanning(true);
 
       const config = {
         fps: 10,
@@ -187,7 +185,6 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
       qrScannerRef.current.clear().catch(console.error);
       qrScannerRef.current = null;
     }
-    setIsScanning(false);
   };
 
   // Handle QR validation from camera
