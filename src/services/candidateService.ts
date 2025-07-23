@@ -18,11 +18,13 @@ const apiClient = axios.create({
 
 // TypeScript Interfaces
 export interface Candidate {
-  id: string;
+  id: string; // Mapped from _id
+  _id?: string; // MongoDB ObjectId from API
+  firestoreId?: string;
   name: string;
   category: 'miss' | 'master';
   ranking: number;
-  points: number;
+  points?: number; // Calculated from votes if missing
   votes: number;
   image: string;
   sash: string;
@@ -35,16 +37,18 @@ export interface Candidate {
     instagram?: string;
     facebook?: string;
     tiktok?: string;
+    _id?: string;
   };
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number; // MongoDB version key
 }
 
 export interface CreateVoteRequest {
   candidateId: string;
   phoneNumber: string;
-  paymentMethod: 'MTN' | 'ORANGEMONEY';
+  paymentMethod: 'MOMO CM' | 'OM CM'; // Backend expects these exact values
   amount: number;
   email: string;
   customerName: string;
@@ -217,6 +221,16 @@ export const candidateService = {
   }
 };
 
+// Payment method mapping utility
+const mapPaymentMethod = (frontendMethod: 'MTN' | 'ORANGEMONEY'): 'MOMO CM' | 'OM CM' => {
+  const methodMap = {
+    'MTN': 'MOMO CM',           // MTN Mobile Money Cameroon
+    'ORANGEMONEY': 'OM CM'      // Orange Money Cameroon
+  } as const;
+  
+  return methodMap[frontendMethod];
+};
+
 // Voting flow utilities
 export const votingService = {
   // Complete voting flow
@@ -228,11 +242,19 @@ export const votingService = {
     candidateName?: string
   ) {
     try {
+      // Map frontend payment method to backend format
+      const backendPaymentMethod = mapPaymentMethod(paymentMethod);
+      
+      console.log('🗳️ Payment method mapping:', {
+        frontend: paymentMethod,
+        backend: backendPaymentMethod
+      });
+
       // Step 1: Create vote and get payment link
       const voteResponse = await candidateService.createVote({
         candidateId,
         phoneNumber: voterInfo.phone,
-        paymentMethod,
+        paymentMethod: backendPaymentMethod,
         amount,
         email: voterInfo.email,
         customerName: voterInfo.name

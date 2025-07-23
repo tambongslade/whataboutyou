@@ -20,11 +20,24 @@ const CandidatesSection = () => {
       const response = await candidateService.getMissCandidates();
 
       if (response.success && response.data) {
+        console.log('🗳️ Raw API candidates data:', response.data);
+
+        // Transform API data to match our interface (map _id to id)
+        const transformedCandidates = response.data.map((candidate: any) => ({
+          ...candidate,
+          id: candidate._id, // Use MongoDB _id as the ID
+          points: candidate.points || (candidate.votes * 5) || 0, // Calculate points if missing (5 points per vote)
+        }));
+
+        console.log('🗳️ Transformed candidates:', transformedCandidates);
+
         // Sort by points (highest first), then by votes as tiebreaker
-        const sortedCandidates = response.data
+        const sortedCandidates = transformedCandidates
           .sort((a, b) => {
-            if (b.points !== a.points) {
-              return b.points - a.points; // Higher points first
+            const aPoints = a.points || 0;
+            const bPoints = b.points || 0;
+            if (bPoints !== aPoints) {
+              return bPoints - aPoints; // Higher points first
             }
             return (b.votes || 0) - (a.votes || 0); // Higher votes as tiebreaker
           })
@@ -32,6 +45,8 @@ const CandidatesSection = () => {
             ...candidate,
             ranking: index + 1 // Dynamic ranking based on points
           }));
+
+        console.log('🗳️ Final sorted candidates with rankings:', sortedCandidates);
         setCandidates(sortedCandidates);
       } else {
         setError(response.error || 'Erreur lors du chargement des candidates');
@@ -322,8 +337,10 @@ const CandidatesSection = () => {
   const displayCandidates = candidates.length > 0 ? candidates : 
     fallbackCandidates
       .sort((a, b) => {
-        if (b.points !== a.points) {
-          return b.points - a.points; // Higher points first
+        const aPoints = a.points || 0;
+        const bPoints = b.points || 0;
+        if (bPoints !== aPoints) {
+          return bPoints - aPoints; // Higher points first
         }
         return (b.votes || 0) - (a.votes || 0); // Higher votes as tiebreaker
       })
@@ -593,8 +610,22 @@ const VotingInterface: React.FC<VotingInterfaceProps> = ({ candidate, onClose })
     setError(null);
 
     try {
+      // Debug: Check candidate ID
+      console.log('🗳️ Voting for candidate:', {
+        candidate: candidate,
+        candidateId: candidate.id,
+        candidateName: candidate.name
+      });
+
+      // Use _id if id is not available (MongoDB format)
+      const candidateId = candidate.id || (candidate as any)._id;
+      
+      if (!candidateId) {
+        throw new Error('ID du candidat manquant');
+      }
+
       const result = await votingService.handleVoteSubmission(
-        candidate.id,
+        candidateId,
         {
           phone: phoneNumber,
           email: email,

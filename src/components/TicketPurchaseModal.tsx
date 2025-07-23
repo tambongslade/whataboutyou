@@ -132,8 +132,18 @@ const TicketPurchaseModal = ({ isOpen, onClose }: TicketPurchaseModalProps) => {
         throw new Error('Veuillez saisir un numéro de téléphone camerounais valide (ex: 695123456 ou 670527426)');
       }
 
-      // Ensure payment method is exactly as expected by backend
-      const normalizedPaymentMethod = paymentMethod as 'MOMO' | 'OM';
+      // Map frontend payment method to backend format
+      const paymentMethodMap = {
+        'MOMO': 'MOMO CM',     // MTN Mobile Money Cameroon
+        'OM': 'OM CM'          // Orange Money Cameroon
+      } as const;
+      
+      const backendPaymentMethod = paymentMethodMap[paymentMethod];
+      
+      console.log('🎫 Payment method mapping:', {
+        frontend: paymentMethod,
+        backend: backendPaymentMethod
+      });
       
       const ticketData: TicketPurchaseData = {
         customerName: buyerInfo.customerName.trim(),
@@ -142,7 +152,7 @@ const TicketPurchaseModal = ({ isOpen, onClose }: TicketPurchaseModalProps) => {
         situation: selectedSituation as 'rouge' | 'bleu' | 'jaune',
         price: 1000, // Fixed price in FCFA as per API specification
         validDate: validDate, // YYYY-MM-DD format
-        paymentMethod: normalizedPaymentMethod
+        paymentMethod: backendPaymentMethod
       };
 
       // Debug log before sending - matches backend format exactly

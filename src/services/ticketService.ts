@@ -9,7 +9,7 @@ export interface TicketPurchaseData {
   situation: 'rouge' | 'bleu' | 'jaune';
   price: number; // Fixed price in FCFA
   validDate: string; // YYYY-MM-DD
-  paymentMethod: 'MOMO' | 'OM';
+  paymentMethod: 'MOMO CM' | 'OM CM'; // Backend expects these exact values
 }
 
 export interface Ticket {
@@ -25,7 +25,7 @@ export interface Ticket {
   qrCode: string;
   qrCodeImage: string;
   secretHash: string;
-  paymentMethod: 'MOMO' | 'OM';
+  paymentMethod: 'MOMO CM' | 'OM CM';
   paymentStatus: 'pending' | 'confirmed' | 'failed';
   soleasPayReference?: string;
   soleasOrderId?: string;
