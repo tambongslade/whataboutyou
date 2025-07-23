@@ -67,7 +67,7 @@ export interface RegistrationStatisticsResponse {
 // ==========================================
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://whataboutyou.net' // Your actual Render backend URL
+  ? 'https://api.whataboutyou.net' // Your actual Render backend URL
   : 'http://localhost:3001';
 
 // ==========================================
