@@ -1,0 +1,86 @@
+{
+  "name": "What About You - WAY 2025",
+  "short_name": "WAY 2025",
+  "description": "Foire entrepreneuriale, socio-culturelle et de divertissement qui mobilise les jeunes autour de l'entrepreneuriat et de l'innovation au Cameroun",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f97316",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "fr",
+  "categories": ["business", "education", "entertainment", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/Header.webp",
+      "sizes": "1200x630",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "Accueil What About You"
+    },
+    {
+      "src": "/eventhero.webp", 
+      "sizes": "800x600",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Événements WAY 2025"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/Logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "/Logo.webp",
+      "sizes": "512x512", 
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Événements",
+      "short_name": "Events",
+      "description": "Voir les événements WAY 2025",
+      "url": "/events",
+      "icons": [
+        {
+          "src": "/eventhero.webp",
+          "sizes": "192x192",
+          "type": "image/webp"
+        }
+      ]
+    },
+    {
+      "name": "Miss & Master",
+      "short_name": "Competition",
+      "description": "Compétition Miss & Master",
+      "url": "/miss-and-master",
+      "icons": [
+        {
+          "src": "/missandmasterhero.webp",
+          "sizes": "192x192", 
+          "type": "image/webp"
+        }
+      ]
+    },
+    {
+      "name": "Tombola",
+      "short_name": "Lottery",
+      "description": "Jeux et tombola",
+      "url": "/tombola",
+      "icons": [
+        {
+          "src": "/tombolahero.webp",
+          "sizes": "192x192",
+          "type": "image/webp"
+        }
+      ]
+    }
+  ]
+}

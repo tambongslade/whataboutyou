@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+        
+  <!-- Homepage -->
+  <url>
+    <loc>https://whataboutyou.cm/</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/Header.webp</image:loc>
+      <image:title>What About You WAY 2025 - Foire Entrepreneuriale</image:title>
+      <image:caption>Événement entrepreneurial majeur du Cameroun</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Events Page -->
+  <url>
+    <loc>https://whataboutyou.cm/events</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/eventhero.webp</image:loc>
+      <image:title>Événements WAY 2025</image:title>
+      <image:caption>Conférences et événements entrepreneuriaux</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Miss and Master Competition -->
+  <url>
+    <loc>https://whataboutyou.cm/miss-and-master</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/missandmasterhero.webp</image:loc>
+      <image:title>Miss & Master WAY 2025</image:title>
+      <image:caption>Compétition Miss et Master du Cameroun</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Tombola/Lottery -->
+  <url>
+    <loc>https://whataboutyou.cm/tombola</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/tombolahero.webp</image:loc>
+      <image:title>Tombola WAY 2025</image:title>
+      <image:caption>Jeux et prix à gagner</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Boutique -->
+  <url>
+    <loc>https://whataboutyou.cm/boutique</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/Store.webp</image:loc>
+      <image:title>Boutique WAY 2025</image:title>
+      <image:caption>Produits officiels What About You</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Posts/Blog -->
+  <url>
+    <loc>https://whataboutyou.cm/posts</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/WhatAboutYou - Events.webp</image:loc>
+      <image:title>Actualités WAY 2025</image:title>
+      <image:caption>Dernières nouvelles et mises à jour</image:caption>
+    </image:image>
+  </url>
+
+  <!-- About/Team Pages -->
+  <url>
+    <loc>https://whataboutyou.cm/about</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/About 1.webp</image:loc>
+      <image:title>À propos de What About You</image:title>
+      <image:caption>Notre mission et notre équipe</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Individual Miss Candidates (if public) -->
+  <url>
+    <loc>https://whataboutyou.cm/miss-and-master/candidates</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/miss1.webp</image:loc>
+      <image:title>Candidats Miss & Master 2025</image:title>
+      <image:caption>Profils des candidats en compétition</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Partnership/Sponsors -->
+  <url>
+    <loc>https://whataboutyou.cm/partners</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://whataboutyou.cm/contact</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Previous Event Archives -->
+  <url>
+    <loc>https://whataboutyou.cm/gallery/way-2024</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/way 2/EmptyName.webp</image:loc>
+      <image:title>Galerie WAY 2024</image:title>
+      <image:caption>Photos et souvenirs de l'édition précédente</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://whataboutyou.cm/gallery/way-2023</loc>
+    <lastmod>2025-01-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <image:image>
+      <image:loc>https://whataboutyou.cm/way1/DSC_5516.webp</image:loc>
+      <image:title>Galerie WAY 2023</image:title>
+      <image:caption>Moments forts de la première édition</image:caption>
+    </image:image>
+  </url>
+
+</urlset>

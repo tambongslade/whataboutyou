@@ -1,0 +1,5 @@
+[33md7a716c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m surely done
+[33m7b9901d[m[33m ([m[1;31morigin/master[m[33m)[m Fix TypeScript errors: touch events safety, styled-jsx replacement, and admin types
+[33mc27a20a[m frontend us done
+[33m33171b8[m Disable Git LFS and commit WebP files directly to fix production images
+[33m576cdd0[m Add all WebP images with Git LFS - fix missing hero image
