@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(curl:*)",
+      "WebFetch(domain:fonts.cdnfonts.com)",
+      "Bash(python:*)",
+      "Bash(ls -lh D:/DEV/whataboutyou-master/public/*.webp D:/DEV/whataboutyou-master/public/*.png)",
+      "Bash(sort -k5 -h -r)",
+      "Bash(node:*)"
     ],
     "deny": []
   }

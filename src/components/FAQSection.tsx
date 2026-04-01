@@ -15,7 +15,7 @@ const FAQSection: React.FC = () => {
     {
       id: 1,
       question: "Quand et où se déroule What About You ?",
-      answer: "What About You 4ème édition se déroule du 21 au 26 juillet au Palais de Congrès à Yaoundé, Cameroun. Un événement de 6 jours rempli d'activités entrepreneuriales, de conférences, d'expositions et de divertissements."
+      answer: "What About You 5ème édition se déroule du 21 au 26 juillet au Palais de Congrès à Yaoundé, Cameroun. Un événement de 6 jours rempli d'activités entrepreneuriales, de conférences, d'expositions et de divertissements."
     },
     {
       id: 2,

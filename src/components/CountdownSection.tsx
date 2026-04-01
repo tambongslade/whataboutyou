@@ -36,7 +36,7 @@ const CountdownSection = () => {
   }, []);
 
   useEffect(() => {
-    const targetDate = new Date('2025-07-21T00:00:00').getTime();
+    const targetDate = new Date('2026-07-21T00:00:00').getTime();
 
     const updateCountdown = () => {
       const now = new Date().getTime();
@@ -98,7 +98,7 @@ const CountdownSection = () => {
             WAY
           </h1>
           <p className="text-xl md:text-2xl text-white/90 font-medium tracking-widest">
-            4<sup className="text-base">ÈME</sup> ÉDITION
+            5<sup className="text-base">ÈME</sup> ÉDITION
           </p>
         </div>
 

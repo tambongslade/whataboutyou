@@ -27,8 +27,8 @@ const EventsList: React.FC = () => {
     {
       id: 1,
       title: "WHATABOUTYOU",
-      subtitle: "4ÈME ÉDITION",
-      description: "La quatrième édition de What About You promet d'être exceptionnelle ! Rejoignez-nous pour une grande foire entrepreneuriale jeune avec exposition vente, conférences inspirantes, concours Miss What About You, manèges et concerts divertissants. Un événement qui transforme les rêves en réalité.",
+      subtitle: "5ÈME ÉDITION",
+      description: "La cinquième édition de What About You promet d'être exceptionnelle ! Rejoignez-nous pour une grande foire entrepreneuriale jeune avec exposition vente, conférences inspirantes, concours Miss What About You, manèges et concerts divertissants. Un événement qui transforme les rêves en réalité.",
       image: "/eventhero.webp",
       location: "PALAIS DE CONGRÈS",
       dateRange: "21 - 26 JUILLET 2024",
