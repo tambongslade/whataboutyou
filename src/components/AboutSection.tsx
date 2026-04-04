@@ -47,7 +47,7 @@ const AboutSection = () => {
         }`}>
           <div className="lg:col-span-3 overflow-hidden rounded-3xl">
             <img
-              src="/About 1.webp"
+              src="/way1/DSC_5918.webp"
               alt="Concert WAY - Valoriser les jeunes créateurs"
               className="w-full h-[300px] md:h-[380px] object-cover"
             />
@@ -86,7 +86,7 @@ const AboutSection = () => {
 
           <div className="lg:col-span-3 overflow-hidden rounded-3xl order-1 lg:order-2">
             <img
-              src="/About 2.webp"
+              src="/way 2/EmptyName 371.webp"
               alt="Festival WAY - Plaisir et partage"
               className="w-full h-[300px] md:h-[380px] object-cover"
             />
@@ -99,7 +99,7 @@ const AboutSection = () => {
         }`}>
           <div className="lg:col-span-3 overflow-hidden rounded-3xl">
             <img
-              src="/About 3.webp"
+              src="/Way 3/DSC_6166.webp"
               alt="Famille WAY - Vibrante et inclusive"
               className="w-full h-[300px] md:h-[380px] object-cover"
             />
