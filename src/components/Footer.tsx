@@ -3,160 +3,130 @@ import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-12">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Logo and Tagline */}
-          <div className="lg:col-span-1">
-            <div className="mb-6">
+    <footer className="px-4 sm:px-8 pb-0 pt-4">
+      <div className="bg-black text-white rounded-t-3xl">
+        <div className="max-w-7xl mx-auto px-8 sm:px-12 lg:px-16 pt-16 pb-8">
+          {/* Main Footer Content */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+            {/* Logo and Tagline */}
+            <div>
               <img
                 src="/Logo.webp"
-                alt="WhataboutYou"
-                className="h-12 mb-4"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
+                alt="What About You"
+                className="h-28 mb-6"
               />
-              {/* Fallback logo text if image fails */}
-              <div className="text-2xl font-bold">
-                <span className="text-red-500">What</span>
-                <span className="text-white">about</span>
-                <span className="text-yellow-400">You</span>
-              </div>
+              <p className="font-clash text-white text-sm font-bold uppercase tracking-wide leading-snug">
+                Quel est votre<br />
+                situation amoureuse ?
+              </p>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              QUEL EST VOTRE<br />
-              SITUATION AMOUREUSE ?
+
+            {/* Company Links */}
+            <div>
+              <h3 className="font-clash text-white font-bold text-lg mb-6 uppercase tracking-wide">
+                Company
+              </h3>
+              <ul className="space-y-4">
+                <li>
+                  <Link to="/" className="font-nekst text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    Accueil
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/boutique" className="font-nekst text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    Boutique
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/about" className="font-nekst text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    Calendrier
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/events" className="font-nekst text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    Événements
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/posts" className="font-nekst text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    Posts
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Contact Links */}
+            <div>
+              <h3 className="font-clash text-white font-bold text-lg mb-6 uppercase tracking-wide">
+                Contact
+              </h3>
+              <ul className="space-y-4">
+                <li>
+                  <a href="#" className="font-nekst text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    Terms of Use
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="font-nekst text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    Privacy Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal Links */}
+            <div>
+              <h3 className="font-clash text-white font-bold text-lg mb-6 uppercase tracking-wide">
+                Legal
+              </h3>
+              <ul className="space-y-4">
+                <li>
+                  <a href="#" className="font-nekst text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    Terms of Use
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="font-nekst text-gray-300 hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    Privacy Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-700 my-8"></div>
+
+          {/* Bottom Section — Centered */}
+          <div className="flex flex-col items-center">
+            {/* Social Media Icons */}
+            <div className="flex space-x-4 mb-4">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-14 h-14 bg-yellow-400 rounded-2xl flex items-center justify-center hover:bg-yellow-500 transition-colors"
+              >
+                <svg className="w-7 h-7 text-black" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-14 h-14 bg-yellow-400 rounded-2xl flex items-center justify-center hover:bg-yellow-500 transition-colors"
+              >
+                <svg className="w-7 h-7 text-black" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                </svg>
+              </a>
+            </div>
+
+            {/* Copyright */}
+            <p className="font-nekst text-gray-400 text-sm uppercase tracking-wider">
+              @Copyright. All Rights Reserved
             </p>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h3 className="text-white font-semibold text-lg mb-4">COMPANY</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link 
-                  to="/" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  ACCUEIL
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/boutique" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  BOUTIQUE
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/about" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  CALENDRIER
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/posts" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  ÉVÉNEMENTS
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/posts" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  POSTS
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Links */}
-          <div>
-            <h3 className="text-white font-semibold text-lg mb-4">CONTACT</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link 
-                  to="/contact" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  TERMS OF USE
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/contact" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  PRIVACY POLICY
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal Links */}
-          <div>
-            <h3 className="text-white font-semibold text-lg mb-4">LEGAL</h3>
-            <ul className="space-y-3">
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  TERMS OF USE
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  PRIVACY POLICY
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="border-t border-gray-700 my-8"></div>
-
-        {/* Bottom Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between">
-          {/* Social Media Icons */}
-          <div className="flex space-x-4 mb-4 md:mb-0">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center hover:bg-yellow-500 transition-colors"
-            >
-              <svg className="w-6 h-6 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center hover:bg-yellow-500 transition-colors"
-            >
-              <svg className="w-6 h-6 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987c6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297L3.938 16.879c.875.807 2.026 1.297 3.323 1.297s2.448-.49 3.323-1.297l-1.188-1.188c-.875.807-2.026 1.297-3.323 1.297zm7.119 0c-1.297 0-2.448-.49-3.323-1.297l-1.188 1.188c.875.807 2.026 1.297 3.323 1.297s2.448-.49 3.323-1.297l-1.188-1.188c-.875.807-2.026 1.297-3.323 1.297z"/>
-              </svg>
-            </a>
-          </div>
-
-          {/* Copyright */}
-          <div className="text-gray-400 text-sm text-center md:text-right">
-            © COPYRIGHT ALL RIGHTS RESERVED
           </div>
         </div>
       </div>
@@ -164,4 +134,4 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer; 
+export default Footer;

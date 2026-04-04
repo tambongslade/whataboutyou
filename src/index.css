@@ -35,11 +35,86 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
 }
-@import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@200;300;400;500;600;700&display=swap');
+/* Local font declarations */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
-/* Tailwind CSS v4 configuration - Define Clash Display as default sans font */
+@font-face {
+  font-family: 'Nekst';
+  src: url('/fonts/nekst/Demo_Fonts/Fontspring-DEMO-nekst-light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nekst';
+  src: url('/fonts/nekst/Demo_Fonts/Fontspring-DEMO-nekst-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nekst';
+  src: url('/fonts/nekst/Demo_Fonts/Fontspring-DEMO-nekst-medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nekst';
+  src: url('/fonts/nekst/Demo_Fonts/Fontspring-DEMO-nekst-semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nekst';
+  src: url('/fonts/nekst/Demo_Fonts/Fontspring-DEMO-nekst-bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Azonix';
+  src: url('/fonts/azonix/Azonix.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Tailwind CSS v4 configuration - Define fonts */
 @theme {
   --font-sans: 'Clash Display', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-clash: 'Clash Display', ui-sans-serif, system-ui, sans-serif;
+  --font-nekst: 'Nekst', ui-sans-serif, system-ui, sans-serif;
+  --font-azonix: 'Azonix', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Custom utilities */

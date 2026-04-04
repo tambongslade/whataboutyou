@@ -62,6 +62,16 @@ const AdminNavbar = ({ activeTab, setActiveTab, onLogout }: AdminNavbarProps) =>
               📱 Scanner QR
             </button>
             <button
+              onClick={() => setActiveTab('surveys')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                activeTab === 'surveys'
+                  ? 'bg-orange-100 text-orange-600'
+                  : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
+              }`}
+            >
+              📊 Sondages
+            </button>
+            <button
               onClick={() => setActiveTab('miss-master')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeTab === 'miss-master'

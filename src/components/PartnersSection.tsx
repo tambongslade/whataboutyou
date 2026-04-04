@@ -49,16 +49,23 @@ const PartnersSection = () => {
   }
 
   const partners: Partner[] = [
-    { name: 'Solution +', logo: '/paternaire/pat1.jpg' },
-    { name: 'Partenaire Premium', logo: '/paternaire/patenaire premium.png', isPrimary: true },
-    { name: 'Partenaire 2', logo: '/paternaire/pat2.jpg' },
-    { name: 'Partenaire 3', logo: '/paternaire/pat3.png' },
-    { name: 'Partenaire 4', logo: '/paternaire/pat4.png' },
-    { name: 'Partenaire 5', logo: '/paternaire/pat5.jpg' },
-    { name: 'Partenaire 6', logo: '/paternaire/pat6.png' },
-    { name: 'Partenaire 7', logo: '/paternaire/pat 7.jpg' },
-    { name: 'Partenaire 8', logo: '/paternaire/pat9jpg.jpg' },
-    { name: 'Partenaire 9', logo: '/paternaire/v1.png' },
+    { name: 'RGBA Solution +', logo: '/partenaires/1- LOGO RGBA SOLUTION +@2x.webp', isPrimary: true },
+    { name: 'OffPlan', logo: '/partenaires/2- Logo-OffPlan-de-travail-1.webp' },
+    { name: 'Partenaire 3', logo: '/partenaires/3- WhatsApp Image 2025-07-10 à 13.21.22_00fc153a.webp' },
+    { name: 'VGROUP', logo: '/partenaires/4- VGROUP - Light (Horizontal).webp' },
+    { name: 'MTN', logo: '/partenaires/5- logo MTN jaune.png' },
+    { name: 'Partenaire 6', logo: '/partenaires/6- WhatsApp Image 2025-06-27 at 16.59.30.jpg' },
+    { name: 'Vmusic', logo: '/partenaires/7- Vmusic white on black.webp' },
+    { name: 'Partenaire 8', logo: '/partenaires/8- Logo copy.webp' },
+    { name: 'VPREMIUM', logo: '/partenaires/9- VPREMIUM - Light (Horizontal).webp' },
+    { name: 'Partenaire 10', logo: '/partenaires/10- IMG_9078.webp' },
+    { name: 'Partenaire 11', logo: '/partenaires/11- IMG_9466.webp' },
+    { name: 'Partenaire 12', logo: '/partenaires/12- IMG_2959.jpg' },
+    { name: 'Partenaire 13', logo: '/partenaires/13- IMG_6055.JPG.webp' },
+    { name: 'Partenaire 14', logo: '/partenaires/14- IMG_3354.png' },
+    { name: 'Partenaire 15', logo: '/partenaires/15- caba689f-d234-478d-bf0d-0b440544f108.jpg' },
+    { name: 'Partenaire 16', logo: '/partenaires/16- WhatsApp Image 2025-07-10 à 13.22.05_af5c6923.jpg' },
+    { name: 'VGaming', logo: '/partenaires/VGaming.webp' },
   ];
 
   // Carousel navigation functions
@@ -112,7 +119,7 @@ const PartnersSection = () => {
             isVisible ? 'scale-x-100' : 'scale-x-0'
           }`}></div>
           
-          <h2 className={`text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-6 transition-all duration-1000 delay-300 ease-out ${
+          <h2 className={`font-clash text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-6 transition-all duration-1000 delay-300 ease-out ${
             isVisible 
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 translate-y-8'
@@ -120,7 +127,7 @@ const PartnersSection = () => {
             NOS PARTENAIRES
           </h2>
           
-          <p className={`text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed transition-all duration-1000 delay-500 ease-out ${
+          <p className={`font-nekst text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed transition-all duration-1000 delay-500 ease-out ${
             isVisible 
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 translate-y-8'
@@ -207,10 +214,10 @@ const PartnersSection = () => {
             ? 'opacity-100 translate-y-0' 
             : 'opacity-0 translate-y-8'
         }`}>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="font-nekst text-lg text-gray-600 mb-8">
             Vous souhaitez devenir partenaire du festival WhatAboutYou ?
           </p>
-          <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+          <button className="font-azonix bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
             Devenir Partenaire
           </button>
         </div>

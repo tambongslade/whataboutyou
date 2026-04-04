@@ -109,13 +109,11 @@ export interface TicketsStatisticsResponse {
 // API CONFIGURATION
 // ==========================================
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://api.whataboutyou.net' // Updated to correct production URL
-  : 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.whataboutyou.net/api';
 
 // Debug: Log the API base URL being used
 console.log('🎫 Ticket API Base URL:', API_BASE_URL);
-console.log('🎫 Environment:', process.env.NODE_ENV);
+console.log('🎫 Environment Mode:', import.meta.env.MODE);
 
 // ==========================================
 // API SERVICE CLASS

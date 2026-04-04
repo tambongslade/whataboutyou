@@ -5,7 +5,7 @@ import HomePage from './pages/HomePage'
 import EventsPage from './pages/events/EventsPage'
 import MissAndMasterPage from './pages/miss-and-master/MissAndMasterPage'
 import PaymentReturn from './pages/miss-and-master/components/PaymentReturn'
-import TombolaPage from './pages/tombola/TombolaPage'
+// import TombolaPage from './pages/tombola/TombolaPage'
 import BoutiquePage from './pages/BoutiquePage'
 import AboutPage from './pages/AboutPage'
 import TeamPage from './pages/TeamPage'
@@ -13,6 +13,9 @@ import HistoryPage from './pages/HistoryPage'
 import PostsPage from './pages/PostsPage'
 import ContactPage from './pages/ContactPage'
 import AdminPage from './pages/admin/AdminPage'
+// import SondagePage from './pages/SondagePage'
+import FirebaseTest from './pages/FirebaseTest'
+import WayEditionPage from './pages/way/WayEditionPage'
 import Footer from './components/Footer'
 import './App.css'
 
@@ -47,13 +50,19 @@ function App() {
           <Route path="/payment/verify" element={<PaymentReturn />} />
           <Route path="/payment/success" element={<PaymentReturn />} />
           <Route path="/payment/failed" element={<PaymentReturn />} />
-          <Route path="/tombola" element={<TombolaPage />} />
+          {/* <Route path="/tombola" element={<TombolaPage />} /> */}
           <Route path="/boutique" element={<BoutiquePage />} />
+          {/* <Route path="/sondage" element={<SondagePage />} /> */}
+          <Route path="/firebase-test" element={<FirebaseTest />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/posts" element={<PostsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/way-1" element={<WayEditionPage edition={1} />} />
+          <Route path="/way-2" element={<WayEditionPage edition={2} />} />
+          <Route path="/way-3" element={<WayEditionPage edition={3} />} />
+          <Route path="/way-4" element={<WayEditionPage edition={4} />} />
           <Route path="/admin" element={<AdminPage />} />
           {/* Fallback route for unmatched paths */}
           <Route path="*" element={<Navigate to="/" replace />} />

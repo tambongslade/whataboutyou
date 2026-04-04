@@ -1,10 +1,7 @@
 import axios from 'axios';
 
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL ||
-  (import.meta.env.MODE === 'production'
-    ? 'https://api.whataboutyou.net/api/'
-    : 'http://localhost:3001/api/');
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.whataboutyou.net/api';
 
 // Debug: Log the API base URL being used
 console.log('🔗 API Base URL:', API_BASE_URL);

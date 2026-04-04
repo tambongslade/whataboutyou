@@ -8,14 +8,12 @@ import CandidatesList from './components/CandidatesList';
 import TicketStats from './components/TicketStats';
 import TicketsList from './components/TicketsList';
 import QRValidationInterface from './components/QRValidationInterface';
+import SurveyResponses from './components/SurveyResponses';
 import { type ConferenceRegistration } from '../../services/registrationService';
 import { type Candidate } from '../../services/candidateService';
 
 // API Configuration for admin
-const API_BASE_URL = import.meta.env.VITE_API_URL ||
-  (import.meta.env.MODE === 'production'
-    ? 'https://api.whataboutyou.net/api/'
-    : 'http://localhost:3001/api/');
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.whataboutyou.net/api';
 
 // Debug: Log the API base URL being used for admin
 console.log('🔐 Admin API Base URL:', API_BASE_URL);
@@ -215,22 +213,38 @@ const AdminPage = () => {
                 Concours en cours
               </div>
             </div>
-            
-            <MissAndMasterStats 
-              candidates={candidates} 
+
+            <MissAndMasterStats
+              candidates={candidates}
               setCandidates={setCandidates}
             />
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                 <span className="mr-2">🏆</span>
                 Classement des Candidats
               </h2>
-              <CandidatesList 
+              <CandidatesList
                 candidates={candidates}
                 isPreview={false}
               />
             </div>
+          </div>
+        )}
+
+        {activeTab === 'surveys' && (
+          <div>
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+                <span className="mr-3">📊</span>
+                Réponses au Sondage
+              </h1>
+              <div className="text-sm text-gray-600">
+                Feedback des participants
+              </div>
+            </div>
+
+            <SurveyResponses />
           </div>
         )}
       </div>
