@@ -111,8 +111,8 @@ const TeamSection: React.FC = () => {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
-            À PROPOS DE NOUS
+          <h2 className="font-clash text-2xl md:text-4xl font-bold text-gray-900 mb-4">
+            NOTRE ÉQUIPE
           </h2>
           <div className="w-16 md:w-24 h-1 bg-red-500 mx-auto mb-4 md:mb-6"></div>
           <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto px-4">

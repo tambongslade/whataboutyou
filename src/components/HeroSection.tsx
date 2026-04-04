@@ -74,7 +74,7 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center">
             {/* EXPLORER — White with angled right edge */}
             <button
-              onClick={() => navigate('/sondage')}
+              onClick={() => navigate('/way-4')}
               className="font-azonix flex items-center gap-3 bg-white text-black pl-8 pr-12 py-4 text-sm sm:text-base font-bold tracking-wider hover:bg-gray-100 transition-all duration-200 cursor-pointer relative"
               style={{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%)' }}
             >
@@ -87,7 +87,7 @@ const HeroSection = () => {
 
             {/* DÉCOUVRIR — Red with angled left edge, overlaps slightly */}
             <button
-              onClick={() => navigate('/events')}
+              onClick={() => navigate('/way-1')}
               className="font-azonix flex items-center gap-3 bg-red-600 text-white pl-10 pr-8 py-4 text-sm sm:text-base font-bold tracking-wider hover:bg-red-700 transition-all duration-200 cursor-pointer -ml-3 sm:-ml-5 relative"
               style={{ clipPath: 'polygon(20px 0, 100% 0, 100% 100%, 0 100%)' }}
             >

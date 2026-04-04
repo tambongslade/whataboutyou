@@ -12,6 +12,8 @@ interface NavbarProps {
 const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [isWayDropdownOpen, setIsWayDropdownOpen] = useState(false);
+  const [isMobileWayOpen, setIsMobileWayOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -20,9 +22,15 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
   const navLinks = [
     { to: '/', label: 'ACCUEIL' },
     { to: '/boutique', label: 'BOUTIQUE' },
-    { to: '/about', label: 'WHATABOUTYOU' },
     { to: '/posts', label: 'POSTS' },
     { to: '/contact', label: 'CONTACT' },
+  ];
+
+  const wayEditions = [
+    { to: '/way-1', label: 'WAY 1' },
+    { to: '/way-2', label: 'WAY 2' },
+    { to: '/way-3', label: 'WAY 3' },
+    { to: '/way-4', label: 'WAY 4' },
   ];
 
   return (
@@ -43,7 +51,50 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
           {/* Desktop Navigation — Centered */}
           <div className="hidden md:flex flex-1 justify-center">
             <div className="flex items-center space-x-6 lg:space-x-8">
-              {navLinks.map((link) => (
+              {navLinks.slice(0, 2).map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="font-nekst text-gray-300 hover:text-white px-2 py-2 text-sm font-light transition-colors tracking-widest uppercase"
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              {/* WHATABOUTYOU Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsWayDropdownOpen(true)}
+                onMouseLeave={() => setIsWayDropdownOpen(false)}
+              >
+                <button className="font-nekst text-gray-300 hover:text-white px-2 py-2 text-sm font-light transition-colors tracking-widest uppercase flex items-center gap-1 cursor-pointer">
+                  WHATABOUTYOU
+                  <svg
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${isWayDropdownOpen ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isWayDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-0 w-48 bg-black/95 backdrop-blur-sm border border-gray-700 rounded-lg shadow-xl overflow-hidden">
+                    {wayEditions.map((edition) => (
+                      <Link
+                        key={edition.to}
+                        to={edition.to}
+                        className="font-nekst block px-5 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors tracking-widest uppercase"
+                      >
+                        {edition.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {navLinks.slice(2).map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
@@ -119,7 +170,48 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
       {isMobileMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-gray-900/95 backdrop-blur-sm border-t border-gray-700">
-            {navLinks.map((link) => (
+            {navLinks.slice(0, 2).map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="font-nekst text-gray-300 hover:text-white block px-3 py-2 text-base font-light transition-colors tracking-widest uppercase"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {/* Mobile WHATABOUTYOU Accordion */}
+            <button
+              onClick={() => setIsMobileWayOpen(!isMobileWayOpen)}
+              className="font-nekst text-gray-300 hover:text-white w-full text-left px-3 py-2 text-base font-light transition-colors tracking-widest uppercase flex items-center justify-between cursor-pointer"
+            >
+              WHATABOUTYOU
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${isMobileWayOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {isMobileWayOpen && (
+              <div className="pl-6 space-y-1">
+                {wayEditions.map((edition) => (
+                  <Link
+                    key={edition.to}
+                    to={edition.to}
+                    className="font-nekst text-gray-400 hover:text-white block px-3 py-2 text-sm font-light transition-colors tracking-widest uppercase"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {edition.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {navLinks.slice(2).map((link) => (
               <Link
                 key={link.to}
                 to={link.to}

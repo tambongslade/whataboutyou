@@ -10,7 +10,26 @@
       "Bash(python:*)",
       "Bash(ls -lh D:/DEV/whataboutyou-master/public/*.webp D:/DEV/whataboutyou-master/public/*.png)",
       "Bash(sort -k5 -h -r)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(unzip -o \"azonix.zip\" -d azonix)",
+      "Bash(unzip -o \"Clash Display- Font.zip\" -d clash-display)",
+      "Bash(unzip -o \"Nekst.zip\" -d nekst)",
+      "Bash(cp clash-display/FontshareKit-2408002460/\"Clash Display\"/Fonts/WEB/fonts/ClashDisplay-Bold.woff2 .)",
+      "Bash(cp clash-display/FontshareKit-2408002460/\"Clash Display\"/Fonts/WEB/fonts/ClashDisplay-Semibold.woff2 .)",
+      "Bash(cp clash-display/FontshareKit-2408002460/\"Clash Display\"/Fonts/WEB/fonts/ClashDisplay-Medium.woff2 .)",
+      "Bash(cp clash-display/FontshareKit-2408002460/\"Clash Display\"/Fonts/WEB/fonts/ClashDisplay-Regular.woff2 .)",
+      "Bash(npx vite:*)",
+      "Bash(python3 -c ':*)",
+      "Bash(find public/ -type f \\\\\\( -name \"*.jpg\" -o -name \"*.jpeg\" -o -name \"*.JPG\" -o -name \"*.png\" -o -name \"*.webp\" -o -name \"*.mp4\" -o -name \"*.zip\" -o -name \"*.docx\" -o -name \"*.svg\" -o -name \"*.otf\" \\\\\\) -exec du -sh {} \\\\;)",
+      "Bash(xargs du:*)",
+      "Bash(du -sh public/fonts/*.zip)",
+      "Bash(find public/ -type f \\\\\\( -name \"*.zip\" -o -name \"*.docx\" \\\\\\) -exec du -sh {} \\\\;)",
+      "Bash(rm -f \"public/fonts/azonix.zip\" \"public/fonts/Nekst.zip\" \"public/fonts/Clash Display- Font.zip\")",
+      "Bash(rm -rf \"public/fonts/clash-display\")",
+      "Bash(rm -f \"public/WAY 2 \\(1\\).docx\" \"public/WAY 3 \\(1\\).docx\" \"public/WAY 4.docx\")",
+      "Bash(rm -f public/fonts/Tickets.svg)",
+      "Bash(rm:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

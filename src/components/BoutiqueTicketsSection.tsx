@@ -16,13 +16,6 @@ const slides = [
     cta: 'DÉCOUVRIR LES CANDIDATS',
     link: '/miss-and-master',
   },
-  {
-    title: 'TOMBOLA WAY –\nTENTE TA CHANCE',
-    description:
-      'Participe à la grande tombola WAY et gagne des lots incroyables. Chaque ticket est une chance de repartir avec un cadeau.',
-    cta: 'PARTICIPER À LA TOMBOLA',
-    link: '/tombola',
-  },
 ];
 
 const BoutiqueTicketsSection = () => {
@@ -70,15 +63,11 @@ const BoutiqueTicketsSection = () => {
 
             {/* Ticket card */}
             <div className="relative transform rotate-[-8deg] hover:rotate-0 transition-transform duration-500">
-              <div className="bg-gradient-to-br from-yellow-300 via-yellow-400 to-green-400 rounded-3xl p-1 shadow-2xl">
-                <div className="bg-gradient-to-br from-yellow-200 via-green-300 to-cyan-400 rounded-3xl w-[320px] sm:w-[400px] h-[200px] sm:h-[240px] flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/logog final 3D.webp"
-                    alt="WAY Ticket"
-                    className="w-[80%] h-auto drop-shadow-xl"
-                  />
-                </div>
-              </div>
+              <img
+                src="/fonts/Tickets.svg"
+                alt="WAY Ticket"
+                className="w-[320px] sm:w-[400px] h-auto drop-shadow-2xl"
+              />
             </div>
           </div>
         </div>

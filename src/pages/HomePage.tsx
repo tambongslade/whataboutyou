@@ -4,7 +4,7 @@ import HeroSection from '../components/HeroSection';
 import AboutSection from '../components/AboutSection';
 import CountdownSection from '../components/CountdownSection';
 import BoutiqueTicketsSection from '../components/BoutiqueTicketsSection';
-import TeamSection from '../components/TeamSection';
+import PartnersSection from '../components/PartnersSection';
 import TestimonialsSection from '../components/TestimonialsSection';
 import FAQSection from '../components/FAQSection';
 
@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
       <AboutSection />
       <CountdownSection />
       <BoutiqueTicketsSection />
-      <TeamSection />
+      <PartnersSection />
       <TestimonialsSection />
       <FAQSection />
     </div>
