@@ -44,7 +44,7 @@ export const getEmailTemplate = (data: ConfirmationEmailData): string => {
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #ff6b35;">What About You 2024</h1>
+                <h1 style="color: #ff6b35;">What About You 2026</h1>
                 <h2 style="color: #333;">Confirmation d'inscription</h2>
             </div>
             
@@ -70,7 +70,7 @@ export const getEmailTemplate = (data: ConfirmationEmailData): string => {
             </div>
             
             <div style="text-align: center; margin-top: 30px; color: #666;">
-                <p>À bientôt à What About You 2024!</p>
+                <p>À bientôt à What About You 2026!</p>
                 <p>L'équipe What About You</p>
                 <p style="font-size: 12px;">
                     Pour toute question: whatabout.officiel@gmail.com<br>

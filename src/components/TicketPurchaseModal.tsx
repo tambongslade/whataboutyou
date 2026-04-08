@@ -269,7 +269,7 @@ const TicketPurchaseModal = ({ isOpen, onClose }: TicketPurchaseModalProps) => {
         <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center rounded-t-2xl">
-            <h2 className="text-2xl font-bold text-gray-900">Achetez votre ticket WAY 2025</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Achetez votre ticket WAY 2026</h2>
             <button 
               onClick={handleClose}
               className="text-gray-400 hover:text-gray-600 text-2xl font-bold"

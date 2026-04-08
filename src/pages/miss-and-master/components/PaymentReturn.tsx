@@ -22,16 +22,16 @@ const PaymentReturn: React.FC = () => {
   // SEO optimization based on payment status
   useSEO({
     title: status === 'success' 
-      ? 'Paiement Réussi - Vote Confirmé | Miss & Master WAY 2025'
+      ? 'Paiement Réussi - Vote Confirmé | Miss & Master WAY 2026'
       : status === 'failed'
-      ? 'Paiement Échoué | Miss & Master WAY 2025'
-      : 'Vérification Paiement | Miss & Master WAY 2025',
+      ? 'Paiement Échoué | Miss & Master WAY 2026'
+      : 'Vérification Paiement | Miss & Master WAY 2026',
     description: status === 'success'
-      ? 'Votre vote a été confirmé avec succès ! Merci de votre participation au concours Miss & Master WAY 2025.'
+      ? 'Votre vote a été confirmé avec succès ! Merci de votre participation au concours Miss & Master WAY 2026.'
       : status === 'failed'
-      ? 'Échec du paiement. Veuillez réessayer pour confirmer votre vote au concours Miss & Master WAY 2025.'
-      : 'Vérification de votre paiement en cours pour le concours Miss & Master WAY 2025.',
-    keywords: 'paiement vote, Miss Master WAY 2025, vote confirmé, concours Cameroun',
+      ? 'Échec du paiement. Veuillez réessayer pour confirmer votre vote au concours Miss & Master WAY 2026.'
+      : 'Vérification de votre paiement en cours pour le concours Miss & Master WAY 2026.',
+    keywords: 'paiement vote, Miss Master WAY 2026, vote confirmé, concours Cameroun',
     image: 'https://whataboutyou.cm/missandmasterhero.webp',
     url: `https://whataboutyou.cm/payment/${status}`,
     type: 'website'
@@ -154,7 +154,7 @@ const PaymentReturn: React.FC = () => {
             <div className="flex justify-center space-x-3 mb-6">
               <button 
                 onClick={() => {
-                  const text = `Je viens de voter pour ${candidateName || 'mon candidat préféré'} au concours Miss & Master WAY 2025 ! 👑✨ #WAY2025 #MissAndMaster`;
+                  const text = `Je viens de voter pour ${candidateName || 'mon candidat préféré'} au concours Miss & Master WAY 2026 ! 👑✨ #WAY2026 #MissAndMaster`;
                   const url = 'https://whataboutyou.cm/miss-and-master';
                   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
                 }}
@@ -167,7 +167,7 @@ const PaymentReturn: React.FC = () => {
               </button>
               <button 
                 onClick={() => {
-                  const text = `Je viens de voter pour ${candidateName || 'mon candidat préféré'} au concours Miss & Master WAY 2025 ! 👑✨`;
+                  const text = `Je viens de voter pour ${candidateName || 'mon candidat préféré'} au concours Miss & Master WAY 2026 ! 👑✨`;
                   const url = 'https://whataboutyou.cm/miss-and-master';
                   window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, '_blank');
                 }}

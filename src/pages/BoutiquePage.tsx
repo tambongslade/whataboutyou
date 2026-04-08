@@ -3,9 +3,9 @@ import { useSEO } from '../hooks/useSEO';
 
 const BoutiquePage: React.FC = () => {
   useSEO({
-    title: 'Boutique WAY 2025 | Produits Exclusifs - What About You',
-    description: 'La boutique officielle WAY 2025 arrive bientôt. Produits exclusifs créés par de jeunes talents camerounais.',
-    keywords: 'boutique WAY 2025, produits jeunes talents Cameroun',
+    title: 'Boutique WAY 2026 | Produits Exclusifs - What About You',
+    description: 'La boutique officielle WAY 2026 arrive bientôt. Produits exclusifs créés par de jeunes talents camerounais.',
+    keywords: 'boutique WAY 2026, produits jeunes talents Cameroun',
     image: 'https://whataboutyou.cm/Store.webp',
     url: 'https://whataboutyou.cm/boutique',
     type: 'website'

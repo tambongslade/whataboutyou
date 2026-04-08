@@ -19,10 +19,10 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const navLinks = [
+  const navLinks: { to: string; label: string; comingSoon?: boolean }[] = [
     { to: '/', label: 'ACCUEIL' },
     { to: '/boutique', label: 'BOUTIQUE' },
-    { to: '/posts', label: 'POSTS' },
+    { to: '/posts', label: 'POSTS', comingSoon: true },
     { to: '/contact', label: 'CONTACT' },
   ];
 
@@ -42,7 +42,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
             <Link to="/" className="flex items-center">
               <img
                 src="/Logo.webp"
-                alt="What About You - WAY 2025"
+                alt="What About You - WAY 2026"
                 className="h-10 w-auto transition-opacity hover:opacity-80"
               />
             </Link>
@@ -52,13 +52,25 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
           <div className="hidden md:flex flex-1 justify-center">
             <div className="flex items-center space-x-6 lg:space-x-8">
               {navLinks.slice(0, 2).map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className="font-nekst text-gray-300 hover:text-white px-2 py-2 text-sm font-light transition-colors tracking-widest uppercase"
-                >
-                  {link.label}
-                </Link>
+                link.comingSoon ? (
+                  <span
+                    key={link.to}
+                    className="font-nekst text-gray-500 px-2 py-2 text-sm font-light tracking-widest uppercase cursor-default relative flex items-center gap-2"
+                  >
+                    {link.label}
+                    <span className="text-[10px] bg-yellow-500 text-black font-bold px-1.5 py-0.5 rounded-full leading-none tracking-normal normal-case">
+                      Bientôt
+                    </span>
+                  </span>
+                ) : (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className="font-nekst text-gray-300 hover:text-white px-2 py-2 text-sm font-light transition-colors tracking-widest uppercase"
+                  >
+                    {link.label}
+                  </Link>
+                )
               ))}
 
               {/* WHATABOUTYOU Dropdown */}
@@ -95,13 +107,25 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
               </div>
 
               {navLinks.slice(2).map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className="font-nekst text-gray-300 hover:text-white px-2 py-2 text-sm font-light transition-colors tracking-widest uppercase"
-                >
-                  {link.label}
-                </Link>
+                link.comingSoon ? (
+                  <span
+                    key={link.to}
+                    className="font-nekst text-gray-500 px-2 py-2 text-sm font-light tracking-widest uppercase cursor-default relative flex items-center gap-2"
+                  >
+                    {link.label}
+                    <span className="text-[10px] bg-yellow-500 text-black font-bold px-1.5 py-0.5 rounded-full leading-none tracking-normal normal-case">
+                      Bientôt
+                    </span>
+                  </span>
+                ) : (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className="font-nekst text-gray-300 hover:text-white px-2 py-2 text-sm font-light transition-colors tracking-widest uppercase"
+                  >
+                    {link.label}
+                  </Link>
+                )
               ))}
             </div>
           </div>
@@ -171,14 +195,26 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-gray-900/95 backdrop-blur-sm border-t border-gray-700">
             {navLinks.slice(0, 2).map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="font-nekst text-gray-300 hover:text-white block px-3 py-2 text-base font-light transition-colors tracking-widest uppercase"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
+              link.comingSoon ? (
+                <span
+                  key={link.to}
+                  className="font-nekst text-gray-500 block px-3 py-2 text-base font-light tracking-widest uppercase cursor-default flex items-center gap-2"
+                >
+                  {link.label}
+                  <span className="text-[10px] bg-yellow-500 text-black font-bold px-1.5 py-0.5 rounded-full leading-none tracking-normal normal-case">
+                    Bientôt
+                  </span>
+                </span>
+              ) : (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="font-nekst text-gray-300 hover:text-white block px-3 py-2 text-base font-light transition-colors tracking-widest uppercase"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              )
             ))}
 
             {/* Mobile WHATABOUTYOU Accordion */}
@@ -212,14 +248,26 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
             )}
 
             {navLinks.slice(2).map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="font-nekst text-gray-300 hover:text-white block px-3 py-2 text-base font-light transition-colors tracking-widest uppercase"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
+              link.comingSoon ? (
+                <span
+                  key={link.to}
+                  className="font-nekst text-gray-500 block px-3 py-2 text-base font-light tracking-widest uppercase cursor-default flex items-center gap-2"
+                >
+                  {link.label}
+                  <span className="text-[10px] bg-yellow-500 text-black font-bold px-1.5 py-0.5 rounded-full leading-none tracking-normal normal-case">
+                    Bientôt
+                  </span>
+                </span>
+              ) : (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="font-nekst text-gray-300 hover:text-white block px-3 py-2 text-base font-light transition-colors tracking-widest uppercase"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              )
             ))}
             <button
               onClick={() => {

@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OptimizedImage from './OptimizedImage';
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  onOpenRegistration?: () => void;
+}
+
+const HeroSection = ({ onOpenRegistration }: HeroSectionProps) => {
   const navigate = useNavigate();
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
@@ -85,17 +89,16 @@ const HeroSection = () => {
               EXPLORER
             </button>
 
-            {/* DÉCOUVRIR — Red with angled left edge, overlaps slightly */}
+            {/* PARTICIPER — Red with angled left edge, overlaps slightly */}
             <button
-              onClick={() => navigate('/way-1')}
+              onClick={onOpenRegistration}
               className="font-azonix flex items-center gap-3 bg-red-600 text-white pl-10 pr-8 py-4 text-sm sm:text-base font-bold tracking-wider hover:bg-red-700 transition-all duration-200 cursor-pointer -ml-3 sm:-ml-5 relative"
               style={{ clipPath: 'polygon(20px 0, 100% 0, 100% 100%, 0 100%)' }}
             >
               <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              DÉCOUVRIR LES ÉDITIONS PRÉCÉDENTES
+              PARTICIPER À LA CONFÉRENCE
             </button>
           </div>
         </div>
