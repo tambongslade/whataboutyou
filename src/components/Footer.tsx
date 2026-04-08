@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
               />
               <p className="font-clash text-white text-sm font-bold uppercase tracking-wide leading-snug">
                 Quel est votre<br />
-                situation amoureuse ?
+                situation actuelle ?
               </p>
             </div>
 

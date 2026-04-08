@@ -62,6 +62,22 @@ export interface RegistrationStatisticsResponse {
   error?: string;
 }
 
+export interface PlacesInfo {
+  edition: string;
+  totalRegistered: number;
+  maxCapacity: number;
+  remainingPlaces: number;
+  isFull: boolean;
+  conferenceDate: string;
+  venue: string;
+}
+
+export interface PlacesResponse {
+  success: boolean;
+  data: PlacesInfo;
+  error?: string;
+}
+
 // ==========================================
 // CONFIGURATION
 // ==========================================
@@ -102,7 +118,7 @@ class RegistrationAPI {
   }
 
   async saveRegistration(registrationData: ConferenceRegistration): Promise<string> {
-    const response = await this.makeRequest<RegistrationResponse>('/api/registrations', {
+    const response = await this.makeRequest<RegistrationResponse>('/registrations', {
       method: 'POST',
       body: JSON.stringify(registrationData),
     });
@@ -117,7 +133,7 @@ class RegistrationAPI {
   async checkEmailExists(email: string): Promise<boolean> {
     try {
       const response = await this.makeRequest<{ success: boolean; data: ConferenceRegistration; found: boolean; error?: string }>(
-        `/api/registrations/search/email?email=${encodeURIComponent(email)}`
+        `/registrations/search/email?email=${encodeURIComponent(email)}`
       );
       return response.success && response.found;
     } catch (error) {
@@ -129,7 +145,7 @@ class RegistrationAPI {
   }
 
   async getAllRegistrations(): Promise<ConferenceRegistration[]> {
-    const response = await this.makeRequest<RegistrationListResponse>('/api/registrations');
+    const response = await this.makeRequest<RegistrationListResponse>('/registrations');
     
     if (response.success) {
       return response.data;
@@ -139,7 +155,7 @@ class RegistrationAPI {
   }
 
   async getRegistrationStatistics(): Promise<RegistrationStatistics> {
-    const response = await this.makeRequest<RegistrationStatisticsResponse>('/api/registrations/statistics');
+    const response = await this.makeRequest<RegistrationStatisticsResponse>('/registrations/statistics');
     
     if (response.success) {
       return response.data;
@@ -151,7 +167,7 @@ class RegistrationAPI {
   async getRegistrationByNumber(registrationNumber: string): Promise<ConferenceRegistration | null> {
     try {
       const response = await this.makeRequest<{ success: boolean; data: ConferenceRegistration; found: boolean; error?: string }>(
-        `/api/registrations/search/number?number=${encodeURIComponent(registrationNumber)}`
+        `/registrations/search/number?number=${encodeURIComponent(registrationNumber)}`
       );
       return response.success && response.found ? response.data : null;
     } catch (error) {
@@ -164,7 +180,7 @@ class RegistrationAPI {
 
   async resendConfirmationEmail(registrationId: string): Promise<void> {
     const response = await this.makeRequest<{ success: boolean; data?: any; error?: string }>(
-      `/api/registrations/${registrationId}/resend-email`, 
+      `/registrations/${registrationId}/resend-email`, 
       {
         method: 'POST',
       }
@@ -175,8 +191,18 @@ class RegistrationAPI {
     }
   }
 
+  async getAvailablePlaces(): Promise<PlacesInfo> {
+    const response = await this.makeRequest<PlacesResponse>('/registrations/places');
+
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error || 'Erreur lors de la récupération des places disponibles');
+    }
+  }
+
   async healthCheck(): Promise<{ status: string; message: string }> {
-    const response = await this.makeRequest<{ status: string; message: string }>('/api/health');
+    const response = await this.makeRequest<{ status: string; message: string }>('/health');
     return response;
   }
 }
@@ -206,8 +232,11 @@ export const getRegistrationById = (id: string): Promise<ConferenceRegistration 
 export const getRegistrationStatistics = (): Promise<RegistrationStatistics> => 
   registrationAPI.getRegistrationStatistics();
 
-export const resendConfirmationEmail = (id: string): Promise<void> => 
+export const resendConfirmationEmail = (id: string): Promise<void> =>
   registrationAPI.resendConfirmationEmail(id);
+
+export const getAvailablePlaces = (): Promise<PlacesInfo> =>
+  registrationAPI.getAvailablePlaces();
 
 // ==========================================
 // ADDITIONAL EXPORTS

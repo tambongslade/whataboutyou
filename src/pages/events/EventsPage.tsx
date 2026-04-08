@@ -3,9 +3,9 @@ import { useSEO } from '../../hooks/useSEO';
 
 const EventsPage: React.FC = () => {
   useSEO({
-    title: 'Événements WAY 2025 | Conférences Entrepreneuriales - What About You',
-    description: 'Découvrez les événements et conférences de WAY 2025.',
-    keywords: 'événements WAY 2025, conférences entrepreneuriat Cameroun',
+    title: 'Événements WAY 2026 | Conférences Entrepreneuriales - What About You',
+    description: 'Découvrez les événements et conférences de WAY 2026.',
+    keywords: 'événements WAY 2026, conférences entrepreneuriat Cameroun',
     image: 'https://whataboutyou.cm/eventhero.webp',
     url: 'https://whataboutyou.cm/events',
     type: 'website'

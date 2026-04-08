@@ -137,7 +137,7 @@ const AdminPage = () => {
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold text-gray-800 flex items-center">
                 <span className="mr-2">🎫</span>
-                Tickets WAY 2025
+                Tickets WAY 2026
               </h2>
               <TicketStats />
             </div>
@@ -176,7 +176,7 @@ const AdminPage = () => {
                 Gestion des Tickets
               </h1>
               <div className="text-sm text-gray-600">
-                WAY 2025 - 23-26 Janvier
+                WAY 2026 - 23-26 Janvier
               </div>
             </div>
             

@@ -405,7 +405,7 @@ const TicketsList = ({ isPreview = false }: TicketsListProps) => {
                     type="text"
                     value={ticketNumberInput}
                     onChange={(e) => setTicketNumberInput(e.target.value)}
-                    placeholder="WAY2025-TICKET-001"
+                    placeholder="WAY2026-TICKET-001"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                   <p className="text-xs text-gray-500 mt-1">

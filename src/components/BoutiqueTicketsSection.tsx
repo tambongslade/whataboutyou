@@ -10,7 +10,7 @@ const slides = [
     link: '/boutique',
   },
   {
-    title: 'MISS & MASTER\nWAY 2025',
+    title: 'MISS & MASTER\nWAY 2026',
     description:
       "Découvre les candidats de cette édition et vote pour ton favori. Le spectacle promet d'être inoubliable !",
     cta: 'DÉCOUVRIR LES CANDIDATS',

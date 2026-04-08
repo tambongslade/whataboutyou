@@ -8,9 +8,9 @@ const TombolaPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useSEO({
-    title: 'Tombola WAY 2025 | Jeux & Prix à Gagner - What About You',
-    description: 'Participez à la tombola WAY 2025 et tentez de remporter des prix incroyables ! PS5, smartphones, bons d’achat et bien plus. Inscription gratuite et tirages exclusifs.',
-    keywords: 'tombola WAY 2025, jeux concours Cameroun, prix à gagner, PS5, smartphones, tirages au sort, loterie',
+    title: 'Tombola WAY 2026 | Jeux & Prix à Gagner - What About You',
+    description: 'Participez à la tombola WAY 2026 et tentez de remporter des prix incroyables ! PS5, smartphones, bons d’achat et bien plus. Inscription gratuite et tirages exclusifs.',
+    keywords: 'tombola WAY 2026, jeux concours Cameroun, prix à gagner, PS5, smartphones, tirages au sort, loterie',
     image: 'https://whataboutyou.cm/tombolahero.webp',
     url: 'https://whataboutyou.cm/tombola',
     type: 'website'
