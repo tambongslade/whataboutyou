@@ -29,7 +29,10 @@
       "Bash(rm -f \"public/WAY 2 \\(1\\).docx\" \"public/WAY 3 \\(1\\).docx\" \"public/WAY 4.docx\")",
       "Bash(rm -f public/fonts/Tickets.svg)",
       "Bash(rm:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(npx tsc:*)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
