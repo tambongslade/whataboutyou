@@ -4,7 +4,7 @@ import { useSEO } from '../hooks/useSEO';
 type Step = 'hero' | 'category' | 'formules';
 type Category = 'entreprises' | 'festif';
 
-const WHATSAPP_NUMBER = '237655643859';
+const WHATSAPP_NUMBER = '237696957872';
 const whatsappLink = (formula: string) =>
   `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
     `Bonjour, je souhaite réserver un stand (${formula}) pour WAY 6ème édition.`
