@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useSEO } from '../hooks/useSEO';
 import HeroSection from '../components/HeroSection';
 import AboutSection from '../components/AboutSection';
-import CountdownSection from '../components/CountdownSection';
 import BoutiqueTicketsSection from '../components/BoutiqueTicketsSection';
 import PartnersSection from '../components/PartnersSection';
 import TestimonialsSection from '../components/TestimonialsSection';
@@ -26,7 +25,6 @@ const HomePage: React.FC = () => {
       <HeroSection onOpenRegistration={() => setIsRegistrationOpen(true)} />
       <ConferenceRegistrationModal isOpen={isRegistrationOpen} onClose={() => setIsRegistrationOpen(false)} />
       <AboutSection />
-      <CountdownSection />
       <BoutiqueTicketsSection />
       <PartnersSection />
       <TestimonialsSection />

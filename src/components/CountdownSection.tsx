@@ -156,7 +156,7 @@ const CountdownSection = () => {
             : 'opacity-0 translate-y-8'
         }`}>
           <p className="text-lg md:text-xl text-white/90 mb-6">
-            Rendez-vous du <span className="font-bold">18 au 25 juillet</span>
+            Rendez-vous du <span className="font-bold">25 Juillet au 01 Aout</span>
           </p>
           <button className="bg-white text-red-800 hover:bg-red-50 font-semibold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
             Réserver Maintenant

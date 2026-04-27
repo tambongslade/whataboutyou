@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import TicketPurchaseModal from './TicketPurchaseModal';
 
 interface NavbarProps {
@@ -10,14 +10,13 @@ interface NavbarProps {
 }
 
 const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) => {
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isWayDropdownOpen, setIsWayDropdownOpen] = useState(false);
   const [isMobileWayOpen, setIsMobileWayOpen] = useState(false);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const navLinks: { to: string; label: string; comingSoon?: boolean }[] = [
     { to: '/', label: 'ACCUEIL' },
@@ -32,6 +31,26 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
     { to: '/way-3', label: 'WAY 3' },
     { to: '/way-4', label: 'WAY 4' },
   ];
+
+  const isActive = (to: string) =>
+    to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
+
+  const isWayActive = wayEditions.some((e) => location.pathname.startsWith(e.to));
+
+  const ActiveDot = () => (
+    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex h-1.5 w-1.5">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60" />
+      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
+    </span>
+  );
+
+  const desktopLinkClass = (active: boolean) =>
+    `font-nekst px-2 py-2 text-sm font-light tracking-widest uppercase relative transition-colors duration-200 group
+    ${active ? 'text-white' : 'text-gray-400 hover:text-white'}`;
+
+  const mobileLinkClass = (active: boolean) =>
+    `font-nekst block px-3 py-2 text-base font-light tracking-widest uppercase transition-colors duration-200 border-l-2
+    ${active ? 'text-white border-white' : 'text-gray-400 hover:text-white border-transparent hover:border-gray-600'}`;
 
   return (
     <nav className="bg-black/95 backdrop-blur-sm border-b border-gray-800 fixed top-0 left-0 right-0 z-50">
@@ -51,7 +70,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
           {/* Desktop Navigation — Centered */}
           <div className="hidden md:flex flex-1 justify-center">
             <div className="flex items-center space-x-6 lg:space-x-8">
-              {navLinks.slice(0, 2).map((link) => (
+              {navLinks.slice(0, 2).map((link) =>
                 link.comingSoon ? (
                   <span
                     key={link.to}
@@ -63,15 +82,15 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
                     </span>
                   </span>
                 ) : (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className="font-nekst text-gray-300 hover:text-white px-2 py-2 text-sm font-light transition-colors tracking-widest uppercase"
-                  >
+                  <Link key={link.to} to={link.to} className={desktopLinkClass(isActive(link.to))}>
                     {link.label}
+                    {/* hover underline */}
+                    <span className={`absolute bottom-0 left-0 h-[2px] bg-white/60 transition-all duration-300 ${isActive(link.to) ? 'w-0' : 'w-0 group-hover:w-full'}`} />
+                    {/* active ping dot */}
+                    {isActive(link.to) && <ActiveDot />}
                   </Link>
                 )
-              ))}
+              )}
 
               {/* WHATABOUTYOU Dropdown */}
               <div
@@ -79,8 +98,15 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
                 onMouseEnter={() => setIsWayDropdownOpen(true)}
                 onMouseLeave={() => setIsWayDropdownOpen(false)}
               >
-                <button className="font-nekst text-gray-300 hover:text-white px-2 py-2 text-sm font-light transition-colors tracking-widest uppercase flex items-center gap-1 cursor-pointer">
+                <button
+                  className={`font-nekst px-2 py-2 text-sm font-light tracking-widest uppercase flex items-center gap-1 cursor-pointer relative group transition-colors duration-200
+                  ${isWayActive ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                >
                   WHATABOUTYOU
+                  {/* hover underline */}
+                  <span className={`absolute bottom-0 left-0 h-[2px] bg-white/60 transition-all duration-300 ${isWayActive ? 'w-0' : 'w-0 group-hover:w-full'}`} />
+                  {/* active ping dot */}
+                  {isWayActive && <ActiveDot />}
                   <svg
                     className={`w-3.5 h-3.5 transition-transform duration-200 ${isWayDropdownOpen ? 'rotate-180' : ''}`}
                     fill="none"
@@ -97,7 +123,8 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
                       <Link
                         key={edition.to}
                         to={edition.to}
-                        className="font-nekst block px-5 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors tracking-widest uppercase"
+                        className={`font-nekst block px-5 py-3 text-sm tracking-widest uppercase transition-colors
+                        ${isActive(edition.to) ? 'text-white bg-white/10' : 'text-gray-300 hover:text-white hover:bg-white/10'}`}
                       >
                         {edition.label}
                       </Link>
@@ -106,7 +133,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
                 )}
               </div>
 
-              {navLinks.slice(2).map((link) => (
+              {navLinks.slice(2).map((link) =>
                 link.comingSoon ? (
                   <span
                     key={link.to}
@@ -118,21 +145,18 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
                     </span>
                   </span>
                 ) : (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className="font-nekst text-gray-300 hover:text-white px-2 py-2 text-sm font-light transition-colors tracking-widest uppercase"
-                  >
+                  <Link key={link.to} to={link.to} className={desktopLinkClass(isActive(link.to))}>
                     {link.label}
+                    <span className={`absolute bottom-0 left-0 h-[2px] bg-white/60 transition-all duration-300 ${isActive(link.to) ? 'w-0' : 'w-0 group-hover:w-full'}`} />
+                    {isActive(link.to) && <ActiveDot />}
                   </Link>
                 )
-              ))}
+              )}
             </div>
           </div>
 
           {/* Right Side Icons */}
           <div className="hidden md:flex items-center space-x-3">
-            {/* Notification Icon */}
             {isAuthenticated && (
               <button className="text-gray-400 hover:text-white p-2 rounded-md transition-colors relative">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,7 +171,6 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
               </button>
             )}
 
-            {/* Profile / Login */}
             {isAuthenticated ? (
               <button className="flex items-center text-gray-400 hover:text-white p-1 rounded-md transition-colors">
                 {userAvatar ? (
@@ -161,10 +184,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
                 )}
               </button>
             ) : (
-              <button
-                onClick={onLogin}
-                className="text-gray-400 hover:text-white p-2 rounded-md transition-colors"
-              >
+              <button onClick={onLogin} className="text-gray-400 hover:text-white p-2 rounded-md transition-colors">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
@@ -174,10 +194,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
 
           {/* Mobile Menu Button */}
           <div className="md:hidden ml-auto">
-            <button
-              onClick={toggleMobileMenu}
-              className="text-gray-400 hover:text-white p-2 rounded-md transition-colors"
-            >
+            <button onClick={toggleMobileMenu} className="text-gray-400 hover:text-white p-2 rounded-md transition-colors">
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 {isMobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -194,7 +211,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
       {isMobileMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-gray-900/95 backdrop-blur-sm border-t border-gray-700">
-            {navLinks.slice(0, 2).map((link) => (
+            {navLinks.slice(0, 2).map((link) =>
               link.comingSoon ? (
                 <span
                   key={link.to}
@@ -209,18 +226,19 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="font-nekst text-gray-300 hover:text-white block px-3 py-2 text-base font-light transition-colors tracking-widest uppercase"
+                  className={mobileLinkClass(isActive(link.to))}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               )
-            ))}
+            )}
 
             {/* Mobile WHATABOUTYOU Accordion */}
             <button
               onClick={() => setIsMobileWayOpen(!isMobileWayOpen)}
-              className="font-nekst text-gray-300 hover:text-white w-full text-left px-3 py-2 text-base font-light transition-colors tracking-widest uppercase flex items-center justify-between cursor-pointer"
+              className={`font-nekst w-full text-left px-3 py-2 text-base font-light tracking-widest uppercase flex items-center justify-between cursor-pointer transition-colors duration-200 border-l-2
+              ${isWayActive ? 'text-white border-white' : 'text-gray-400 hover:text-white border-transparent hover:border-gray-600'}`}
             >
               WHATABOUTYOU
               <svg
@@ -238,7 +256,8 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
                   <Link
                     key={edition.to}
                     to={edition.to}
-                    className="font-nekst text-gray-400 hover:text-white block px-3 py-2 text-sm font-light transition-colors tracking-widest uppercase"
+                    className={`font-nekst block px-3 py-2 text-sm font-light tracking-widest uppercase transition-colors duration-200 border-l-2
+                    ${isActive(edition.to) ? 'text-white border-white' : 'text-gray-400 hover:text-white border-transparent hover:border-gray-600'}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {edition.label}
@@ -247,7 +266,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
               </div>
             )}
 
-            {navLinks.slice(2).map((link) => (
+            {navLinks.slice(2).map((link) =>
               link.comingSoon ? (
                 <span
                   key={link.to}
@@ -262,13 +281,14 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="font-nekst text-gray-300 hover:text-white block px-3 py-2 text-base font-light transition-colors tracking-widest uppercase"
+                  className={mobileLinkClass(isActive(link.to))}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               )
-            ))}
+            )}
+
             <button
               onClick={() => {
                 setIsTicketModalOpen(true);

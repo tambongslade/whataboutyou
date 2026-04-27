@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 
 const AboutSection = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -37,7 +37,7 @@ const AboutSection = () => {
             A PROPOS DE NOUS
           </h2>
           <p className="font-nekst text-base md:text-lg text-gray-500 max-w-3xl mx-auto leading-relaxed">
-            Découvrez l'essence du festival WhataboutYou : son histoire, sa vision et les valeurs qui l'animent. Nous vous en disons plus sur ce qui fait de WAY une expérience unique.
+            Découvrez l’essence du festival WhataboutYou : son histoire, sa vision et les valeurs qui l’animent. Nous vous en disons plus sur ce qui fait de WAY une expérience unique.
           </p>
         </div>
 

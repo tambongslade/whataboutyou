@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 interface Ad {
   id: number;
@@ -172,7 +172,7 @@ const AdsSection: React.FC = () => {
               className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
             <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-              S'abonner
+              S’abonner
             </button>
           </div>
         </div>

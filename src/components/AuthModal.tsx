@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -219,7 +219,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   required
                 />
                 <label className="text-sm text-gray-600">
-                  J'accepte les Conditions Générales d'Utilisation et la Politique de Confidentialité.
+                  J’accepte les Conditions Générales d’Utilisation et la Politique de Confidentialité.
                 </label>
               </div>
             )}
