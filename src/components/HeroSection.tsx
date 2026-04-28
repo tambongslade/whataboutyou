@@ -6,15 +6,16 @@ interface HeroSectionProps {
   onOpenRegistration?: () => void;
 }
 
-const HeroSection = ({ onOpenRegistration }: HeroSectionProps) => {
+const HeroSection = ({ onOpenRegistration: _onOpenRegistration }: HeroSectionProps) => {
   const navigate = useNavigate();
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   const backgroundImages = [
     '/Header.webp',
     '/way1/DSC_5516.webp',
     '/way 2/EmptyName 390.webp',
-    '/eventhero.webp'
+    '/eventhero.webp',
   ];
 
   useEffect(() => {
@@ -24,84 +25,118 @@ const HeroSection = ({ onOpenRegistration }: HeroSectionProps) => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const targetDate = new Date('2026-07-25T00:00:00').getTime();
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const diff = targetDate - now;
+      if (diff > 0) {
+        setTimeLeft({
+          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((diff % (1000 * 60)) / 1000),
+        });
+      }
+    };
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const fmt = (n: number) => n.toString().padStart(2, '0');
+
+  const countdownItems = [
+    { value: timeLeft.days, label: 'JOURS' },
+    { value: timeLeft.hours, label: 'HEURES' },
+    { value: timeLeft.minutes, label: 'MINUTES' },
+    { value: timeLeft.seconds, label: 'SECONDES' },
+  ];
+
   return (
     <section className="relative min-h-screen overflow-hidden">
-      {/* Background Image Container */}
-      <div className="relative w-full min-h-screen flex items-center justify-center">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <OptimizedImage
-            src={backgroundImages[currentBgIndex] || '/Header.webp'}
-            alt="Hero Background"
-            className="w-full h-full object-cover"
-            priority={true}
-            loading="eager"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-black/50"></div>
-        </div>
+      {/* Background */}
+      <div className="absolute inset-0">
+        <OptimizedImage
+          src={backgroundImages[currentBgIndex] || '/Header.webp'}
+          alt="Hero Background"
+          className="w-full h-full object-cover"
+          priority={true}
+          loading="eager"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
 
-        {/* Light Effects SVG - Positioned on top with 30% coverage on left and right */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 15 }}>
-          {/* Left side lights - 30% width */}
+      {/* Light Effects */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 15 }}>
+        <img src="/Lights.svg" alt="" className="absolute top-0 left-0 w-[30%] h-full object-cover opacity-70" />
+        <img src="/Lights.svg" alt="" className="absolute top-0 right-0 w-[30%] h-full object-cover opacity-70 scale-x-[-1]" />
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-30 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 text-center pt-16 pb-10">
+
+        {/* 3D Logo */}
+        <div className="mb-1 w-[80vw] sm:w-[70vw] md:w-[55vw] lg:w-[45vw] max-w-3xl">
           <img
-            src="/Lights.svg"
-            alt="Light Effects Left"
-            className="absolute top-0 left-0 w-[30%] h-full object-cover opacity-70"
-          />
-
-          {/* Right side lights - 30% width, mirrored */}
-          <img
-            src="/Lights.svg"
-            alt="Light Effects Right"
-            className="absolute top-0 right-0 w-[30%] h-full object-cover opacity-70 scale-x-[-1]"
+            src="/logog final 3D.webp"
+            alt="What About You"
+            className="w-full h-auto drop-shadow-2xl"
           />
         </div>
 
-        {/* Main Content */}
-        <div className="relative z-30 text-center px-6 sm:px-8 lg:px-12 max-w-6xl mx-auto flex flex-col items-center">
-          {/* 3D Logo */}
-          <div className="mb-2 md:mb-4 w-[80vw] sm:w-[70vw] md:w-[60vw] lg:w-[50vw] max-w-5xl">
-            <img
-              src="/logog final 3D.webp"
-              alt="What About You"
-              className="w-full h-auto drop-shadow-2xl"
-            />
-          </div>
+        <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white/90 tracking-[0.3em] mb-6 sm:mb-8">
+          <span className="text-4xl sm:text-5xl md:text-6xl leading-none">5</span>
+          <sup className="text-xs align-super">ÈME</sup>&nbsp;ÉDITION
+        </p>
 
-          {/* Tagline */}
-          <p className="font-nekst text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 mb-10 max-w-2xl mx-auto leading-relaxed tracking-wide">
-            Partagez où vous en êtes aujourd'hui — étudiant, jeune actif ou entrepreneur — pour rejoindre une communauté qui évolue avec vous et vous ouvre de nouvelles opportunités.
-          </p>
-
-          {/* CTA Buttons — Angled/Chevron Shape */}
-          <div className="flex flex-col sm:flex-row items-center justify-center">
-            {/* EXPLORER — White with angled right edge */}
-            <button
-              onClick={() => navigate('/way-4')}
-              className="font-azonix flex items-center gap-3 bg-white text-black pl-8 pr-12 py-4 text-sm sm:text-base font-bold tracking-wider hover:bg-gray-100 transition-all duration-200 cursor-pointer relative"
-              style={{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%)' }}
-            >
-              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              EXPLORER
-            </button>
-
-            {/* PARTICIPER — Red with angled left edge, overlaps slightly */}
-            <button
-              onClick={onOpenRegistration}
-              className="font-azonix flex items-center gap-3 bg-red-600 text-white pl-10 pr-8 py-4 text-sm sm:text-base font-bold tracking-wider hover:bg-red-700 transition-all duration-200 cursor-pointer -ml-3 sm:-ml-5 relative"
-              style={{ clipPath: 'polygon(20px 0, 100% 0, 100% 100%, 0 100%)' }}
-            >
-              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              PARTICIPER À LA CONFÉRENCE
-            </button>
-          </div>
+        {/* Countdown Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 w-full max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-3xl mb-6 sm:mb-8">
+          {countdownItems.map(({ value, label }) => (
+            <div key={label} className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-5 md:p-6 border border-white/20">
+              <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-1 tabular-nums">
+                {fmt(value)}
+              </div>
+              <div className="text-[10px] sm:text-xs md:text-sm text-white/80 uppercase tracking-wider">
+                {label}
+              </div>
+            </div>
+          ))}
         </div>
+
+        {/* Date */}
+        <p className="text-sm sm:text-base md:text-lg text-white/90 mb-8">
+          Rendez-vous du <span className="font-bold">25 Juillet au 01 Août</span>
+        </p>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          {/* Primary — Bleu */}
+          <button
+            onClick={() => navigate('/boutique')}
+            className="font-azonix border-2 border-blue-500 bg-blue-500/10 text-white hover:bg-blue-500 font-semibold px-8 sm:px-10 py-3 sm:py-4 text-sm sm:text-base tracking-wider transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/30"
+          >
+            Réserver Votre Stand
+          </button>
+
+          {/* Secondary — Rouge */}
+          <button
+            onClick={() => navigate('/miss-and-master')}
+            className="font-azonix border-2 border-red-500 bg-red-500/10 text-white hover:bg-red-500 font-semibold px-8 sm:px-10 py-3 sm:py-4 text-sm sm:text-base tracking-wider transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/30"
+          >
+           Voter Votre Miss
+          </button>
+
+          {/* Tertiary — Jaune */}
+          <button
+            onClick={() => navigate('/events')}
+            className="font-azonix border-2 border-yellow-400 bg-yellow-400/10 text-white hover:bg-yellow-400 hover:text-black font-semibold px-8 sm:px-10 py-3 sm:py-4 text-sm sm:text-base tracking-wider transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/30"
+          >
+            Accéder a la Conférence
+          </button>
+        </div>
+
       </div>
     </section>
   );
