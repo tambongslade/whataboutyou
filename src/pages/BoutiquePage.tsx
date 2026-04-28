@@ -111,7 +111,7 @@ const BoutiquePage: React.FC = () => {
               className="bg-red-600 text-white font-clash font-bold tracking-wider text-sm sm:text-base md:text-lg px-10 sm:px-14 py-3 shadow-lg"
               style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0 100%)' }}
             >
-              RÉSERVEZ VOTRE STAND - WAY 6EME EDITION
+              RÉSERVEZ VOTRE STAND - WAY 5EME EDITION
             </div>
           </div>
 
@@ -193,7 +193,7 @@ const BoutiquePage: React.FC = () => {
 
               <div className="relative bg-gradient-to-b from-sky-500 to-sky-800 text-white px-6 sm:px-8 pt-16 pb-8 flex-1 flex flex-col">
                 <h3 className="font-clash text-3xl sm:text-4xl font-extrabold uppercase tracking-tight text-center">
-                  Entreprises
+                  Entreprises et Institutions
                 </h3>
 
                 <div className="flex flex-wrap justify-center gap-2 mt-5">
@@ -370,7 +370,7 @@ const BoutiquePage: React.FC = () => {
                 }`}
                 style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0 100%)' }}
               >
-                RÉSERVEZ VOTRE STAND - WAY 6EME EDITION
+                RÉSERVEZ VOTRE STAND - WAY 5EME EDITION
               </div>
             </div>
           </div>
@@ -408,7 +408,7 @@ const BoutiquePage: React.FC = () => {
             <FormulaCard
               image="/stand/mockup%20Tente%205.webp"
               title="FORMULE 3"
-              bullets={['50 m² (5 x 10 m)', '7 personnes', 'Forte présence de marque, grande capacité d’accueil']}
+              bullets={['50 m² (5 x 10 m)', '10 personnes', 'Forte présence de marque, grande capacité d’accueil']}
               price="400 000 FCFA"
               whatsappLink={whatsappLink('Formule 3 - 50m² - 400 000 FCFA')}
             />
