@@ -21,7 +21,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
   const navLinks: { to: string; label: string; comingSoon?: boolean }[] = [
     { to: '/', label: 'ACCUEIL' },
     { to: '/boutique', label: 'BOUTIQUE' },
-    { to: '/posts', label: 'POSTS', comingSoon: true },
+    { to: '/posts', label: 'POSTS' },
     { to: '/contact', label: 'CONTACT' },
   ];
 
