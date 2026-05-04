@@ -16,6 +16,7 @@ import PostDetailPage from './pages/PostDetailPage'
 import ContactPage from './pages/ContactPage'
 import AdminPage from './pages/admin/AdminPage'
 import NotFoundPage from './pages/NotFoundPage'
+import WayEditionPage from './pages/way/WayEditionPage'
 import Footer from './components/Footer'
 import './App.css'
 
@@ -59,6 +60,10 @@ function App() {
           <Route path="/posts" element={<PostsPage />} />
           <Route path="/posts/:slug" element={<PostDetailPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/way-1" element={<WayEditionPage edition={1} />} />
+          <Route path="/way-2" element={<WayEditionPage edition={2} />} />
+          <Route path="/way-3" element={<WayEditionPage edition={3} />} />
+          <Route path="/way-4" element={<WayEditionPage edition={4} />} />
           <Route path="/admin" element={<AdminPage />} />
           {/* Fallback route for unmatched paths */}
           <Route path="*" element={<NotFoundPage />} />
