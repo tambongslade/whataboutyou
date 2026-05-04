@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import TicketPurchaseModal from './TicketPurchaseModal';
 
 interface NavbarProps {
   isAuthenticated?: boolean;
@@ -12,7 +11,6 @@ interface NavbarProps {
 const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isWayDropdownOpen, setIsWayDropdownOpen] = useState(false);
   const [isMobileWayOpen, setIsMobileWayOpen] = useState(false);
 
@@ -289,16 +287,6 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
               )
             )}
 
-            <button
-              onClick={() => {
-                setIsTicketModalOpen(true);
-                setIsMobileMenuOpen(false);
-              }}
-              className="font-azonix bg-gradient-to-r from-orange-500 to-red-500 text-white mx-3 px-4 py-2 rounded-lg text-base font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-200 w-[calc(100%-1.5rem)]"
-            >
-              TICKETS
-            </button>
-
             {/* Mobile Auth */}
             <div className="pt-4 border-t border-gray-700">
               {isAuthenticated ? (
@@ -327,11 +315,6 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
         </div>
       )}
 
-      {/* Ticket Purchase Modal */}
-      <TicketPurchaseModal
-        isOpen={isTicketModalOpen}
-        onClose={() => setIsTicketModalOpen(false)}
-      />
     </nav>
   );
 };
