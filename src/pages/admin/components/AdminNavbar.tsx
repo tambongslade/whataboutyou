@@ -81,6 +81,16 @@ const AdminNavbar = ({ activeTab, setActiveTab, onLogout }: AdminNavbarProps) =>
             >
               Miss & Master
             </button>
+            <button
+              onClick={() => setActiveTab('posts')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                activeTab === 'posts'
+                  ? 'bg-orange-100 text-orange-600'
+                  : 'text-gray-600 hover:text-orange-600 hover:bg-orange-50'
+              }`}
+            >
+              📰 Posts
+            </button>
           </div>
 
           {/* User Menu */}

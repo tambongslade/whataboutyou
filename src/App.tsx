@@ -12,6 +12,7 @@ import AboutPage from './pages/AboutPage'
 import TeamPage from './pages/TeamPage'
 import HistoryPage from './pages/HistoryPage'
 import PostsPage from './pages/PostsPage'
+import PostDetailPage from './pages/PostDetailPage'
 import ContactPage from './pages/ContactPage'
 import AdminPage from './pages/admin/AdminPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -56,6 +57,7 @@ function App() {
           <Route path="/team" element={<TeamPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/posts" element={<PostsPage />} />
+          <Route path="/posts/:slug" element={<PostDetailPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin" element={<AdminPage />} />
           {/* Fallback route for unmatched paths */}

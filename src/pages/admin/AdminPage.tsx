@@ -9,6 +9,7 @@ import TicketStats from './components/TicketStats';
 import TicketsList from './components/TicketsList';
 import QRValidationInterface from './components/QRValidationInterface';
 import SurveyResponses from './components/SurveyResponses';
+import AdminPosts from './components/AdminPosts';
 import { type ConferenceRegistration } from '../../services/registrationService';
 import { type Candidate } from '../../services/candidateService';
 
@@ -231,6 +232,8 @@ const AdminPage = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'posts' && <AdminPosts />}
 
         {activeTab === 'surveys' && (
           <div>
