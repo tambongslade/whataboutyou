@@ -8,11 +8,12 @@ interface NavbarProps {
   onLogout?: () => void;
 }
 
-const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) => {
+const Navbar = ({ isAuthenticated = false, userAvatar, onLogin, onLogout }: NavbarProps) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isWayDropdownOpen, setIsWayDropdownOpen] = useState(false);
   const [isMobileWayOpen, setIsMobileWayOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -170,19 +171,41 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
             )}
 
             {isAuthenticated ? (
-              <button className="flex items-center text-gray-400 hover:text-white p-1 rounded-md transition-colors">
-                {userAvatar ? (
-                  <img className="h-8 w-8 rounded-full object-cover" src={userAvatar} alt="Profile" />
-                ) : (
-                  <div className="h-8 w-8 bg-gray-600 rounded-full flex items-center justify-center">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
+              <div className="relative">
+                <button
+                  onClick={() => setIsUserMenuOpen((open) => !open)}
+                  className="flex items-center text-gray-400 hover:text-white p-1 rounded-md transition-colors"
+                  aria-label="Menu utilisateur"
+                >
+                  {userAvatar ? (
+                    <img className="h-8 w-8 rounded-full object-cover" src={userAvatar} alt="Profile" />
+                  ) : (
+                    <div className="h-8 w-8 bg-gray-600 rounded-full flex items-center justify-center">
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                  )}
+                </button>
+                {isUserMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsUserMenuOpen(false)} />
+                    <div className="absolute top-full right-0 mt-2 w-44 bg-black/95 backdrop-blur-sm border border-gray-700 rounded-lg shadow-xl overflow-hidden z-50">
+                      <button
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          onLogout?.();
+                        }}
+                        className="font-nekst block w-full text-left px-5 py-3 text-sm tracking-widest uppercase text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+                      >
+                        Déconnexion
+                      </button>
+                    </div>
+                  </>
                 )}
-              </button>
+              </div>
             ) : (
-              <button onClick={onLogin} className="text-gray-400 hover:text-white p-2 rounded-md transition-colors">
+              <button onClick={onLogin} className="text-gray-400 hover:text-white p-2 rounded-md transition-colors" aria-label="Se connecter">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
@@ -290,21 +313,21 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin }: NavbarProps) =
             {/* Mobile Auth */}
             <div className="pt-4 border-t border-gray-700">
               {isAuthenticated ? (
-                <div className="flex items-center space-x-4 px-3 py-2">
-                  {userAvatar ? (
-                    <img className="h-8 w-8 rounded-full object-cover" src={userAvatar} alt="Profile" />
-                  ) : (
-                    <div className="h-8 w-8 bg-gray-600 rounded-full flex items-center justify-center">
-                      <svg className="h-5 w-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                    </div>
-                  )}
-                  <span className="text-gray-300 text-sm">Profile</span>
-                </div>
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onLogout?.();
+                  }}
+                  className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium transition-colors w-full text-left"
+                >
+                  Déconnexion
+                </button>
               ) : (
                 <button
-                  onClick={onLogin}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onLogin?.();
+                  }}
                   className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium transition-colors w-full text-left"
                 >
                   Se connecter

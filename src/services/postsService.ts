@@ -19,6 +19,8 @@ export interface PostAuthor {
   _id?: string;
   id?: string;
   name?: string;
+  prenom?: string;
+  nom?: string;
   email?: string;
 }
 
@@ -38,6 +40,8 @@ export interface Post {
   publishedAt?: string;
   createdAt?: string;
   updatedAt?: string;
+  likeCount?: number;
+  liked?: boolean;
 }
 
 export interface Comment {
@@ -82,7 +86,8 @@ export const resolveImageUrl = (url?: string | null): string => {
   return `${API_ORIGIN}/${url}`;
 };
 
-const getAuthToken = (): string | null => localStorage.getItem('adminToken');
+const getAuthToken = (): string | null =>
+  localStorage.getItem('adminToken') || localStorage.getItem('userToken');
 
 const buildQueryString = (q: Record<string, string | number | undefined | null>): string => {
   const parts: string[] = [];
@@ -263,6 +268,24 @@ export const postsApi = {
   // 10. DELETE /posts/comments/:commentId
   async deleteComment(commentId: string): Promise<void> {
     await request<unknown>(`/posts/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE', auth: true });
+  },
+
+  // 11. POST /posts/:idOrSlug/like — toggles a like (assumed contract)
+  async toggleLike(idOrSlug: string): Promise<{ liked: boolean; likeCount: number }> {
+    const raw = await request<unknown>(`/posts/${encodeURIComponent(idOrSlug)}/like`, {
+      method: 'POST',
+      auth: true,
+    });
+    const data = unwrap<Record<string, unknown>>(raw);
+    const liked =
+      (typeof (data as { liked?: unknown }).liked === 'boolean' && (data as { liked: boolean }).liked) ||
+      (typeof (data as { likedByMe?: unknown }).likedByMe === 'boolean' && (data as { likedByMe: boolean }).likedByMe) ||
+      false;
+    const likeCount =
+      (typeof (data as { likeCount?: unknown }).likeCount === 'number' && (data as { likeCount: number }).likeCount) ||
+      (typeof (data as { likes?: unknown }).likes === 'number' && (data as { likes: number }).likes) ||
+      0;
+    return { liked, likeCount };
   },
 };
 

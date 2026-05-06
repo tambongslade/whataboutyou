@@ -17,6 +17,17 @@ const apiClient = axios.create({
   withCredentials: false, // Explicitly set credentials policy
 });
 
+// Attach bearer token (admin first, falls back to user) to every request.
+// Public endpoints ignore it; admin-protected endpoints need it.
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('adminToken') || localStorage.getItem('userToken');
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // TypeScript Interfaces
 export interface Candidate {
   id: string; // Mapped from _id

@@ -174,7 +174,7 @@ class TicketAPI {
     // Debug: Log the data being sent to backend
     console.log('🎫 Sending ticket purchase data:', ticketData);
     
-    const response = await this.makeRequest<TicketPurchaseResponse>('/api/tickets/purchase', {
+    const response = await this.makeRequest<TicketPurchaseResponse>('/tickets/purchase', {
       method: 'POST',
       body: JSON.stringify(ticketData),
     });
@@ -214,7 +214,7 @@ class TicketAPI {
         createdAt: string;
       };
       message?: string;
-    }>(`/api/tickets/status/${txRef}`);
+    }>(`/tickets/status/${txRef}`);
 
     return response;
   }
@@ -243,7 +243,7 @@ class TicketAPI {
         qrCode?: string;
       };
       message?: string;
-    }>(`/api/tickets/verify-payment/${txRef}`, {
+    }>(`/tickets/verify-payment/${txRef}`, {
       method: 'POST',
     });
 
@@ -251,7 +251,7 @@ class TicketAPI {
   }
 
   async confirmPayment(txRef: string): Promise<TicketConfirmResponse> {
-    const response = await this.makeRequest<TicketConfirmResponse>(`/api/tickets/confirm/${txRef}`, {
+    const response = await this.makeRequest<TicketConfirmResponse>(`/tickets/confirm/${txRef}`, {
       method: 'POST',
     });
 
@@ -264,7 +264,7 @@ class TicketAPI {
 
   // Option 1: QR Code Validation (existing method)
   async validateTicket(qrCode: string, validatedBy: string, validationLocation: string): Promise<TicketValidationResponse> {
-    const response = await this.makeRequest<TicketValidationResponse>('/api/tickets/validate', {
+    const response = await this.makeRequest<TicketValidationResponse>('/tickets/validate', {
       method: 'POST',
       body: JSON.stringify({
         qrCode,
@@ -278,7 +278,7 @@ class TicketAPI {
 
   // Option 2: ID-Only Validation (new method)
   async validateTicketById(ticketNumber: string, validatedBy: string, validationLocation: string): Promise<TicketValidationResponse> {
-    const response = await this.makeRequest<TicketValidationResponse>('/api/tickets/validate', {
+    const response = await this.makeRequest<TicketValidationResponse>('/tickets/validate', {
       method: 'POST',
       body: JSON.stringify({
         ticketNumber,
@@ -293,7 +293,7 @@ class TicketAPI {
 
   // Option 3: Convenient ID Endpoint (new)
   async validateTicketByIdEndpoint(ticketNumber: string, validatedBy: string, validationLocation: string): Promise<TicketValidationResponse> {
-    const response = await this.makeRequest<TicketValidationResponse>(`/api/tickets/validate-by-id/${encodeURIComponent(ticketNumber)}`, {
+    const response = await this.makeRequest<TicketValidationResponse>(`/tickets/validate-by-id/${encodeURIComponent(ticketNumber)}`, {
       method: 'POST',
       body: JSON.stringify({
         validatedBy,
@@ -305,7 +305,7 @@ class TicketAPI {
   }
 
   async getTicketStatistics(): Promise<TicketsStatistics> {
-    const response = await this.makeRequest<TicketsStatisticsResponse>('/api/tickets/statistics');
+    const response = await this.makeRequest<TicketsStatisticsResponse>('/tickets/statistics');
     
     if (response.success) {
       return response.data;
@@ -317,7 +317,7 @@ class TicketAPI {
   async searchTicketByEmail(email: string): Promise<Ticket | null> {
     try {
       const response = await this.makeRequest<{ success: boolean; data: Ticket; found: boolean; error?: string }>(
-        `/api/tickets/search?email=${encodeURIComponent(email)}`
+        `/tickets/search?email=${encodeURIComponent(email)}`
       );
       return response.success && response.found ? response.data : null;
     } catch (error) {
@@ -329,7 +329,7 @@ class TicketAPI {
   }
 
   async healthCheck(): Promise<{ status: string; message: string }> {
-    const response = await this.makeRequest<{ status: string; message: string }>('/api/health');
+    const response = await this.makeRequest<{ status: string; message: string }>('/health');
     return response;
   }
 }

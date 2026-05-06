@@ -14,7 +14,8 @@ const formatDate = (iso?: string): string => {
 const authorName = (author?: PostAuthor | string): string => {
   if (!author) return 'Anonyme';
   if (typeof author === 'string') return author;
-  return author.name || author.email || 'Auteur';
+  const fullName = [author.prenom, author.nom].filter(Boolean).join(' ').trim();
+  return fullName || author.name || author.email || 'Auteur';
 };
 
 const PostDetailPage: React.FC = () => {
@@ -147,7 +148,7 @@ const PostDetailPage: React.FC = () => {
           </div>
         )}
 
-        <hr className="my-12 border-gray-200" />
+        <LikeBar slug={slug!} post={post} setPost={setPost} commentCount={comments.length} />
 
         <CommentsSection
           slug={slug!}
@@ -156,6 +157,82 @@ const PostDetailPage: React.FC = () => {
         />
       </article>
     </main>
+  );
+};
+
+interface LikeBarProps {
+  slug: string;
+  post: Post;
+  setPost: React.Dispatch<React.SetStateAction<Post | null>>;
+  commentCount: number;
+}
+
+const LikeBar: React.FC<LikeBarProps> = ({ slug, post, setPost, commentCount }) => {
+  const [pending, setPending] = useState(false);
+  const loggedIn = isLoggedIn();
+  const liked = !!post.liked;
+  const likeCount = typeof post.likeCount === 'number' ? post.likeCount : 0;
+
+  const toggle = async () => {
+    if (!loggedIn || pending) return;
+    setPending(true);
+    setPost((prev) =>
+      prev
+        ? { ...prev, liked: !liked, likeCount: Math.max(0, likeCount + (liked ? -1 : 1)) }
+        : prev
+    );
+    try {
+      const result = await postsApi.toggleLike(slug);
+      setPost((prev) => (prev ? { ...prev, liked: result.liked, likeCount: result.likeCount } : prev));
+    } catch (err) {
+      setPost((prev) => (prev ? { ...prev, liked, likeCount } : prev));
+      alert((err as Error).message || 'Erreur lors du like');
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return (
+    <div className="my-12 flex items-center justify-between border-y border-gray-200 py-6">
+      <button
+        onClick={toggle}
+        disabled={!loggedIn || pending}
+        title={loggedIn ? (liked ? 'Retirer le like' : 'Aimer cet article') : 'Connectez-vous pour aimer'}
+        className={`group flex items-center gap-3 transition-colors ${
+          loggedIn ? 'cursor-pointer' : 'cursor-not-allowed'
+        }`}
+      >
+        <span
+          className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+            liked
+              ? 'bg-red-600 border-red-600 text-white'
+              : 'border-gray-300 text-gray-500 group-hover:border-red-600 group-hover:text-red-600 group-hover:scale-110'
+          } ${pending ? 'animate-pulse' : ''}`}
+        >
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill={liked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+          </svg>
+        </span>
+        <span className="flex flex-col items-start leading-tight">
+          <span className="font-clash text-lg font-bold uppercase tracking-tight text-black">
+            {likeCount}
+          </span>
+          <span className="font-nekst text-xs text-gray-500 uppercase tracking-wider">
+            {likeCount <= 1 ? 'like' : 'likes'}
+          </span>
+        </span>
+      </button>
+
+      <div className="flex items-center gap-3 text-gray-500">
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <span className="font-nekst text-sm">
+          <strong className="font-clash text-black">{commentCount}</strong>{' '}
+          {commentCount <= 1 ? 'commentaire' : 'commentaires'}
+        </span>
+      </div>
+    </div>
   );
 };
 

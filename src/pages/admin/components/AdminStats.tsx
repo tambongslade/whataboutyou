@@ -1,137 +1,93 @@
 import { type ConferenceRegistration } from '../../../services/registrationService';
+import StatCard from './StatCard';
 
 interface AdminStatsProps {
   registrations?: ConferenceRegistration[];
 }
 
 const AdminStats = ({ registrations }: AdminStatsProps) => {
-  // Ensure registrations is always an array
-  const safeRegistrations = Array.isArray(registrations) ? registrations : [];
-  
-  // Calculate statistics
-  const totalRegistrations = safeRegistrations.length;
-  
-  const situationStats = {
-    rouge: safeRegistrations.filter(r => r.situation === 'rouge').length,
-    bleu: safeRegistrations.filter(r => r.situation === 'bleu').length,
-    jaune: safeRegistrations.filter(r => r.situation === 'jaune').length,
+  const safe = Array.isArray(registrations) ? registrations : [];
+  const total = safe.length;
+
+  const situation = {
+    rouge: safe.filter((r) => r.situation === 'rouge').length,
+    bleu: safe.filter((r) => r.situation === 'bleu').length,
+    jaune: safe.filter((r) => r.situation === 'jaune').length,
   };
 
-  const hasConferenceExperience = safeRegistrations.filter(r => r.aDejaParticipe === 'oui').length;
-  
-  const todayRegistrations = safeRegistrations.filter(r => {
-    const today = new Date();
-    const regDate = new Date(r.createdAt);
-    return regDate.toDateString() === today.toDateString();
+  const experienced = safe.filter((r) => r.aDejaParticipe === 'oui').length;
+
+  const today = safe.filter((r) => {
+    const t = new Date();
+    const d = new Date(r.createdAt);
+    return d.toDateString() === t.toDateString();
   }).length;
 
-  const averageAge = safeRegistrations.length > 0 
-    ? Math.round(safeRegistrations.reduce((sum, r) => sum + parseInt(r.age || '0'), 0) / safeRegistrations.length)
-    : 0;
+  const averageAge =
+    safe.length > 0
+      ? Math.round(safe.reduce((sum, r) => sum + parseInt(r.age || '0'), 0) / safe.length)
+      : 0;
 
-  const StatCard = ({ title, value, subtitle, color, icon }: {
-    title: string;
-    value: string | number;
-    subtitle?: string;
-    color: string;
-    icon: React.ReactNode;
-  }) => (
-    <div className="bg-white rounded-xl shadow-md p-6 border-l-4" style={{ borderLeftColor: color }}>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
-          {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
-        </div>
-        <div className="text-3xl" style={{ color }}>
-          {icon}
-        </div>
-      </div>
-    </div>
-  );
+  const situationRows = [
+    { key: 'rouge', label: 'Rouge', sub: 'Étudiants · Chercheurs', count: situation.rouge, dot: 'bg-red-500' },
+    { key: 'bleu', label: 'Bleu', sub: 'Collégiens · Lycéens', count: situation.bleu, dot: 'bg-blue-500' },
+    { key: 'jaune', label: 'Jaune', sub: 'Travailleurs · Entrepreneurs', count: situation.jaune, dot: 'bg-yellow-400' },
+  ];
+
+  const max = Math.max(...situationRows.map((r) => r.count), 1);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <StatCard
-        title="Total Inscriptions"
-        value={totalRegistrations}
-        subtitle="Toutes catégories"
-        color="#f59e0b"
-        icon="👥"
-      />
-      
-      <StatCard
-        title="Aujourd'hui"
-        value={todayRegistrations}
-        subtitle="Nouvelles inscriptions"
-        color="#10b981"
-        icon="📈"
-      />
-      
-      <StatCard
-        title="Âge Moyen"
-        value={`${averageAge} ans`}
-        subtitle="Participants"
-        color="#3b82f6"
-        icon="🎂"
-      />
-      
-      <StatCard
-        title="Expérience Conférence"
-        value={hasConferenceExperience}
-        subtitle={`sur ${totalRegistrations} participants`}
-        color="#8b5cf6"
-        icon="🎯"
-      />
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-black/10">
+        <StatCard index="01" label="Total Inscriptions" value={total} hint="Toutes catégories" accent="red" />
+        <StatCard index="02" label="Aujourd'hui" value={today} hint="Nouvelles 24 h" accent="yellow" trend={today > 0 ? 'up' : 'flat'} />
+        <StatCard index="03" label="Âge Moyen" value={`${averageAge} ans`} hint="Participants" accent="black" />
+        <StatCard index="04" label="Expérience Conférence" value={experienced} hint={`Sur ${total} inscrits`} accent="red" />
+      </div>
 
-      {/* Situation Distribution */}
-      <div className="md:col-span-2 lg:col-span-4 bg-white rounded-xl shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Répartition par Situation
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">🔴</span>
-              <div>
-                <p className="font-medium text-red-800">ROUGE</p>
-                <p className="text-sm text-red-600">Étudiants, Chercheurs</p>
-              </div>
-            </div>
-            <div className="text-2xl font-bold text-red-800">
-              {situationStats.rouge}
-            </div>
+      <div className="bg-white border border-black/10 p-6 lg:p-8">
+        <div className="flex items-baseline justify-between mb-6">
+          <div>
+            <div className="font-mono text-[10px] tracking-[0.3em] text-gray-400 mb-1">05 / SEGMENT</div>
+            <h3 className="font-azonix text-2xl text-black leading-none">Répartition</h3>
           </div>
+          <div className="font-nekst text-[10px] tracking-[0.4em] uppercase text-gray-400">
+            Par situation
+          </div>
+        </div>
 
-          <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">🔵</span>
-              <div>
-                <p className="font-medium text-blue-800">BLEU</p>
-                <p className="text-sm text-blue-600">Collégiens, Lycéens</p>
+        <div className="space-y-5">
+          {situationRows.map((row) => {
+            const pct = max > 0 ? (row.count / max) * 100 : 0;
+            return (
+              <div key={row.key}>
+                <div className="flex items-baseline justify-between mb-2 gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className={`w-2 h-2 ${row.dot} flex-shrink-0`} />
+                    <span className="font-nekst text-xs tracking-[0.3em] uppercase text-black truncate">
+                      {row.label}
+                    </span>
+                    <span className="font-nekst text-[10px] tracking-widest uppercase text-gray-400 truncate">
+                      · {row.sub}
+                    </span>
+                  </div>
+                  <span className="font-azonix text-2xl text-black tracking-tight">
+                    {row.count}
+                  </span>
+                </div>
+                <div className="h-1 bg-gray-100 relative overflow-hidden">
+                  <div
+                    className={`absolute top-0 left-0 bottom-0 ${row.dot} transition-all duration-700 ease-out`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="text-2xl font-bold text-blue-800">
-              {situationStats.bleu}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">🟡</span>
-              <div>
-                <p className="font-medium text-yellow-800">JAUNE</p>
-                <p className="text-sm text-yellow-600">Travailleurs, Entrepreneurs</p>
-              </div>
-            </div>
-            <div className="text-2xl font-bold text-yellow-800">
-              {situationStats.jaune}
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 };
 
-export default AdminStats; 
+export default AdminStats;
