@@ -23,8 +23,9 @@ const navItems: NavItem[] = [
 ];
 
 const grouped: Record<string, NavItem[]> = navItems.reduce<Record<string, NavItem[]>>((acc, item) => {
-  acc[item.group] = acc[item.group] || [];
-  acc[item.group].push(item);
+  const list = acc[item.group] ?? [];
+  list.push(item);
+  acc[item.group] = list;
   return acc;
 }, {});
 
