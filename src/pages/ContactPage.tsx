@@ -84,7 +84,16 @@ const ContactPage: React.FC = () => {
                       <p className="text-sm text-gray-400 leading-relaxed">
                         +237 6 91 94 58 95<br />
                         +237 6 55 64 38 59<br />
-                        +237 6 73 03 52 57
+                        +237 6 73 03 52 57<br />
+                        <a
+                          href="https://wa.me/237658219638"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          +237 6 58 21 96 38
+                        </a>
+                        <span className="text-xs text-gray-500"> · Stands</span>
                       </p>
                     </div>
                   </div>

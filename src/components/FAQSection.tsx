@@ -12,30 +12,24 @@ const FAQSection: React.FC = () => {
   const faqItems: FAQItem[] = [
     {
       id: 1,
-      question: 'Comment acheter mes tickets ?',
-      answer:
-        "Vous pouvez acheter vos tickets directement sur notre boutique en ligne ou sur place au Palais de Congrès à Yaoundé. Plusieurs moyens de paiement sont disponibles : Mobile Money (MTN, Orange), carte bancaire et espèces.",
-    },
-    {
-      id: 2,
       question: 'Quel âge pour participer ?',
       answer:
         "What About You est ouvert à tous les âges. Cependant, l'événement est principalement conçu pour les jeunes entrepreneurs, étudiants et professionnels âgés de 15 à 40 ans.",
     },
     {
-      id: 3,
+      id: 2,
       question: 'Y a-t-il un programme pour les entrepreneurs ?',
       answer:
         "Oui ! WAY propose des conférences, ateliers pratiques, sessions de mentorat et des espaces de networking dédiés aux entrepreneurs. Vous pourrez également exposer vos produits et services sur nos stands.",
     },
     {
-      id: 4,
+      id: 3,
       question: 'Quels moyens de paiement sont acceptés ?',
       answer:
         "Nous acceptons les paiements par Mobile Money (MTN Mobile Money, Orange Money), les cartes bancaires (Visa, Mastercard), ainsi que les paiements en espèces sur place.",
     },
     {
-      id: 5,
+      id: 4,
       question: 'Comment puis-je obtenir plus d\'informations ?',
       answer:
         "Contactez-nous par téléphone au +237 6 91 94 58 95, +237 6 55 64 38 59 ou +237 6 73 03 52 57. Par email : whatabout.officiel@gmail.com. Suivez-nous sur nos réseaux sociaux pour les dernières actualités.",

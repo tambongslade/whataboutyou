@@ -3,6 +3,19 @@ import axios from 'axios';
 // API base URL - uses environment variable or defaults to production
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.whataboutyou.net/api';
 
+// Attach bearer token (admin first, falls back to user) on every request.
+// Module-level interceptor on the default axios instance — applies to every call below.
+axios.interceptors.request.use((config) => {
+  if (typeof config.url === 'string' && config.url.startsWith(API_BASE_URL)) {
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('userToken');
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
 // Survey categories type
 export type SurveyCategory =
   | 'Exposant'
