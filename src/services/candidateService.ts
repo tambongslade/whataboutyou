@@ -2,6 +2,18 @@ import axios from 'axios';
 
 // API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.whataboutyou.net/api';
+// Origin without the /api suffix — candidate.image comes back as a bare path
+// (e.g. /uploads/candidates/2026/ngo-ngomin.png) that must be served from the origin, not /api.
+const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
+
+// Prefix a candidate's image path with the API origin. Leaves absolute URLs
+// and local /public paths (legacy fallback candidates) untouched.
+export const getImageUrl = (image?: string): string => {
+  if (!image) return '';
+  if (image.startsWith('http://') || image.startsWith('https://')) return image;
+  if (image.startsWith('/uploads')) return `${API_ORIGIN}${image}`;
+  return image;
+};
 
 // Debug: Log the API base URL being used
 console.log('🔗 API Base URL:', API_BASE_URL);
@@ -69,7 +81,8 @@ export interface CreateVoteRequest {
 export interface VoteResponse {
   success: boolean;
   data?: {
-    paymentLink: string;
+    paymentInstructions: string;
+    soleasOrderId: string;
     txRef: string;
   };
   error?: string;
@@ -124,7 +137,8 @@ export const handleApiError = (error: any): string => {
 
     switch (status) {
       case 400:
-        return `Erreur de validation: ${data.error || data.message}`;
+        // ValidationPipe errors come as { message: string[] }, not the { success, error } envelope
+        return `Erreur de validation: ${data.error || (Array.isArray(data.message) ? data.message.join(', ') : data.message)}`;
       case 404:
         return "Ressource non trouvée";
       case 429:
@@ -241,22 +255,6 @@ export const candidateService = {
     }
   },
 
-  // Manually verify vote payment (new endpoint for modal flow)
-  async verifyVotePayment(txRef: string): Promise<ApiResponse<{
-    verified: boolean;
-    paymentStatus: 'confirmed' | 'failed';
-    message: string;
-    points?: number;
-  }>> {
-    try {
-      const response = await apiClient.post(`/candidates/votes/${txRef}/verify-payment`);
-      return response.data;
-    } catch (error) {
-      console.error('Error verifying vote payment:', error);
-      throw error;
-    }
-  },
-
   // Verify payment
   async verifyPayment(txRef: string): Promise<PaymentResult> {
     try {
@@ -268,8 +266,8 @@ export const candidateService = {
     }
   },
 
-  // Confirm vote after successful payment
-  async confirmVote(txRef: string): Promise<ApiResponse<{ points: number }>> {
+  // Confirm vote after successful payment (manual "I paid" button)
+  async confirmVote(txRef: string): Promise<ApiResponse<{ points?: number; votes?: number; message?: string }>> {
     try {
       const response = await apiClient.post(`/candidates/votes/${txRef}/confirm`);
       return response.data;
@@ -323,7 +321,7 @@ export const votingService = {
         throw new Error(voteResponse.error);
       }
 
-      const { paymentLink, txRef } = voteResponse.data!;
+      const { paymentInstructions, txRef } = voteResponse.data!;
 
       // Step 2: Store transaction reference for later verification
       localStorage.setItem('pendingVote', JSON.stringify({
@@ -335,10 +333,10 @@ export const votingService = {
         voterInfo
       }));
 
-      // Step 3: Return payment info for modal handling (no redirect)
-      console.log('🗳️ Payment link generated:', paymentLink);
+      // Step 3: Return payment instructions for modal handling (no redirect)
+      console.log('🗳️ Payment instructions:', paymentInstructions);
 
-      return { success: true, txRef, paymentLink };
+      return { success: true, txRef, paymentInstructions };
     } catch (error) {
       console.error('Vote submission failed:', error);
       return { success: false, error: handleApiError(error) };
@@ -412,24 +410,24 @@ export const votingService = {
     };
   },
 
-  // Enhanced manual verification for modal flow
+  // Enhanced manual verification for modal flow ("I paid" button)
   async handleManualVerification(txRef: string): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const result = await candidateService.verifyVotePayment(txRef);
-      
-      if (result.success && result.data && result.data.verified) {
+      const result = await candidateService.confirmVote(txRef);
+
+      if (result.success) {
         return { success: true, data: result.data };
       } else {
-        return { 
-          success: false, 
-          error: result.data?.message || 'Vérification échouée. Le paiement sera vérifié automatiquement par notre système.' 
+        return {
+          success: false,
+          error: result.error || 'Vérification échouée. Le paiement sera vérifié automatiquement par notre système.'
         };
       }
     } catch (error) {
       console.error('Manual verification failed:', error);
-      return { 
-        success: false, 
-        error: 'Erreur de vérification. Notre système automatique continuera à vérifier le paiement.' 
+      return {
+        success: false,
+        error: 'Erreur de vérification. Notre système automatique continuera à vérifier le paiement.'
       };
     }
   },

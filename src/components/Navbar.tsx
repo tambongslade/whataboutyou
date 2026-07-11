@@ -19,6 +19,7 @@ const Navbar = ({ isAuthenticated = false, userAvatar, onLogin, onLogout }: Navb
 
   const navLinks: { to: string; label: string; comingSoon?: boolean }[] = [
     { to: '/', label: 'ACCUEIL' },
+    { to: '/miss-and-master', label: 'MISS & MASTER' },
     { to: '/boutique', label: 'BOUTIQUE' },
     { to: '/posts', label: 'POSTS' },
     { to: '/contact', label: 'CONTACT' },

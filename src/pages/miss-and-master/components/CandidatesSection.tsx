@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { candidateService, handleApiError, type Candidate } from '../../../services/candidateService';
+import { candidateService, getImageUrl, handleApiError, type Candidate } from '../../../services/candidateService';
 import VotingModal from '../../../components/VotingModal';
 
 const CandidatesSection = () => {
@@ -456,7 +456,7 @@ const CandidatesSection = () => {
                 {/* Image Container */}
                 <div className="relative overflow-hidden">
               <img
-                src={candidate.image}
+                src={getImageUrl(candidate.image)}
                 alt={candidate.name}
                     className="w-full h-80 object-cover object-top group-hover:scale-110 transition-transform duration-500"
                   />

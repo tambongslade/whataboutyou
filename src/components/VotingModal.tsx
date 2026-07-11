@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { votingService, candidateService, handleApiError, type Candidate } from '../services/candidateService';
+import { votingService, candidateService, getImageUrl, handleApiError, type Candidate } from '../services/candidateService';
 
 interface VotingModalProps {
   candidate: Candidate;
@@ -24,7 +24,7 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
   // Modal flow states
   const [step, setStep] = useState<ModalStep>('payment');
   const [txRef, setTxRef] = useState('');
-  const [, setPaymentInstructions] = useState('');
+  const [paymentInstructions, setPaymentInstructions] = useState('');
   const [votesEarned, setVotesEarned] = useState(0);
   const [pollCleanup, setPollCleanup] = useState<(() => void) | null>(null);
 
@@ -155,7 +155,7 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
 
       if (result.success && result.data) {
         setTxRef(result.data.txRef || '');
-        setPaymentInstructions(result.data.paymentLink || `Paiement initié. Référence: ${result.data.txRef}`);
+        setPaymentInstructions(result.data.paymentInstructions || `Paiement initié. Référence: ${result.data.txRef}`);
         setStep('polling');
         startPolling(result.data.txRef || '');
       } else {
@@ -279,7 +279,7 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
             <div className="lg:w-1/2 p-8">
               <div className="relative">
                 <img
-                  src={candidate.image}
+                  src={getImageUrl(candidate.image)}
                   alt={candidate.name}
                   className="w-full h-80 object-cover rounded-2xl shadow-xl"
                 />
@@ -456,7 +456,13 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
             <p className="text-sm text-blue-700 mb-2">Montant: {amount.toLocaleString()} FCFA</p>
             <p className="text-sm text-blue-700">Votes à donner: {votes}</p>
           </div>
-          
+
+          {paymentInstructions && (
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-purple-800 font-semibold">{paymentInstructions}</p>
+            </div>
+          )}
+
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
             <h4 className="font-semibold text-yellow-800 mb-2">💡 Que se passe-t-il?</h4>
             <p className="text-sm text-yellow-700 mb-2">
