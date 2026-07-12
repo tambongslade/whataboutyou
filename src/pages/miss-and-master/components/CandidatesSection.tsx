@@ -1,556 +1,386 @@
-import { useState, useEffect } from 'react';
-import { candidateService, handleApiError, type Candidate } from '../../../services/candidateService';
+import { useMemo, useState } from 'react';
+import { getImageUrl, type Candidate } from '../../../services/candidateService';
 import VotingModal from '../../../components/VotingModal';
 
-const CandidatesSection = () => {
+interface CandidatesSectionProps {
+  missCandidates: Candidate[];
+  masterCandidates: Candidate[];
+  loading: boolean;
+  usingFallback: boolean;
+  onRetry: () => void;
+  onVoteComplete: () => void;
+}
+
+type Category = 'miss' | 'master';
+
+const formatRank = (ranking: number) => `Nº ${String(ranking).padStart(2, '0')}`;
+
+/* The signature: a satin sash laid diagonally across the photo, carrying the rank.
+   Gold for the podium, ivory for the rest of the field. */
+const Sash = ({ candidate, podium }: { candidate: Candidate; podium: boolean }) => (
+  <div
+    aria-hidden="true"
+    className="absolute -left-1/4 bottom-[12%] w-[150%] rotate-[-12deg] pointer-events-none"
+  >
+    <div
+      className={`py-1.5 shadow-lg ${
+        podium
+          ? 'bg-gradient-to-r from-[#C89B3C] via-[#EDD189] to-[#C89B3C]'
+          : 'bg-gradient-to-r from-[#E9E2D4] via-[#FBF7EE] to-[#E9E2D4]'
+      }`}
+    >
+      <p className="font-azonix text-center text-[10px] sm:text-xs tracking-[0.3em] text-[#140D18]">
+        {formatRank(candidate.ranking)} · {candidate.sash || 'WAY 2026'}
+      </p>
+    </div>
+  </div>
+);
+
+const CrownIcon = ({ className }: { className?: string }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M5 16L3 8l5.5 2L12 4l3.5 6L21 8l-2 8H5zm2.7-2h8.6l.9-4.4-2.6 1-2-3.4-2 3.4-2.6-1L7.7 14z" />
+  </svg>
+);
+
+const CandidateCard = ({
+  candidate,
+  podium = false,
+  onVote,
+  className = '',
+  style
+}: {
+  candidate: Candidate;
+  podium?: boolean;
+  onVote: (candidate: Candidate) => void;
+  className?: string;
+  style?: React.CSSProperties;
+}) => (
+  <article
+    style={style}
+    className={`group relative bg-[#201626] rounded-2xl overflow-hidden border transition-all duration-300 ${
+      podium && candidate.ranking === 1
+        ? 'border-[#E8C15C]/60 shadow-[0_0_40px_-10px_rgba(232,193,92,0.35)]'
+        : 'border-white/5 hover:border-[#E8C15C]/40'
+    } ${className}`}
+  >
+    <div className="relative aspect-[3/4] overflow-hidden">
+      <img
+        src={getImageUrl(candidate.image)}
+        alt={candidate.name.trim()}
+        loading="lazy"
+        className="w-full h-full object-cover object-top transition-transform duration-500 motion-safe:group-hover:scale-105"
+      />
+      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#201626]/90 to-transparent" />
+
+      {podium && (
+        <div className="absolute top-3 left-3 flex items-center gap-2">
+          <span className="w-11 h-11 rounded-full border border-[#E8C15C]/60 bg-[#140D18]/80 backdrop-blur-sm flex items-center justify-center font-azonix text-[#E8C15C] text-sm">
+            {String(candidate.ranking).padStart(2, '0')}
+          </span>
+          {candidate.ranking === 1 && <CrownIcon className="w-6 h-6 text-[#E8C15C]" />}
+        </div>
+      )}
+
+      <Sash candidate={candidate} podium={podium} />
+    </div>
+
+    <div className={podium ? 'p-5' : 'p-4'}>
+      <h3
+        className={`font-clash font-semibold text-[#F5EFE4] leading-snug line-clamp-2 ${
+          podium ? 'text-lg' : 'text-sm sm:text-base'
+        }`}
+      >
+        {candidate.name.trim()}
+      </h3>
+
+      <div className="flex items-baseline gap-1.5 mt-2 mb-4">
+        <span className={`font-azonix text-[#E8C15C] ${podium ? 'text-2xl' : 'text-lg'}`}>
+          {(candidate.votes || 0).toLocaleString('fr-FR')}
+        </span>
+        <span className="font-nekst font-light text-[#A79BB3] text-xs tracking-widest uppercase">
+          votes
+        </span>
+      </div>
+
+      <button
+        onClick={() => onVote(candidate)}
+        disabled={!candidate.isActive}
+        className={`w-full font-clash font-semibold rounded-full transition-colors ${
+          podium ? 'py-3.5 text-base' : 'py-2.5 text-sm'
+        } ${
+          candidate.isActive
+            ? 'bg-[#E8C15C] hover:bg-[#F2D27D] text-[#140D18]'
+            : 'bg-white/10 text-white/40 cursor-not-allowed'
+        }`}
+      >
+        {candidate.isActive ? 'Voter' : 'Votes clos'}
+      </button>
+    </div>
+  </article>
+);
+
+const SkeletonCard = ({ tall = false }: { tall?: boolean }) => (
+  <div className="bg-[#201626] rounded-2xl overflow-hidden border border-white/5 animate-pulse">
+    <div className={`bg-white/5 ${tall ? 'aspect-[3/4]' : 'aspect-[3/4]'}`} />
+    <div className="p-4 space-y-3">
+      <div className="h-4 bg-white/10 rounded w-3/4" />
+      <div className="h-4 bg-white/10 rounded w-1/3" />
+      <div className="h-9 bg-white/10 rounded-full" />
+    </div>
+  </div>
+);
+
+const SectionHeading = ({ eyebrow, title, live = false }: { eyebrow: string; title: string; live?: boolean }) => (
+  <div className="mb-10">
+    <p className="font-azonix text-[#E8C15C] text-xs tracking-[0.35em] mb-3 flex items-center gap-3">
+      {live && (
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E8C15C] opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E8C15C]" />
+        </span>
+      )}
+      {eyebrow}
+    </p>
+    <h2 className="font-clash font-bold text-[#F5EFE4] text-3xl sm:text-4xl">{title}</h2>
+    {/* Slanted rule — same angle as the sash */}
+    <div aria-hidden="true" className="mt-4 h-[3px] w-20 rotate-[-4deg] bg-gradient-to-r from-[#C89B3C] to-[#EDD189]" />
+  </div>
+);
+
+const CandidatesSection = ({
+  missCandidates,
+  masterCandidates,
+  loading,
+  usingFallback,
+  onRetry,
+  onVoteComplete
+}: CandidatesSectionProps) => {
+  const [category, setCategory] = useState<Category>('miss');
+  const [query, setQuery] = useState('');
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
-  // Voting modal state
-  const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
 
-  // Load candidates from API
-  useEffect(() => {
-    loadCandidates();
-  }, []);
+  const activeList = category === 'miss' ? missCandidates : masterCandidates;
 
-  const loadCandidates = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await candidateService.getMissCandidates();
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return activeList;
+    return activeList.filter((candidate) => candidate.name.toLowerCase().includes(q));
+  }, [activeList, query]);
 
-      if (response.success && response.data) {
-        console.log('🗳️ Raw API candidates data:', response.data);
+  const searching = query.trim().length > 0;
+  const podium = searching ? [] : filtered.slice(0, 3);
+  const field = searching ? filtered : filtered.slice(3);
 
-        // Transform API data to match our interface (map _id to id)
-        const transformedCandidates = response.data.map((candidate: any) => ({
-          ...candidate,
-          id: candidate._id, // Use MongoDB _id as the ID
-          votes: candidate.votes || Math.floor((candidate.points || 0) / 1) || 0, // Use votes directly (1 point = 1 vote)
-        }));
-
-        console.log('🗳️ Transformed candidates:', transformedCandidates);
-        console.log('🗳️ First candidate structure:', transformedCandidates[0]);
-        console.log('🗳️ First candidate ID fields:', {
-          id: transformedCandidates[0]?.id,
-          _id: transformedCandidates[0]?._id
-        });
-
-        // Sort by votes (highest first)
-        const sortedCandidates = transformedCandidates
-          .sort((a, b) => {
-            const aVotes = a.votes || 0;
-            const bVotes = b.votes || 0;
-            return bVotes - aVotes; // Higher votes first
-          })
-          .map((candidate, index) => ({
-            ...candidate,
-            ranking: index + 1 // Dynamic ranking based on votes
-          }));
-
-        console.log('🗳️ Final sorted candidates with rankings:', sortedCandidates);
-        setCandidates(sortedCandidates);
-      } else {
-        setError(response.error || 'Erreur lors du chargement des candidates');
-      }
-    } catch (err) {
-      setError(handleApiError(err));
-      console.error('Failed to load candidates:', err);
-    } finally {
-      setLoading(false);
-    }
+  // Desktop podium order: 2nd — 1st (lifted) — 3rd
+  const podiumLayout: Record<number, string> = {
+    1: 'lg:order-2 lg:-translate-y-8',
+    2: 'lg:order-1',
+    3: 'lg:order-3'
   };
 
-  const handleVoteClick = (candidate: Candidate) => {
-    setSelectedCandidate(candidate);
-    setIsVotingModalOpen(true);
-  };
-
-  const handleVotingModalClose = () => {
-    setIsVotingModalOpen(false);
-    setSelectedCandidate(null);
-  };
-
-  const handleVoteComplete = () => {
-    // Refresh candidates to show updated data
-    loadCandidates();
-  };
-
-  // Mock data as fallback (in case API is not available)
-  const fallbackCandidates: Candidate[] = [
-    {
-      id: '1',
-      name: "EDIDIGUE SOPHIE NATACHA",
-      category: 'miss',
-      ranking: 1,
-      votes: 251,
-      image: "/miss2025/c1.webp",
-      sash: "MISS WAY 2026",
-      age: 22,
-      city: "Douala",
-      profession: "Étudiante en Commerce International",
-      hobbies: ["Danse", "Photographie", "Voyage", "Lecture"],
-      description: "Passionnée par l'art et la culture, Sophie rêve de représenter le Cameroun sur la scène internationale. Elle s'engage activement dans des projets communautaires pour l'éducation des jeunes filles.",
-      socialMedia: {
-        instagram: "@sophie_natacha",
-        facebook: "Sophie Natacha Edidigue",
-        tiktok: "@sophienatacha"
-      },
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-
-    },
-    {
-      id: '2',
-      name: "MARTHE YVANA",
-      category: 'miss',
-      ranking: 2,
-      votes: 245,
-      image: "/miss2025/c2.webp",
-      sash: "MISS WAY 2026",
-      age: 21,
-      city: "Yaoundé",
-      profession: "Étudiante en Marketing Digital",
-      hobbies: ["Mode", "Cuisine", "Fitness", "Musique"],
-      description: "Créative et ambitieuse, Marthe aspire à utiliser sa plateforme pour promouvoir l'entrepreneuriat féminin au Cameroun.",
-      socialMedia: {
-        instagram: "@marthe_yvana",
-        facebook: "Marthe Yvana",
-        tiktok: "@martheyvana",
-      },
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z',
-    },
-    {
-      id: '3',
-      name: "MENYE ABOUNA ORNELLA",
-      category: 'miss',
-      ranking: 3,
-      votes: 184,
-      image: "/miss2025/c3.webp",
-      sash: "MISS WAY 2026",
-      age: 23,
-      city: "Bafoussam",
-      profession: "Infirmière",
-      hobbies: ["Bénévolat", "Lecture", "Natation", "Jardinage"],
-      description: "Dévouée au service de la communauté, Ornella souhaite sensibiliser sur l'importance de la santé préventive.",
-      socialMedia: {
-        instagram: "@ornella_menye",
-        facebook: "Ornella Menye Abouna",
-        tiktok: "@ornellamenye",
-
-      },
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '4',
-      name: "MBASSEGUE MADELEINE IVANA",
-      category: 'miss',
-      ranking: 4,
-      votes: 167,
-      image: "/miss2025/c4.webp",
-      sash: "MISS WAY 2026",
-      age: 20,
-      city: "Douala",
-      profession: "Étudiante en Droit",
-      hobbies: ["Débat", "Écriture", "Théâtre", "Peinture"],
-      description: "Future avocate passionnée par la justice sociale, Madeleine veut défendre les droits des femmes et des enfants.",
-      socialMedia: {
-        instagram: "@madeleine_ivana",
-        facebook: "Madeleine Ivana Mbassegue",
-        tiktok: "@madeleineivana"
-      },
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '5',
-      name: "MBARGA CHANTAL ASTRID",
-      category: 'miss',
-      ranking: 5,
-      votes: 145,
-      image: "/miss2025/c5.webp",
-      sash: "MISS WAY 2026",
-      age: 24,
-      city: "Yaoundé",
-      profession: "Architecte",
-      hobbies: ["Design", "Voyage", "Photographie", "Yoga"],
-      description: "Architecte créative, Chantal rêve de concevoir des espaces durables et accessibles pour tous.",
-      socialMedia: {
-        instagram: "@chantal_astrid",
-        facebook: "Chantal Astrid Mbarga",
-        tiktok: "@chantalastrid",
-
-      },
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '6',
-      name: "BAKOTTO ÉMILIE CAROLE",
-      category: 'miss',
-      ranking: 6,
-      votes: 132,
-      image: "/miss2025/c6.webp",
-      sash: "MISS WAY 2026",
-      age: 22,
-      city: "Bamenda",
-      profession: "Journaliste",
-      hobbies: ["Écriture", "Investigation", "Podcast", "Cinéma"],
-      description: "Journaliste engagée, Émilie veut donner une voix aux sans-voix et promouvoir la transparence.",
-      socialMedia: {
-        instagram: "@emilie_carole",
-        facebook: "Émilie Carole Bakotto",
-        tiktok: "@emiliecarole",
-
-      },
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '7',
-      name: "LOVELY MENDJA",
-      category: 'miss',
-      ranking: 7,
-      votes: 128,
-      image: "/miss2025/c7.webp",
-      sash: "MISS WAY 2026",
-      age: 21,
-      city: "Douala",
-      profession: "Étudiante en Médecine",
-      hobbies: ["Recherche", "Musique", "Danse", "Bénévolat"],
-      description: "Future médecin, Lovely s'engage pour améliorer l'accès aux soins de santé dans les zones rurales.",
-      socialMedia: {
-        instagram: "@lovely_mendja",
-        facebook: "Lovely Mendja",
-        tiktok: "@lovelymendja",
-
-      },
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '8',
-      name: "Sa'a Dongmo Emira Princesse",
-      category: 'miss',
-      ranking: 8,
-      votes: 118,
-      image: "/miss2025/c8.webp",
-      sash: "MISS WAY 2026",
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '9',
-      name: "MENDO Israel",
-      category: 'miss',
-      ranking: 9,
-      votes: 112,
-      image: "/miss2025/c9.webp",
-      sash: "MISS WAY 2026",
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '10',
-      name: "Metagne Aristide flaure ",
-      category: 'miss',
-      ranking: 10,
-      votes: 105,
-      image: "/miss2025/c10.webp",
-      sash: "MISS WAY 2026",
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '11',
-      name: "Bidjang Armand Danièle",
-      category: 'miss',
-      ranking: 11,
-      votes: 98,
-      image: "/miss2025/c11.webp",
-      sash: "MISS WAY 2026",
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '12',
-      name: "Djiani Lesly",
-      category: 'miss',
-      ranking: 12,
-      votes: 92,
-      image: "/miss2025/c12.webp",
-      sash: "MISS WAY 2026",
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '13',
-      name: "manguelle  Kimberly ",
-      category: 'miss',
-      ranking: 13,
-      votes: 87,
-      image: "/miss2025/c13.webp",
-      sash: "MISS WAY 2026",
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '14',
-      name: "NGWE  EZ'IA  REINE ",
-      category: 'miss',
-      ranking: 14,
-      votes: 82,
-      image: "/miss2025/c14.webp",
-      sash: "MISS WAY 2026",
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    },
-    {
-      id: '15',
-      name: "Baloueck  Princess Géraldine ",
-      category: 'miss',
-      ranking: 15,
-      votes: 76,
-      image: "/miss2025/c15.webp",
-      sash: "MISS WAY 2026",
-      isActive: true,
-      createdAt: '2025-01-19T20:00:00Z',
-      updatedAt: '2025-01-19T21:30:00Z'
-    }
-  ];
-
-  // Use fallback data if API fails, apply same sorting logic
-  const displayCandidates = candidates.length > 0 ? candidates : 
-    fallbackCandidates
-      .sort((a, b) => {
-        const aVotes = a.votes || 0;
-        const bVotes = b.votes || 0;
-        return bVotes - aVotes; // Higher votes first
-      })
-      .map((candidate, index) => ({
-        ...candidate,
-        ranking: index + 1 // Dynamic ranking based on votes
-      }));
-
-  if (loading) {
-    return (
-      <section className="py-20 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 min-h-screen">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mb-4"></div>
-            <h2 className="text-2xl font-bold text-gray-700">Chargement des candidates...</h2>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="py-20 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 min-h-screen">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl mb-4 max-w-md mx-auto">
-              <h2 className="text-xl font-bold mb-2">Erreur de chargement</h2>
-              <p className="mb-4">{error}</p>
-              <button
-                onClick={loadCandidates}
-                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors"
-              >
-                Réessayer
-              </button>
-            </div>
-            {fallbackCandidates.length > 0 && (
-              <p className="text-gray-600">Affichage des données de démonstration...</p>
-            )}
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const handleVote = (candidate: Candidate) => setSelectedCandidate(candidate);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 min-h-screen">
-      <div className="container mx-auto px-4">
-        {/* Enhanced Section Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-white/70 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg mb-6">
-            <svg className="w-6 h-6 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    <section id="candidates-section" className="relative bg-[#140D18] scroll-mt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
+        <SectionHeading eyebrow="Classement en direct" title="Le podium" live />
+      </div>
+
+      {/* Toolbar: category, search */}
+      <div className="sticky top-16 z-30 bg-[#140D18]/90 backdrop-blur-md border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div className="flex items-center gap-1" role="tablist" aria-label="Catégorie">
+            {(['miss', 'master'] as const).map((tab) => (
+              <button
+                key={tab}
+                role="tab"
+                aria-selected={category === tab}
+                onClick={() => setCategory(tab)}
+                className={`font-nekst uppercase tracking-widest text-sm px-4 py-2 border-b-2 transition-colors ${
+                  category === tab
+                    ? 'text-[#E8C15C] border-[#E8C15C]'
+                    : 'text-[#A79BB3] border-transparent hover:text-[#F5EFE4]'
+                }`}
+              >
+                {tab === 'miss' ? `Miss · ${missCandidates.length}` : `Master · ${masterCandidates.length}`}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative flex-1 min-w-[220px] max-w-sm ml-auto">
+            <svg
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <span className="font-bold text-gray-800">MISS WHAT ABOUT YOU 2025</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Rechercher une candidate…"
+              aria-label="Rechercher une candidate"
+              className="w-full bg-white/5 border border-white/10 rounded-full pl-11 pr-4 py-2.5 font-nekst font-light text-sm text-[#F5EFE4] placeholder:text-white/40 focus:border-[#E8C15C]/60 focus:outline-none transition-colors"
+            />
           </div>
-          
-          <h2 className="text-4xl lg:text-6xl font-black mb-6">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600">
-              NOS CANDIDATES
-            </span>
-          </h2>
-          
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Découvrez les 15 magnifiques candidates en compétition pour le titre de Miss What About You 2025. 
-            Votez pour votre favorite et aidez-la à remporter la couronne !
-          </p>
-
-          {/* Voting Info */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 max-w-4xl mx-auto shadow-xl border border-white/50">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div className="text-center">
-                <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                  </div>
-                <h3 className="font-bold text-gray-800 mb-2">100 FCFA = 1 VOTE</h3>
-                <p className="text-gray-600 text-sm">Minimum 100 FCFA pour voter</p>
-                </div>
-
-              <div className="text-center">
-                <div className="bg-gradient-to-r from-purple-500 to-indigo-600 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                <h3 className="font-bold text-gray-800 mb-2">PAIEMENT MOBILE</h3>
-                <p className="text-gray-600 text-sm">MTN Mobile Money & Orange Money</p>
-                </div>
-
-              <div className="text-center">
-                <div className="bg-gradient-to-r from-indigo-500 to-blue-600 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <h3 className="font-bold text-gray-800 mb-2">INSTANTANÉ</h3>
-                <p className="text-gray-600 text-sm">Votes confirmés automatiquement</p>
-              </div>
-            </div>
-        </div>
-            </div>
-
-        {/* Candidates Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {displayCandidates.map((candidate) => (
-            <div key={candidate.id} className="group relative">
-              {/* Enhanced Card */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/50">
-                {/* Image Container */}
-                <div className="relative overflow-hidden">
-              <img
-                src={candidate.image}
-                alt={candidate.name}
-                    className="w-full h-80 object-cover object-top group-hover:scale-110 transition-transform duration-500"
-                  />
-                  
-                  {/* Ranking Badge */}
-                  <div className="absolute top-4 left-4">
-                    <div className={`${candidate.ranking <= 3 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' : 'bg-gradient-to-br from-gray-400 to-gray-600'} text-white font-black text-sm px-3 py-2 rounded-2xl shadow-xl border-2 border-white`}>
-                  <div className="text-center">
-                        <div className="text-lg">#{candidate.ranking}</div>
-                  </div>
-                </div>
-                {candidate.ranking === 1 && (
-                      <div className="absolute -top-1 -right-1 animate-bounce">
-                        <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M5 16L3 8l5.5 2L12 4l3.5 6L21 8l-2 8H5zm2.7-2h8.6l.9-4.4-2.6 1-2-3.4-2 3.4-2.6-1L7.7 14z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
-
-                  {/* Votes Badge */}
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-800 font-bold px-3 py-2 rounded-full shadow-lg">
-                    <span className="text-sm">{candidate.votes || 0} votes</span>
-              </div>
-
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-                {/* Card Content */}
-                <div className="p-6">
-                  {/* Sash */}
-                  <div className="inline-flex items-center space-x-1 bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 border border-pink-200">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-                    <span>{candidate.sash}</span>
-              </div>
-
-                  {/* Name */}
-                  <h3 className="text-xl font-black text-gray-900 mb-2 leading-tight">
-                {candidate.name}
-              </h3>
-
-                  {/* Stats */}
-                  <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
-                    <div className="flex items-center space-x-1">
-                      <svg className="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
-                      <span className="font-bold">{candidate.votes} votes</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <svg className="w-4 h-4 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-                      <span className="font-bold">{candidate.votes || 0} votes</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-                  <div className="space-y-3">
-                <button
-                      onClick={() => handleVoteClick(candidate)}
-                      className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-150 transform hover:scale-105 hover:shadow-lg group-hover:shadow-pink-500/25 flex items-center justify-center space-x-2"
-                >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                      <span>VOTER POUR MOI</span>
-                </button>
         </div>
       </div>
 
-                {/* Decorative Elements */}
-                <div className="absolute -top-2 -left-2 w-4 h-4 bg-pink-400 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-150"></div>
-                <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-purple-400 rounded-full opacity-40 group-hover:opacity-100 transition-opacity duration-150"></div>
-                </div>
-              </div>
-                    ))}
-                  </div>
-
-        {/* Voting Modal */}
-        {selectedCandidate && (
-          <VotingModal
-            candidate={selectedCandidate}
-            isOpen={isVotingModalOpen}
-            onClose={handleVotingModalClose}
-            onVoteComplete={handleVoteComplete}
-          />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
+        {usingFallback && (
+          <div className="mb-8 flex flex-wrap items-center gap-4 bg-[#E8C15C]/10 border border-[#E8C15C]/30 rounded-xl px-5 py-3">
+            <p className="font-nekst font-light text-sm text-[#EDD189]">
+              Connexion au serveur impossible — données de démonstration affichées.
+            </p>
+            <button
+              onClick={onRetry}
+              className="font-clash font-medium text-sm text-[#140D18] bg-[#E8C15C] hover:bg-[#F2D27D] px-4 py-1.5 rounded-full transition-colors"
+            >
+              Réessayer
+            </button>
+          </div>
         )}
-                        </div>
+
+        {loading ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8 mb-16">
+              {[0, 1, 2].map((i) => (
+                <SkeletonCard key={i} tall />
+              ))}
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {[...Array(8)].map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          </>
+        ) : activeList.length === 0 ? (
+          <div className="text-center py-24 max-w-md mx-auto">
+            <CrownIcon className="w-10 h-10 text-[#E8C15C]/50 mx-auto mb-6" />
+            <h3 className="font-clash font-semibold text-[#F5EFE4] text-xl mb-3">
+              Les candidats Master arrivent bientôt
+            </h3>
+            <p className="font-nekst font-light text-[#A79BB3]">
+              La sélection est en cours. Revenez très vite pour les découvrir et voter.
+            </p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-24 max-w-md mx-auto">
+            <h3 className="font-clash font-semibold text-[#F5EFE4] text-xl mb-3">
+              Aucune candidate ne correspond à « {query.trim()} »
+            </h3>
+            <button
+              onClick={() => setQuery('')}
+              className="font-nekst text-sm text-[#E8C15C] hover:text-[#F2D27D] underline underline-offset-4 transition-colors"
+            >
+              Effacer la recherche
+            </button>
+          </div>
+        ) : (
+          <>
+            {podium.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8 mb-20 lg:pt-8">
+                {podium.map((candidate, i) => (
+                  <CandidateCard
+                    key={candidate.id}
+                    candidate={candidate}
+                    podium
+                    onVote={handleVote}
+                    className={`animate-rise-in ${podiumLayout[candidate.ranking] || ''}`}
+                    style={{ animationDelay: `${i * 120}ms` }}
+                  />
+                ))}
+              </div>
+            )}
+
+            {field.length > 0 && (
+              <>
+                {!searching && (
+                  <div className="mb-8">
+                    <h3 className="font-clash font-semibold text-[#F5EFE4] text-xl sm:text-2xl">
+                      Toutes les candidates
+                    </h3>
+                    <p className="font-nekst font-light text-[#A79BB3] text-sm mt-1">
+                      Le classement se met à jour à chaque vote confirmé.
+                    </p>
+                  </div>
+                )}
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                  {field.map((candidate) => (
+                    <CandidateCard key={candidate.id} candidate={candidate} onVote={handleVote} />
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* How to vote — a real sequence, so the steps are numbered */}
+      <div id="comment-voter" className="border-t border-white/5 bg-[#181020] scroll-mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <SectionHeading eyebrow="Mode d'emploi" title="Comment voter" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+            {[
+              {
+                step: '01',
+                title: 'Choisissez votre candidate',
+                text: 'Parcourez le classement et appuyez sur « Voter » sous son portrait.'
+              },
+              {
+                step: '02',
+                title: 'Payez par mobile money',
+                text: 'MTN Mobile Money ou Orange Money — validez simplement le paiement sur votre téléphone.'
+              },
+              {
+                step: '03',
+                title: 'Vos votes sont crédités',
+                text: 'La confirmation est automatique et le classement se met à jour immédiatement.'
+              }
+            ].map(({ step, title, text }) => (
+              <div key={step}>
+                <p className="font-azonix text-[#E8C15C]/70 text-3xl mb-4">{step}</p>
+                <h3 className="font-clash font-semibold text-[#F5EFE4] text-lg mb-2">{title}</h3>
+                <p className="font-nekst font-light text-[#A79BB3] leading-relaxed">{text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="font-nekst font-light text-[#A79BB3] text-sm tracking-widest uppercase mr-2">
+              Packs de votes
+            </p>
+            {[
+              ['500 FCFA', '5 votes'],
+              ['1 000 FCFA', '11 votes'],
+              ['5 000 FCFA', '55 votes']
+            ].map(([price, count]) => (
+              <span
+                key={price}
+                className="inline-flex items-baseline gap-2 border border-[#E8C15C]/30 bg-[#E8C15C]/5 rounded-full px-4 py-2"
+              >
+                <span className="font-clash font-semibold text-[#F5EFE4] text-sm">{price}</span>
+                <span className="font-azonix text-[#E8C15C] text-xs">{count}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {selectedCandidate && (
+        <VotingModal
+          candidate={selectedCandidate}
+          isOpen={selectedCandidate !== null}
+          onClose={() => setSelectedCandidate(null)}
+          onVoteComplete={onVoteComplete}
+        />
+      )}
     </section>
   );
 };
 
-export default CandidatesSection; 
+export default CandidatesSection;

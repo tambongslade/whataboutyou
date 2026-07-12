@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { votingService, candidateService, handleApiError, type Candidate } from '../services/candidateService';
+import { votingService, candidateService, getImageUrl, handleApiError, VOTE_TIERS, type VoteAmount, type Candidate } from '../services/candidateService';
 
 interface VotingModalProps {
   candidate: Candidate;
@@ -14,22 +14,22 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
   // Form states
   const [paymentMethod, setPaymentMethod] = useState<'MTN' | 'ORANGEMONEY'>('MTN');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [amount, setAmount] = useState(500);
-  const [amountInput, setAmountInput] = useState('500');
+  const [amount, setAmount] = useState<VoteAmount>(500);
   const [email, setEmail] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Modal flow states
   const [step, setStep] = useState<ModalStep>('payment');
   const [txRef, setTxRef] = useState('');
-  const [, setPaymentInstructions] = useState('');
+  const [paymentInstructions, setPaymentInstructions] = useState('');
   const [votesEarned, setVotesEarned] = useState(0);
   const [pollCleanup, setPollCleanup] = useState<(() => void) | null>(null);
+  const [canForceVerify, setCanForceVerify] = useState(false);
 
-  // Calculate votes (100 FCFA = 1 vote)
-  const votes = Math.floor(amount / 100);
+  // Votes for the selected tier (500 → 5, 1000 → 11, 5000 → 55)
+  const votes = VOTE_TIERS[amount];
 
   // Cleanup polling on unmount or close
   useEffect(() => {
@@ -48,27 +48,16 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
       setTxRef('');
       setPaymentInstructions('');
       setVotesEarned(0);
+      setCanForceVerify(false);
     }
   }, [isOpen]);
 
-  // Handle amount input changes
-  const handleAmountChange = (value: string) => {
-    setAmountInput(value);
-    const numValue = parseInt(value) || 0;
-    if (numValue >= 100) {
-      setAmount(numValue);
-    }
-  };
-
-  const handleAmountBlur = () => {
-    const numValue = parseInt(amountInput) || 0;
-    if (numValue < 100 || amountInput === '') {
-      setAmountInput('100');
-      setAmount(100);
-    } else {
-      setAmount(numValue);
-    }
-  };
+  // Enable the force-verify button after 60s of pending polling
+  useEffect(() => {
+    if (step !== 'polling') return;
+    const timer = setTimeout(() => setCanForceVerify(true), 60000);
+    return () => clearTimeout(timer);
+  }, [step]);
 
   // Step 1: Handle payment form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,88 +66,30 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
     setError(null);
 
     try {
-      // Debug: Check candidate structure
-      console.log('🗳️ Full candidate object:', candidate);
-      console.log('🗳️ Available candidate fields:', Object.keys(candidate));
-      console.log('🗳️ Candidate._id:', candidate._id);
-      console.log('🗳️ Candidate.id:', candidate.id);
-      
-      // Extract candidate ID - try multiple possible field names
-      const candidateId = candidate._id || candidate.id || (candidate as any).candidateId || (candidate as any).mongoId;
-      
-      console.log('🗳️ Extracted candidate ID:', candidateId);
-      console.log('🗳️ CandidateId type:', typeof candidateId);
-      console.log('🗳️ CandidateId length:', candidateId?.length);
-      
-      if (!candidateId || candidateId === '' || candidateId === 'undefined') {
-        console.error('🗳️ No valid candidate ID found!');
-        console.error('🗳️ candidate._id:', candidate._id);
-        console.error('🗳️ candidate.id:', candidate.id);
-        console.error('🗳️ Full candidate object:', JSON.stringify(candidate, null, 2));
-        
-        // Temporary fallback - use a test ID to verify the API works
-        console.warn('🗳️ Using temporary test candidate ID');
-        const testCandidateId = '507f1f77bcf86cd799439011'; // Use the test ID you provided
-        
-        // Create payload with test ID
-        const testPayload = {
-          candidateId: testCandidateId,
-          phoneNumber: String(phoneNumber),
-          paymentMethod: (paymentMethod === 'MTN' ? 'MOMO CM' : 'OM CM') as 'MOMO CM' | 'OM CM',
-          amount: Number(amount),
-          email: String(email),
-          customerName: String(customerName)
-        };
-        
-        console.log('🗳️ Sending test payload:', testPayload);
-        
-        try {
-          const result = await candidateService.createVote(testPayload);
-          console.log('🗳️ Test API call succeeded!', result);
-          setError('Test réussi avec ID temporaire. Problème confirmé: extraction de candidateId');
-        } catch (err) {
-          console.error('🗳️ Test API call failed:', err);
-          setError('Test échoué même avec ID temporaire. Problème: ' + handleApiError(err));
-        }
+      const candidateId = candidate._id || candidate.id;
+
+      if (!candidateId) {
+        setError('Candidat invalide. Veuillez recharger la page et réessayer.');
         setLoading(false);
         return;
       }
 
-      // Map payment method to backend format
-      const backendPaymentMethod = paymentMethod === 'MTN' ? 'MOMO CM' : 'OM CM';
-      
-      // Create the exact payload format you specified
-      const votePayload = {
-        candidateId: String(candidateId), // Ensure it's a string
-        phoneNumber: String(phoneNumber),
-        paymentMethod: backendPaymentMethod as 'MOMO CM' | 'OM CM',
-        amount: Number(amount),
-        email: String(email),
-        customerName: String(customerName)
-      };
-
-      console.log('🗳️ Sending vote payload:', votePayload);
-      
-      // Final validation before sending
-      const requiredFields = ['candidateId', 'phoneNumber', 'paymentMethod', 'amount', 'email', 'customerName'];
-      const missingFields = requiredFields.filter(field => !votePayload[field as keyof typeof votePayload]);
-      
-      if (missingFields.length > 0) {
-        console.error('🗳️ CRITICAL: Payload missing required fields:', missingFields);
-        console.error('🗳️ Current payload:', votePayload);
-        throw new Error(`Champs requis manquants: ${missingFields.join(', ')}`);
-      }
-      
-      console.log('🗳️ ✅ Payload validation passed. Sending:', votePayload);
-
-      const result = await candidateService.createVote(votePayload);
+      const result = await candidateService.createVote({
+        candidateId: String(candidateId),
+        phoneNumber: phoneNumber.replace(/\s/g, ''),
+        paymentMethod: paymentMethod === 'MTN' ? 'MOMO CM' : 'OM CM',
+        amount,
+        email: email.trim(),
+        customerName: customerName.trim()
+      });
 
       if (result.success && result.data) {
         setTxRef(result.data.txRef || '');
-        setPaymentInstructions(result.data.paymentLink || `Paiement initié. Référence: ${result.data.txRef}`);
+        setPaymentInstructions(result.data.paymentInstructions || `Paiement initié. Référence: ${result.data.txRef}`);
         setStep('polling');
         startPolling(result.data.txRef || '');
       } else {
+        // Business errors arrive with success:false (e.g. candidat inactif, méthode non supportée)
         setError(result.error || 'Erreur lors de la création du vote');
       }
     } catch (err) {
@@ -250,17 +181,17 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[95vh] overflow-y-auto shadow-2xl">
           {/* Header */}
-          <div className="relative bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 p-6 rounded-t-3xl">
+          <div className="relative bg-gradient-to-r from-[#2A1C36] to-[#140D18] p-6 rounded-t-3xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="bg-white/20 p-2 rounded-full">
-                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                <div className="bg-[#E8C15C]/15 p-2 rounded-full">
+                  <svg className="w-6 h-6 text-[#E8C15C]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M5 16L3 8l5.5 2L12 4l3.5 6L21 8l-2 8H5zm2.7-2h8.6l.9-4.4-2.6 1-2-3.4-2 3.4-2.6-1L7.7 14z" />
                   </svg>
                 </div>
                 <div>
-                  <span className="font-bold text-white text-lg">Voter pour {candidate.name}</span>
-                  <p className="text-white/80 text-sm">100 FCFA = 1 VOTE • Minimum: 100 FCFA</p>
+                  <span className="font-clash font-semibold text-white text-lg">Voter pour {candidate.name}</span>
+                  <p className="text-[#E8C15C] text-sm">500 FCFA = 5 votes • 1000 = 11 • 5000 = 55</p>
                 </div>
               </div>
               <button
@@ -279,11 +210,11 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
             <div className="lg:w-1/2 p-8">
               <div className="relative">
                 <img
-                  src={candidate.image}
+                  src={getImageUrl(candidate.image)}
                   alt={candidate.name}
                   className="w-full h-80 object-cover rounded-2xl shadow-xl"
                 />
-                <div className="absolute top-4 left-4 bg-yellow-400 text-black font-bold px-3 py-2 rounded-full">
+                <div className="absolute top-4 left-4 bg-[#E8C15C] text-[#140D18] font-bold px-3 py-2 rounded-full">
                   #{candidate.ranking}
                 </div>
                 <div className="absolute top-4 right-4 bg-white/90 text-gray-800 font-bold px-3 py-2 rounded-full">
@@ -303,73 +234,65 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
                   <select
                     value={paymentMethod}
                     onChange={(e) => setPaymentMethod(e.target.value as 'MTN' | 'ORANGEMONEY')}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#C89B3C] focus:border-[#C89B3C]"
                   >
                     <option value="MTN">🟡 MTN Mobile Money</option>
                     <option value="ORANGEMONEY">🟠 Orange Money</option>
                   </select>
                 </div>
 
-                {/* Phone Number */}
+                {/* Phone Number (mobile money wallet) */}
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-3">
-                    Numéro de téléphone
+                    Numéro Mobile Money (qui paie)
                   </label>
                   <input
                     type="tel"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="674123456"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#C89B3C] focus:border-[#C89B3C]"
                     required
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Le numéro du compte {paymentMethod === 'MTN' ? 'MTN Mobile Money' : 'Orange Money'} qui effectuera le paiement
+                  </p>
                 </div>
 
-                {/* Amount */}
+                {/* Vote tier */}
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-3">
-                    Montant (FCFA)
+                    Choisissez votre pack de votes
                   </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={amountInput}
-                      onChange={(e) => handleAmountChange(e.target.value)}
-                      onBlur={handleAmountBlur}
-                      min="100"
-                      step="100"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      required
-                    />
-                    <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      FCFA
-                    </span>
+                  <div className="grid grid-cols-3 gap-3">
+                    {(Object.entries(VOTE_TIERS) as unknown as [string, number][]).map(([tierAmount, tierVotes]) => {
+                      const tier = Number(tierAmount) as VoteAmount;
+                      return (
+                        <button
+                          key={tier}
+                          type="button"
+                          onClick={() => setAmount(tier)}
+                          className={`p-4 rounded-xl border-2 text-center transition-all ${
+                            amount === tier
+                              ? 'border-[#C89B3C] bg-[#C89B3C]/10 shadow-md'
+                              : 'border-gray-200 bg-white hover:border-[#C89B3C]/50'
+                          }`}
+                        >
+                          <p className={`text-lg font-bold ${amount === tier ? 'text-[#8A6A1F]' : 'text-gray-800'}`}>
+                            {tier.toLocaleString()}
+                          </p>
+                          <p className="text-xs text-gray-500 mb-1">FCFA</p>
+                          <p className={`text-sm font-semibold ${amount === tier ? 'text-[#8A6A1F]' : 'text-gray-600'}`}>
+                            {tierVotes} votes
+                          </p>
+                        </button>
+                      );
+                    })}
                   </div>
                   <div className="mt-2 p-3 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-800">
-                      <strong>Votes à donner: {votes}</strong> • 100 FCFA = 1 vote
+                      <strong>Votes à donner: {votes}</strong> pour {amount.toLocaleString()} FCFA
                     </p>
-                  </div>
-                  
-                  {/* Quick amount buttons */}
-                  <div className="mt-3 grid grid-cols-4 gap-2">
-                    {[100, 500, 1000, 2500].map((quickAmount) => (
-                      <button
-                        key={quickAmount}
-                        type="button"
-                        onClick={() => {
-                          setAmount(quickAmount);
-                          setAmountInput(quickAmount.toString());
-                        }}
-                        className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                          amount === quickAmount
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                      >
-                        {quickAmount}
-                      </button>
-                    ))}
                   </div>
                 </div>
 
@@ -383,7 +306,7 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="votre@email.com"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#C89B3C] focus:border-[#C89B3C]"
                     required
                   />
                 </div>
@@ -398,7 +321,7 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Votre nom complet"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#C89B3C] focus:border-[#C89B3C]"
                     required
                   />
                 </div>
@@ -413,7 +336,7 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
                 <button
                   type="submit"
                   disabled={loading || !candidate.isActive}
-                  className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="w-full bg-[#E8C15C] hover:bg-[#D9AF45] text-[#140D18] font-bold py-4 px-6 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
                   {loading ? (
                     <>
@@ -456,14 +379,20 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
             <p className="text-sm text-blue-700 mb-2">Montant: {amount.toLocaleString()} FCFA</p>
             <p className="text-sm text-blue-700">Votes à donner: {votes}</p>
           </div>
-          
+
+          {paymentInstructions && (
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-purple-800 font-semibold">{paymentInstructions}</p>
+            </div>
+          )}
+
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
             <h4 className="font-semibold text-yellow-800 mb-2">💡 Que se passe-t-il?</h4>
             <p className="text-sm text-yellow-700 mb-2">
-              • Nous vérifions votre paiement toutes les 3 secondes
+              • Validez le paiement sur votre téléphone (suivez les instructions ci-dessus)
             </p>
             <p className="text-sm text-yellow-700 mb-2">
-              • Notre système automatique vérifie aussi toutes les 5 minutes
+              • Nous vérifions votre paiement toutes les 5 secondes
             </p>
             <p className="text-sm text-yellow-600">
               • Même si vous fermez cette fenêtre, votre vote sera confirmé automatiquement
@@ -475,28 +404,34 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
               <p className="text-sm text-red-700">{error}</p>
             </div>
           )}
-          
+
           <div className="flex flex-col space-y-3">
-            <button
-              onClick={handleManualVerification}
-              disabled={loading}
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center space-x-2"
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>Vérification...</span>
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>Forcer la vérification</span>
-                </>
-              )}
-            </button>
-            
+            {canForceVerify ? (
+              <button
+                onClick={handleManualVerification}
+                disabled={loading}
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center space-x-2"
+              >
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Vérification...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>J'ai payé — vérifier maintenant</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <p className="text-xs text-gray-500">
+                Un bouton de vérification manuelle apparaîtra si le paiement n'est pas confirmé d'ici une minute.
+              </p>
+            )}
+
             <button
               onClick={handleClose}
               className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-xl transition-colors"
@@ -574,7 +509,7 @@ const VotingModal: React.FC<VotingModalProps> = ({ candidate, isOpen, onClose, o
               Référence: {txRef}
             </p>
             <p className="text-sm text-orange-700">
-              Notre système automatique continuera à vérifier votre paiement toutes les 5 minutes.
+              Si le paiement aboutit, vos votes seront crédités automatiquement. Conservez cette référence.
             </p>
           </div>
           
