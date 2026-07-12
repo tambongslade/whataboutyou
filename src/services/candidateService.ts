@@ -69,11 +69,17 @@ export interface Candidate {
   __v?: number; // MongoDB version key
 }
 
+// Fixed vote tiers — the backend rejects any other amount with a 400
+export const VOTE_TIERS = { 500: 5, 1000: 11, 5000: 55 } as const;
+export type VoteAmount = keyof typeof VOTE_TIERS; // 500 | 1000 | 5000
+
 export interface CreateVoteRequest {
   candidateId: string;
-  phoneNumber: string;
+  phoneNumber: string; // Mobile money wallet used to pay
+  // NOTE: do NOT send voterNumber — the deployed backend's DTO whitelist
+  // rejects it with 400 "property voterNumber should not exist"
   paymentMethod: 'MOMO CM' | 'OM CM'; // Backend expects these exact values
-  amount: number;
+  amount: VoteAmount;
   email: string;
   customerName: string;
 }
@@ -266,6 +272,22 @@ export const candidateService = {
     }
   },
 
+  // Force-verify a vote payment directly with SoleasPay (use when polling stays pending)
+  async verifyVotePayment(txRef: string): Promise<ApiResponse<{
+    verified: boolean;
+    paymentStatus: 'pending' | 'confirmed';
+    message: string;
+    points?: number;
+  }>> {
+    try {
+      const response = await apiClient.post(`/candidates/votes/${txRef}/verify-payment`);
+      return response.data;
+    } catch (error) {
+      console.error('Vote payment verification failed:', error);
+      throw error;
+    }
+  },
+
   // Confirm vote after successful payment (manual "I paid" button)
   async confirmVote(txRef: string): Promise<ApiResponse<{ points?: number; votes?: number; message?: string }>> {
     try {
@@ -294,7 +316,7 @@ export const votingService = {
   async handleVoteSubmission(
     candidateId: string,
     voterInfo: { phone: string; email: string; name: string },
-    amount: number,
+    amount: VoteAmount,
     paymentMethod: 'MTN' | 'ORANGEMONEY',
     candidateName?: string
   ) {
@@ -352,7 +374,7 @@ export const votingService = {
   ): Promise<() => void> {
     let pollInterval: NodeJS.Timeout;
     let totalAttempts = 0;
-    const maxAttempts = 100; // Poll for up to 5 minutes (100 * 3 seconds)
+    const maxAttempts = 24; // Poll for up to 2 minutes (24 * 5 seconds) — status endpoint is limited to 30/min
     
     const poll = async (): Promise<void> => {
       try {
@@ -380,14 +402,14 @@ export const votingService = {
         // Continue polling if pending
         if (totalAttempts >= maxAttempts) {
           clearInterval(pollInterval);
-          onError('Délai d\'attente dépassé. Le paiement pourrait encore être traité par notre système automatique.');
+          onError('Paiement en cours de vérification. Contactez-nous si vos votes ne sont pas crédités.');
           return;
         }
-        
+
       } catch (error) {
         console.error('Polling error:', error);
         totalAttempts++;
-        
+
         if (totalAttempts >= maxAttempts) {
           clearInterval(pollInterval);
           onError('Erreur lors de la vérification du paiement');
@@ -395,9 +417,9 @@ export const votingService = {
         }
       }
     };
-    
-    // Start polling every 3 seconds
-    pollInterval = setInterval(poll, 3000);
+
+    // Start polling every 5 seconds
+    pollInterval = setInterval(poll, 5000);
     
     // Initial poll
     poll();
@@ -410,19 +432,19 @@ export const votingService = {
     };
   },
 
-  // Enhanced manual verification for modal flow ("I paid" button)
+  // Force verification with SoleasPay ("I paid" button) — call once, not in a loop (10/min limit)
   async handleManualVerification(txRef: string): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const result = await candidateService.confirmVote(txRef);
+      const result = await candidateService.verifyVotePayment(txRef);
 
-      if (result.success) {
+      if (result.success && result.data?.paymentStatus === 'confirmed') {
         return { success: true, data: result.data };
-      } else {
-        return {
-          success: false,
-          error: result.error || 'Vérification échouée. Le paiement sera vérifié automatiquement par notre système.'
-        };
       }
+
+      return {
+        success: false,
+        error: result.data?.message || result.error || 'Paiement non confirmé par SoleasPay. Réessayez dans quelques instants.'
+      };
     } catch (error) {
       console.error('Manual verification failed:', error);
       return {
