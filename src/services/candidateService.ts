@@ -208,6 +208,23 @@ export const candidateService = {
     }
   },
 
+  // Create a candidate (admin only — bearer token attached by the interceptor)
+  async createCandidate(candidateData: {
+    name: string;
+    category: 'miss' | 'master';
+    image: string;
+    sash: string;
+    isActive: boolean;
+  }): Promise<ApiResponse<Candidate>> {
+    try {
+      const response = await apiClient.post('/candidates', candidateData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating candidate:', error);
+      throw error;
+    }
+  },
+
   // Get candidate statistics
   async getCandidateStats(): Promise<ApiResponse<CandidateStats>> {
     try {

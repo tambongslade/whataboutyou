@@ -1,6 +1,7 @@
 import { useOutletContext } from 'react-router-dom';
 import MissAndMasterStats from '../components/MissAndMasterStats';
 import CandidatesList from '../components/CandidatesList';
+import AddCandidateForm from '../components/AddCandidateForm';
 import SectionHeader from '../components/SectionHeader';
 import { type AdminOutletContext } from '../AdminLayout';
 
@@ -18,6 +19,10 @@ const MissAndMasterSection = () => {
       />
 
       <MissAndMasterStats candidates={candidates} setCandidates={setCandidates} />
+
+      <AddCandidateForm
+        onCreated={(candidate) => setCandidates([...candidates, candidate])}
+      />
 
       <div className="bg-white border border-black/10 p-6 lg:p-8">
         <div className="flex items-baseline gap-4 mb-6">
