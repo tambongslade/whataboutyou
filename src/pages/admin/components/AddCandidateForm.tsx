@@ -8,20 +8,15 @@ interface AddCandidateFormProps {
 const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [city, setCity] = useState('');
   const [category, setCategory] = useState<'miss' | 'master'>('miss');
   const [image, setImage] = useState('');
-  const [sash, setSash] = useState('MISS WAY 2026');
+  const [profession, setProfession] = useState('');
+  const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  const handleCategoryChange = (value: 'miss' | 'master') => {
-    setCategory(value);
-    // Keep the sash in sync unless the admin already customised it
-    if (sash === 'MISS WAY 2026' || sash === 'MASTER WAY 2026') {
-      setSash(value === 'miss' ? 'MISS WAY 2026' : 'MASTER WAY 2026');
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,17 +27,23 @@ const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
     try {
       const result = await candidateService.createCandidate({
         name: name.trim(),
+        age: Number(age),
+        city: city.trim(),
         category,
         image: image.trim(),
-        sash: sash.trim(),
-        isActive: true
+        ...(profession.trim() ? { profession: profession.trim() } : {}),
+        ...(description.trim() ? { description: description.trim() } : {})
       });
 
       if (result.success && result.data) {
         onCreated(result.data);
         setSuccess(`${result.data.name} ajouté(e) au concours.`);
         setName('');
+        setAge('');
+        setCity('');
         setImage('');
+        setProfession('');
+        setDescription('');
       } else {
         setError(result.error || "Erreur lors de la création du candidat");
       }
@@ -87,18 +88,49 @@ const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
               />
             </div>
 
+            <div className="grid grid-cols-2 gap-5">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                  Âge
+                </label>
+                <input
+                  type="number"
+                  min="16"
+                  max="60"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  placeholder="22"
+                  className="w-full px-4 py-3 border border-black/15 focus:border-black focus:outline-none text-sm"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                  Catégorie
+                </label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as 'miss' | 'master')}
+                  className="w-full px-4 py-3 border border-black/15 focus:border-black focus:outline-none text-sm bg-white"
+                >
+                  <option value="miss">Miss</option>
+                  <option value="master">Master</option>
+                </select>
+              </div>
+            </div>
+
             <div>
               <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
-                Catégorie
+                Ville
               </label>
-              <select
-                value={category}
-                onChange={(e) => handleCategoryChange(e.target.value as 'miss' | 'master')}
-                className="w-full px-4 py-3 border border-black/15 focus:border-black focus:outline-none text-sm bg-white"
-              >
-                <option value="miss">Miss</option>
-                <option value="master">Master</option>
-              </select>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="Ex : Yaoundé"
+                className="w-full px-4 py-3 border border-black/15 focus:border-black focus:outline-none text-sm"
+                required
+              />
             </div>
 
             <div>
@@ -109,25 +141,38 @@ const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
                 type="text"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
-                placeholder="/miss2026/nom-candidate.webp"
+                placeholder="/uploads/candidates/2026/nom-candidate.png"
                 className="w-full px-4 py-3 border border-black/15 focus:border-black focus:outline-none text-sm font-mono"
                 required
               />
               <p className="mt-1 text-xs text-gray-400">
-                Chemin servi par le site (ex : /miss2026/…) ou URL complète
+                Chemin serveur (/uploads/candidates/2026/…) ou URL complète
               </p>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
-                Écharpe
+                Profession <span className="normal-case font-normal text-gray-400">(optionnel)</span>
               </label>
               <input
                 type="text"
-                value={sash}
-                onChange={(e) => setSash(e.target.value)}
+                value={profession}
+                onChange={(e) => setProfession(e.target.value)}
+                placeholder="Ex : Étudiante en Droit"
                 className="w-full px-4 py-3 border border-black/15 focus:border-black focus:outline-none text-sm"
-                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                Description <span className="normal-case font-normal text-gray-400">(optionnel)</span>
+              </label>
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Quelques mots sur la candidate"
+                className="w-full px-4 py-3 border border-black/15 focus:border-black focus:outline-none text-sm"
               />
             </div>
           </div>

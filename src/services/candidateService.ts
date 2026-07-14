@@ -209,12 +209,16 @@ export const candidateService = {
   },
 
   // Create a candidate (admin only — bearer token attached by the interceptor)
+  // DTO requires name/age/city; do NOT send fields outside this shape —
+  // the backend whitelist rejects unknown properties with a 400
   async createCandidate(candidateData: {
     name: string;
+    age: number;
+    city: string;
     category: 'miss' | 'master';
     image: string;
-    sash: string;
-    isActive: boolean;
+    profession?: string;
+    description?: string;
   }): Promise<ApiResponse<Candidate>> {
     try {
       const response = await apiClient.post('/candidates', candidateData);
