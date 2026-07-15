@@ -209,19 +209,34 @@ export const candidateService = {
   },
 
   // Create a candidate (admin only — bearer token attached by the interceptor)
-  // DTO requires name/age/city; do NOT send fields outside this shape —
-  // the backend whitelist rejects unknown properties with a 400
+  // multipart/form-data: the image file (max 5MB) is saved server-side under
+  // uploads/candidates/<season>/ and the returned data is { id, message }
   async createCandidate(candidateData: {
     name: string;
     age: number;
     city: string;
     category: 'miss' | 'master';
-    image: string;
+    imageFile?: File;
     profession?: string;
     description?: string;
-  }): Promise<ApiResponse<Candidate>> {
+    sash?: string;
+    season?: string;
+  }): Promise<ApiResponse<{ id: string; message: string }>> {
     try {
-      const response = await apiClient.post('/candidates', candidateData);
+      const form = new FormData();
+      form.append('name', candidateData.name);
+      form.append('age', String(candidateData.age));
+      form.append('city', candidateData.city);
+      form.append('category', candidateData.category);
+      if (candidateData.imageFile) form.append('image', candidateData.imageFile);
+      if (candidateData.profession) form.append('profession', candidateData.profession);
+      if (candidateData.description) form.append('description', candidateData.description);
+      if (candidateData.sash) form.append('sash', candidateData.sash);
+      if (candidateData.season) form.append('season', candidateData.season);
+
+      const response = await apiClient.post('/candidates', form, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       return response.data;
     } catch (error) {
       console.error('Error creating candidate:', error);

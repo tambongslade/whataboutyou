@@ -39,12 +39,12 @@ const MissAndMasterHeroSection = ({
             MISS
             <br />
             <span className="relative inline-block mt-2">
-              {/* The sash: a gold satin band carrying the second half of the title */}
+              {/* The sash: a gold satin band carrying the competition name */}
               <span
                 aria-hidden="true"
                 className="absolute -inset-x-3 inset-y-1 -skew-y-2 bg-gradient-to-r from-[#C89B3C] via-[#EDD189] to-[#C89B3C]"
               />
-              <span className="relative px-1 text-[#140D18]">&amp; MASTER</span>
+              <span className="relative px-1 text-[#140D18] text-3xl sm:text-4xl lg:text-5xl">WHAT ABOUT YOU</span>
             </span>
           </h1>
 

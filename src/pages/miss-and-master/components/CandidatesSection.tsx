@@ -4,14 +4,11 @@ import VotingModal from '../../../components/VotingModal';
 
 interface CandidatesSectionProps {
   missCandidates: Candidate[];
-  masterCandidates: Candidate[];
   loading: boolean;
   usingFallback: boolean;
   onRetry: () => void;
   onVoteComplete: () => void;
 }
-
-type Category = 'miss' | 'master';
 
 const formatRank = (ranking: number) => `Nº ${String(ranking).padStart(2, '0')}`;
 
@@ -149,23 +146,19 @@ const SectionHeading = ({ eyebrow, title, live = false }: { eyebrow: string; tit
 
 const CandidatesSection = ({
   missCandidates,
-  masterCandidates,
   loading,
   usingFallback,
   onRetry,
   onVoteComplete
 }: CandidatesSectionProps) => {
-  const [category, setCategory] = useState<Category>('miss');
   const [query, setQuery] = useState('');
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
 
-  const activeList = category === 'miss' ? missCandidates : masterCandidates;
-
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return activeList;
-    return activeList.filter((candidate) => candidate.name.toLowerCase().includes(q));
-  }, [activeList, query]);
+    if (!q) return missCandidates;
+    return missCandidates.filter((candidate) => candidate.name.toLowerCase().includes(q));
+  }, [missCandidates, query]);
 
   const searching = query.trim().length > 0;
   const podium = searching ? [] : filtered.slice(0, 3);
@@ -186,26 +179,12 @@ const CandidatesSection = ({
         <SectionHeading eyebrow="Classement en direct" title="Le podium" live />
       </div>
 
-      {/* Toolbar: category, search */}
+      {/* Toolbar: count, search */}
       <div className="sticky top-16 z-30 bg-[#140D18]/90 backdrop-blur-md border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <div className="flex items-center gap-1" role="tablist" aria-label="Catégorie">
-            {(['miss', 'master'] as const).map((tab) => (
-              <button
-                key={tab}
-                role="tab"
-                aria-selected={category === tab}
-                onClick={() => setCategory(tab)}
-                className={`font-nekst uppercase tracking-widest text-sm px-4 py-2 border-b-2 transition-colors ${
-                  category === tab
-                    ? 'text-[#E8C15C] border-[#E8C15C]'
-                    : 'text-[#A79BB3] border-transparent hover:text-[#F5EFE4]'
-                }`}
-              >
-                {tab === 'miss' ? `Miss · ${missCandidates.length}` : `Master · ${masterCandidates.length}`}
-              </button>
-            ))}
-          </div>
+          <p className="font-nekst uppercase tracking-widest text-sm text-[#E8C15C] px-1 py-2">
+            Miss · {missCandidates.length} candidates
+          </p>
 
           <div className="relative flex-1 min-w-[220px] max-w-sm ml-auto">
             <svg
@@ -257,16 +236,6 @@ const CandidatesSection = ({
               ))}
             </div>
           </>
-        ) : activeList.length === 0 ? (
-          <div className="text-center py-24 max-w-md mx-auto">
-            <CrownIcon className="w-10 h-10 text-[#E8C15C]/50 mx-auto mb-6" />
-            <h3 className="font-clash font-semibold text-[#F5EFE4] text-xl mb-3">
-              Les candidats Master arrivent bientôt
-            </h3>
-            <p className="font-nekst font-light text-[#A79BB3]">
-              La sélection est en cours. Revenez très vite pour les découvrir et voter.
-            </p>
-          </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-24 max-w-md mx-auto">
             <h3 className="font-clash font-semibold text-[#F5EFE4] text-xl mb-3">

@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { candidateService, getImageUrl, handleApiError, type Candidate } from '../../../services/candidateService';
+import { useEffect, useRef, useState } from 'react';
+import { candidateService, handleApiError } from '../../../services/candidateService';
 
 interface AddCandidateFormProps {
-  onCreated: (candidate: Candidate) => void;
+  onCreated: () => void | Promise<void>;
 }
+
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // backend upload limit
 
 const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
   const [open, setOpen] = useState(false);
@@ -11,12 +13,42 @@ const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
   const [age, setAge] = useState('');
   const [city, setCity] = useState('');
   const [category, setCategory] = useState<'miss' | 'master'>('miss');
-  const [image, setImage] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [profession, setProfession] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Release the preview object URL when it changes or on unmount
+  useEffect(() => {
+    return () => {
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
+
+  const handleFileChange = (file: File | null) => {
+    setError(null);
+    if (file && file.size > MAX_IMAGE_BYTES) {
+      setError('Image trop lourde (max 5 Mo). Compressez-la puis réessayez.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+    setImageFile(file);
+    setImagePreview(file ? URL.createObjectURL(file) : null);
+  };
+
+  const resetFields = () => {
+    setName('');
+    setAge('');
+    setCity('');
+    setProfession('');
+    setDescription('');
+    handleFileChange(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,20 +62,17 @@ const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
         age: Number(age),
         city: city.trim(),
         category,
-        image: image.trim(),
+        ...(imageFile ? { imageFile } : {}),
         ...(profession.trim() ? { profession: profession.trim() } : {}),
-        ...(description.trim() ? { description: description.trim() } : {})
+        ...(description.trim() ? { description: description.trim() } : {}),
+        sash: category === 'miss' ? 'MISS WAY 2026' : 'MASTER WAY 2026',
+        season: '2026'
       });
 
-      if (result.success && result.data) {
-        onCreated(result.data);
-        setSuccess(`${result.data.name} ajouté(e) au concours.`);
-        setName('');
-        setAge('');
-        setCity('');
-        setImage('');
-        setProfession('');
-        setDescription('');
+      if (result.success) {
+        setSuccess(`${name.trim()} ajouté(e) au concours.`);
+        resetFields();
+        await onCreated();
       } else {
         setError(result.error || "Erreur lors de la création du candidat");
       }
@@ -121,7 +150,7 @@ const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
-                Ville
+                Ville / Région
               </label>
               <input
                 type="text"
@@ -135,19 +164,15 @@ const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
-                Image (chemin ou URL)
+                Photo <span className="normal-case font-normal text-gray-400">(jpg, png, webp — max 5 Mo)</span>
               </label>
               <input
-                type="text"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                placeholder="/uploads/candidates/2026/nom-candidate.png"
-                className="w-full px-4 py-3 border border-black/15 focus:border-black focus:outline-none text-sm font-mono"
-                required
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
+                className="w-full px-4 py-2.5 border border-black/15 focus:border-black focus:outline-none text-sm file:mr-4 file:py-1.5 file:px-4 file:border-0 file:bg-black file:text-white file:text-xs file:font-medium file:cursor-pointer"
               />
-              <p className="mt-1 text-xs text-gray-400">
-                Chemin serveur (/uploads/candidates/2026/…) ou URL complète
-              </p>
             </div>
 
             <div>
@@ -177,20 +202,16 @@ const AddCandidateForm = ({ onCreated }: AddCandidateFormProps) => {
             </div>
           </div>
 
-          {image.trim() && (
+          {imagePreview && (
             <div className="flex items-center gap-4">
               <img
-                src={getImageUrl(image.trim())}
+                src={imagePreview}
                 alt="Aperçu"
                 className="w-20 h-28 object-cover object-top border border-black/10"
-                onError={(e) => {
-                  e.currentTarget.style.opacity = '0.2';
-                }}
-                onLoad={(e) => {
-                  e.currentTarget.style.opacity = '1';
-                }}
               />
-              <p className="text-xs text-gray-400">Aperçu de l'image</p>
+              <p className="text-xs text-gray-400">
+                {imageFile?.name} — {Math.round((imageFile?.size || 0) / 1024)} Ko
+              </p>
             </div>
           )}
 

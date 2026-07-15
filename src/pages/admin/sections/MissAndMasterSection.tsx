@@ -1,4 +1,5 @@
 import { useOutletContext } from 'react-router-dom';
+import { candidateService } from '../../../services/candidateService';
 import MissAndMasterStats from '../components/MissAndMasterStats';
 import CandidatesList from '../components/CandidatesList';
 import AddCandidateForm from '../components/AddCandidateForm';
@@ -21,7 +22,12 @@ const MissAndMasterSection = () => {
       <MissAndMasterStats candidates={candidates} setCandidates={setCandidates} />
 
       <AddCandidateForm
-        onCreated={(candidate) => setCandidates([...candidates, candidate])}
+        onCreated={async () => {
+          const response = await candidateService.getAllCandidates();
+          if (response.success && response.data) {
+            setCandidates(response.data);
+          }
+        }}
       />
 
       <div className="bg-white border border-black/10 p-6 lg:p-8">
