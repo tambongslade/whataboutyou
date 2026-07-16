@@ -13,8 +13,17 @@ interface CandidatesSectionProps {
 const formatRank = (ranking: number) => `Nº ${String(ranking).padStart(2, '0')}`;
 
 /* The signature: a satin sash laid diagonally across the photo, carrying the rank.
-   Gold for the podium, ivory for the rest of the field. */
-const Sash = ({ candidate, podium }: { candidate: Candidate; podium: boolean }) => (
+   Gold for the podium, ivory for the rest of the field.
+   While the race is neutral (no vote spread yet) the rank is hidden. */
+const Sash = ({
+  candidate,
+  podium,
+  showRank
+}: {
+  candidate: Candidate;
+  podium: boolean;
+  showRank: boolean;
+}) => (
   <div
     aria-hidden="true"
     className="absolute -left-1/4 bottom-[12%] w-[150%] rotate-[-12deg] pointer-events-none"
@@ -27,7 +36,7 @@ const Sash = ({ candidate, podium }: { candidate: Candidate; podium: boolean }) 
       }`}
     >
       <p className="font-azonix text-center text-[10px] sm:text-xs tracking-[0.3em] text-[#140D18]">
-        {formatRank(candidate.ranking)} · {candidate.sash || 'WAY 2026'}
+        {showRank ? `${formatRank(candidate.ranking)} · ` : ''}{candidate.sash || 'WAY 2026'}
       </p>
     </div>
   </div>
@@ -42,12 +51,14 @@ const CrownIcon = ({ className }: { className?: string }) => (
 const CandidateCard = ({
   candidate,
   podium = false,
+  showRank = true,
   onVote,
   className = '',
   style
 }: {
   candidate: Candidate;
   podium?: boolean;
+  showRank?: boolean;
   onVote: (candidate: Candidate) => void;
   className?: string;
   style?: React.CSSProperties;
@@ -78,7 +89,7 @@ const CandidateCard = ({
         </div>
       )}
 
-      <Sash candidate={candidate} podium={podium} />
+      <Sash candidate={candidate} podium={podium} showRank={showRank} />
     </div>
 
     <div className={podium ? 'p-5' : 'p-4'}>
@@ -160,9 +171,17 @@ const CandidatesSection = ({
     return missCandidates.filter((candidate) => candidate.name.toLowerCase().includes(q));
   }, [missCandidates, query]);
 
+  // Neutral race: every candidate has the same vote count (e.g. all zeros at launch).
+  // No podium, no ranks — every card is rendered identically.
+  const topVotes = missCandidates[0]?.votes || 0;
+  const neutralRace =
+    missCandidates.length > 0 &&
+    missCandidates.every((candidate) => (candidate.votes || 0) === topVotes);
+
   const searching = query.trim().length > 0;
-  const podium = searching ? [] : filtered.slice(0, 3);
-  const field = searching ? filtered : filtered.slice(3);
+  const flatList = searching || neutralRace;
+  const podium = flatList ? [] : filtered.slice(0, 3);
+  const field = flatList ? filtered : filtered.slice(3);
 
   // Desktop podium order: 2nd — 1st (lifted) — 3rd
   const podiumLayout: Record<number, string> = {
@@ -176,7 +195,11 @@ const CandidatesSection = ({
   return (
     <section id="candidates-section" className="relative bg-[#140D18] scroll-mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
-        <SectionHeading eyebrow="Classement en direct" title="Le podium" live />
+        {neutralRace ? (
+          <SectionHeading eyebrow="La compétition est ouverte" title="Les candidates" />
+        ) : (
+          <SectionHeading eyebrow="Classement en direct" title="Le podium" live />
+        )}
       </div>
 
       {/* Toolbar: count, search */}
@@ -267,7 +290,7 @@ const CandidatesSection = ({
 
             {field.length > 0 && (
               <>
-                {!searching && (
+                {!searching && !neutralRace && (
                   <div className="mb-8">
                     <h3 className="font-clash font-semibold text-[#F5EFE4] text-xl sm:text-2xl">
                       Toutes les candidates
@@ -277,9 +300,23 @@ const CandidatesSection = ({
                     </p>
                   </div>
                 )}
+                {!searching && neutralRace && (
+                  <div className="mb-8">
+                    <p className="font-nekst font-light text-[#A79BB3] text-sm">
+                      {topVotes === 0
+                        ? "Aucun vote comptabilisé pour l'instant — le classement apparaîtra dès les premiers votes."
+                        : 'Toutes les candidates sont à égalité — le classement apparaîtra dès que les votes se départageront.'}
+                    </p>
+                  </div>
+                )}
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                   {field.map((candidate) => (
-                    <CandidateCard key={candidate.id} candidate={candidate} onVote={handleVote} />
+                    <CandidateCard
+                      key={candidate.id}
+                      candidate={candidate}
+                      showRank={!neutralRace}
+                      onVote={handleVote}
+                    />
                   ))}
                 </div>
               </>
