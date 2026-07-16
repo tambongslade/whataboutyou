@@ -29,38 +29,24 @@ const MissAndMasterPage = () => {
   });
 
   const [missCandidates, setMissCandidates] = useState<Candidate[]>([]);
-  const [masterCandidates, setMasterCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [usingFallback, setUsingFallback] = useState(false);
 
   const loadCandidates = useCallback(async () => {
     setLoading(true);
 
-    const [missResult, masterResult] = await Promise.allSettled([
-      candidateService.getMissCandidates(),
-      candidateService.getMasterCandidates()
-    ]);
-
-    if (
-      missResult.status === 'fulfilled' &&
-      missResult.value.success &&
-      missResult.value.data
-    ) {
-      setMissCandidates(rankByVotes(missResult.value.data));
-      setUsingFallback(false);
-    } else {
+    try {
+      const response = await candidateService.getMissCandidates();
+      if (response.success && response.data) {
+        setMissCandidates(rankByVotes(response.data));
+        setUsingFallback(false);
+      } else {
+        setMissCandidates(rankByVotes(fallbackMissCandidates));
+        setUsingFallback(true);
+      }
+    } catch {
       setMissCandidates(rankByVotes(fallbackMissCandidates));
       setUsingFallback(true);
-    }
-
-    if (
-      masterResult.status === 'fulfilled' &&
-      masterResult.value.success &&
-      masterResult.value.data
-    ) {
-      setMasterCandidates(rankByVotes(masterResult.value.data));
-    } else {
-      setMasterCandidates([]);
     }
 
     setLoading(false);
@@ -70,7 +56,7 @@ const MissAndMasterPage = () => {
     loadCandidates();
   }, [loadCandidates]);
 
-  const totalVotes = [...missCandidates, ...masterCandidates].reduce(
+  const totalVotes = missCandidates.reduce(
     (sum, candidate) => sum + (candidate.votes || 0),
     0
   );
@@ -78,14 +64,13 @@ const MissAndMasterPage = () => {
   return (
     <div className="min-h-screen bg-[#140D18]">
       <MissAndMasterHeroSection
-        candidateCount={missCandidates.length + masterCandidates.length}
+        candidateCount={missCandidates.length}
         totalVotes={totalVotes}
         loading={loading}
       />
 
       <CandidatesSection
         missCandidates={missCandidates}
-        masterCandidates={masterCandidates}
         loading={loading}
         usingFallback={usingFallback}
         onRetry={loadCandidates}
