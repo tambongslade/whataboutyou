@@ -72,11 +72,7 @@ const CandidateCard = ({
         : 'border-white/5 hover:border-[#E8C15C]/40'
     } ${className}`}
   >
-    <Link
-      to={`/miss-and-master/candidate/${candidate.id}`}
-      aria-label={`Voir le profil de ${candidate.name.trim()}`}
-      className="block relative aspect-[3/4] overflow-hidden"
-    >
+    <div className="relative aspect-[3/4] overflow-hidden">
       <img
         src={getImageUrl(candidate.image)}
         alt={candidate.name.trim()}
@@ -95,7 +91,7 @@ const CandidateCard = ({
       )}
 
       <Sash candidate={candidate} podium={podium} showRank={showRank} />
-    </Link>
+    </div>
 
     <div className={podium ? 'p-5' : 'p-4'}>
       <h3
@@ -105,7 +101,8 @@ const CandidateCard = ({
       >
         <Link
           to={`/miss-and-master/candidate/${candidate.id}`}
-          className="text-[#F5EFE4] hover:text-[#E8C15C] transition-colors"
+          aria-label={`Voir le profil de ${candidate.name.trim()}`}
+          className="text-[#F5EFE4] group-hover:text-[#E8C15C] transition-colors after:absolute after:inset-0 after:content-['']"
         >
           {candidate.name.trim()}
         </Link>
@@ -123,7 +120,7 @@ const CandidateCard = ({
       <button
         onClick={() => onVote(candidate)}
         disabled={!candidate.isActive}
-        className={`w-full font-clash font-semibold rounded-full transition-colors ${
+        className={`relative z-10 w-full font-clash font-semibold rounded-full transition-colors ${
           podium ? 'py-3.5 text-base' : 'py-2.5 text-sm'
         } ${
           candidate.isActive
