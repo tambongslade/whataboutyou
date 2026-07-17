@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getImageUrl, type Candidate } from '../../../services/candidateService';
 import VotingModal from '../../../components/VotingModal';
 
@@ -94,11 +95,17 @@ const CandidateCard = ({
 
     <div className={podium ? 'p-5' : 'p-4'}>
       <h3
-        className={`font-clash font-semibold text-[#F5EFE4] leading-snug line-clamp-2 ${
+        className={`font-clash font-semibold leading-snug line-clamp-2 ${
           podium ? 'text-lg' : 'text-sm sm:text-base'
         }`}
       >
-        {candidate.name.trim()}
+        <Link
+          to={`/miss-and-master/candidate/${candidate.id}`}
+          aria-label={`Voir le profil de ${candidate.name.trim()}`}
+          className="text-[#F5EFE4] group-hover:text-[#E8C15C] transition-colors after:absolute after:inset-0 after:content-['']"
+        >
+          {candidate.name.trim()}
+        </Link>
       </h3>
 
       <div className="flex items-baseline gap-1.5 mt-2 mb-4">
@@ -113,7 +120,7 @@ const CandidateCard = ({
       <button
         onClick={() => onVote(candidate)}
         disabled={!candidate.isActive}
-        className={`w-full font-clash font-semibold rounded-full transition-colors ${
+        className={`relative z-10 w-full font-clash font-semibold rounded-full transition-colors ${
           podium ? 'py-3.5 text-base' : 'py-2.5 text-sm'
         } ${
           candidate.isActive
