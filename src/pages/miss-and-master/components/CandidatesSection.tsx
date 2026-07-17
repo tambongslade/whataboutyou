@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getImageUrl, type Candidate } from '../../../services/candidateService';
 import VotingModal from '../../../components/VotingModal';
 
@@ -71,7 +72,11 @@ const CandidateCard = ({
         : 'border-white/5 hover:border-[#E8C15C]/40'
     } ${className}`}
   >
-    <div className="relative aspect-[3/4] overflow-hidden">
+    <Link
+      to={`/miss-and-master/candidate/${candidate.id}`}
+      aria-label={`Voir le profil de ${candidate.name.trim()}`}
+      className="block relative aspect-[3/4] overflow-hidden"
+    >
       <img
         src={getImageUrl(candidate.image)}
         alt={candidate.name.trim()}
@@ -90,15 +95,20 @@ const CandidateCard = ({
       )}
 
       <Sash candidate={candidate} podium={podium} showRank={showRank} />
-    </div>
+    </Link>
 
     <div className={podium ? 'p-5' : 'p-4'}>
       <h3
-        className={`font-clash font-semibold text-[#F5EFE4] leading-snug line-clamp-2 ${
+        className={`font-clash font-semibold leading-snug line-clamp-2 ${
           podium ? 'text-lg' : 'text-sm sm:text-base'
         }`}
       >
-        {candidate.name.trim()}
+        <Link
+          to={`/miss-and-master/candidate/${candidate.id}`}
+          className="text-[#F5EFE4] hover:text-[#E8C15C] transition-colors"
+        >
+          {candidate.name.trim()}
+        </Link>
       </h3>
 
       <div className="flex items-baseline gap-1.5 mt-2 mb-4">
